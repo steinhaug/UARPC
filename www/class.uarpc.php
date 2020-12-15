@@ -1,10 +1,10 @@
 <?php
-$mysql_user = "a2uthuser";
-$mysql_password = "889ydfay";
+$mysql_user = "";
+$mysql_password = "";
+$mysql_database = "";
 $mysql_host = "localhost";
-$mysql_database = "phprbac";
 $mysql_port = "3306";
-require 'mysqli_connect.php';
+require 'class.mysqli.php';
 
 class UARPC {
 
