@@ -1008,6 +1008,10 @@ class Mysqli2 extends mysqli
         }
 
         $stmt = $this->prepare($sql);
+        if(!empty($stmt->errno)){
+            die("Error: " . $stmt->error);
+            return false;
+        }
         // i-nteger, d-ouble, s-tring, b.lob
 
         if( $types !== false and $variables !== false ){
@@ -1080,6 +1084,10 @@ class Mysqli2 extends mysqli
         }
 
         $stmt = $this->prepare($sql);
+        if(!empty($stmt->errno)){
+            die("Error: " . $stmt->error);
+            return false;
+        }
 
         if( $types !== false and $variables !== false ){
             array_unshift($variables, $types);
