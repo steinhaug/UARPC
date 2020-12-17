@@ -1,5 +1,18 @@
 <?php
-class UARPC {
+/**
+ * UARPC - User Access Roles Permissions Configuration v0.1.0
+ * 
+ * Framework for managing and checking all rights for a particular user.
+ * 
+ * Maintained by: @steinhaug
+ * 
+ * Roadmap:
+ * - user override of the roles, this way we can tailer all needs
+ * - configuration object extends a permission
+ * - optimazation of DB and queries making sure it's fast
+ *
+ */
+class UARPC_base {
 
     public $roles;
     public $permissions;
@@ -33,12 +46,25 @@ class UARPC {
 
 }
 
+/**
+ * All role based functions and operations goes into this class
+ */
 class UARPC_RoleManager 
 {
     public function __construct()
     {
         echo 'UARPC_RoleManager init: ' . time() . '<br>';
     }
+
+
+    /**
+     * Add role by name and description
+     *
+     * @param string $title
+     * @param string $description
+     *
+     * @return int On success returns RoleID
+     */
     public function add($title, $description='')
     {
         global $mysqli;
@@ -59,6 +85,14 @@ class UARPC_RoleManager
 
     }
 
+    /**
+     * Assign User to Role
+     *
+     * @param int $RoleID
+     * @param int $UserID
+     *
+     * @return boolean Retuirns true on success
+     */
     public function assign($RoleID, $UserID)
     {
         global $mysqli;
@@ -79,16 +113,51 @@ class UARPC_RoleManager
         }
     }
 
+
+    /**
+     * Return RoleID from role
+     *
+     * @param string $title
+     *
+     * @return int
+     */
+    public function id($title)
+    {
+        global $mysqli;
+
+        $res = $mysqli->prepared_query("SELECT RoleID from UARPC__roles WHERE title=?", 's', [$title]);
+        if (!count($res)) {
+            echo 'RoleID for ' . $title . ' does not exist' . '<br>';
+            return false;
+        } else {
+            echo 'RoleId returned is ' . $res[0]['RoleID'] . '<br>';
+            return $res[0]['RoleID'];
+        }
+    }
+
 }
-class UARPC_PermissionManager 
+
+/**
+ * All permission based operations and functions goes into this class.
+ */class UARPC_PermissionManager 
 {
     public function __construct()
     {
         echo 'UARPC_PermissionManager init: ' . time() . '<br>';
     }
+
+    /**
+     * Add permission by name and description
+     *
+     * @param string $title
+     * @param string $description
+     *
+     * @return int Returns PermissionId on success
+     */
     public function add($title, $description='')
     {
         global $mysqli;
+
         $res = $mysqli->prepared_query("SELECT PermissionID from UARPC__permissions WHERE title=?", 's', [$title]);
         if( !count($res) ){
             $sql = [
@@ -106,6 +175,14 @@ class UARPC_PermissionManager
 
     }
 
+    /**
+     * Assign Role to Permission
+     *
+     * @param int $PermissionID
+     * @param int $RoleID
+     *
+     * @return boolean Returns true on success
+     */
     public function assign($PermissionID, $RoleID)
     {
         global $mysqli;
@@ -123,6 +200,27 @@ class UARPC_PermissionManager
         } else {
             echo 'RoleID (' . $RoleID . ') already assigned to PermissionID (' . $PermissionID . ').' . '<br>';
             return true;
+        }
+    }
+
+    /**
+     * Return PermissionID for permission
+     *
+     * @param string $title
+     *
+     * @return int Returns PermissionID on success
+     */
+    public function id($title)
+    {
+        global $mysqli;
+
+        $res = $mysqli->prepared_query("SELECT PermissionID from UARPC__permissions WHERE title=?", 's', [$title]);
+        if (!count($res)) {
+            echo 'PermissionID for ' . $title . ' does not exist' . '<br>';
+            return false;
+        } else {
+            echo 'PermissionID returned is ' . $res[0]['PermissionID'] . '<br>';
+            return $res[0]['PermissionID'];
         }
     }
 
