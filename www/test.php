@@ -9,7 +9,6 @@ define('ROLE2','Boss');
 define('PERM1','/invoice/read');
 define('PERM2','/invoice/write');
 
-
 $uarpc = new UARPC_base;
 
 echo '<hr>Functional approach:<br>';
