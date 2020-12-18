@@ -970,7 +970,9 @@ class Mysqli2 extends mysqli
     }
 
     /**
-     * Run a prepared statment, results as associated array
+     * Run a prepared SELECT or DELETE statment.
+     * 
+     * Returns SELECT results as associated array or DELETE affected_rows
      *
      * $sql = "SELECT * FROM table WHERE id=?";
      * $typ = "i";
@@ -1021,6 +1023,14 @@ class Mysqli2 extends mysqli
 
         if( !$stmt->execute() ){
             printf("Error: %s.\n", $stmt->error);
+        }
+
+        // If it's a DELETE we do not need more and close here
+        if( strtoupper(substr($sql, 0, 12)) == 'DELETE FROM ' )
+        {
+            $ret = $stmt->affected_rows;
+            $stmt->close();
+            return $ret;
         }
 
         // Make sure result set becomes associated array

@@ -1,5 +1,9 @@
 <style>
-dd { margin-left:0;padding-left:0.5em;background-color: #818; color: #fff;}
+body {background-color: #eee;color:#000;}
+dd { margin-left:0;padding-left:0em;color: #818;}
+h1, h2, h3 { font-weight:bold;color:#818;}
+h2:before {content:">";position:absolute;left:-20px;}
+h2,h3 {border-bottom: 1px dotted #000;margin-bottom:1em;padding-bottom:0.25em;}
 </style>
 
 # ROLES OBJECT FUNCTIONS

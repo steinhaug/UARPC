@@ -1,5 +1,9 @@
 <style>
-dd { margin-left:0;padding-left:0.5em;background-color: #818; color: #fff;}
+body {background-color: #eee;color:#000;}
+dd { margin-left:0;padding-left:0em;color: #818;}
+h1, h2, h3 { font-weight:bold;color:#818;}
+h2:before {content:">";position:absolute;left:-20px;}
+h2,h3 {border-bottom: 1px dotted #000;margin-bottom:1em;padding-bottom:0.25em;}
 </style>
 
 # PERMISSIONS OBJECT FUNCTIONS
@@ -62,6 +66,37 @@ _Example #1 assigning role admins to write permission_
     $permissionId = $uarpc->permissions->add('write_access');
     $roleId = $uarpc->roles->add('admins');
     $uarpc->permissions->assign($permissionId, $roleId);
+
+<hr>
+<hr>
+
+## <dd>**permissions->unassign**</dd>
+
+Delete the permission   the PermissionId of a permission, the function is available from the $uarpc object.
+
+### **Description**
+
+    $uarpc->permissions->id( string $title ) : int
+
+### **Parameters**
+
+_title_
+    Name of permission you want to look up
+
+### **Return Values**
+
+On success will return the PermissionId, false if fail.'
+
+### **Examples**
+
+_Example #1 return the PermissionId for the admins role_
+
+    $permissionId = $uarpc->permissions->add('write_access');
+    // Lets say the PermissionId from previous line was 8
+
+    $permissionId = $uarpc->permissions->id('write_access');
+    // $permissionId = 8
+
 
 <hr>
 <hr>

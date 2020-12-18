@@ -11,6 +11,20 @@ define('PERM2','/invoice/write');
 
 $uarpc = new UARPC_base;
 
+
+/*
+// Unassigned test
+$roleId = $uarpc->roles->add(ROLE1);
+$uarpc->roles->assign($roleId, USER_KIM);
+$uarpc->roles->unassign($roleId, USER_KIM);
+*/
+
+$permissionId = $uarpc->permissions->add(PERM1, 'User can read invoice');
+$roleId = $uarpc->roles->add(ROLE2);
+$uarpc->permissions->assign($permissionId, $roleId);
+$uarpc->permissions->unassign($permissionId, $roleId);
+
+/*
 echo '<hr>Functional approach:<br>';
 
 $roleid =       $uarpc->addRole(ROLE1);
@@ -43,7 +57,7 @@ echo 'PermissionId for ' . PERM1 . ' is ' . $permissionId . '<br>';
 
 $permissionId = $uarpc->permissions->id(PERM2);
 echo 'PermissionId for ' . PERM2 . ' is ' . $permissionId . '<br>'; 
-
+*/
 
 #$permissionId = $uarpc->permissions->id('/invoice/read');
 #echo 'PermissionId for /invoice/read is ' . $permissionId . '<br>'; 

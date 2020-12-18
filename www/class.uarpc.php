@@ -91,7 +91,7 @@ class UARPC_RoleManager
      * @param int $RoleID
      * @param int $UserID
      *
-     * @return boolean Retuirns true on success
+     * @return boolean Returns true on success
      */
     public function assign($RoleID, $UserID)
     {
@@ -110,6 +110,19 @@ class UARPC_RoleManager
         } else {
             echo 'UserID (' . $UserID . ') already assigned to RoleID (' . $RoleID . ').' . '<br>';
             return true;
+        }
+    }
+
+    public function unassign($RoleID, $UserID)
+    {
+        global $mysqli;
+
+        $affected_rows = $mysqli->prepared_query("DELETE FROM UARPC__userroles WHERE UserID=? AND RoleID=?", 'ii', [$UserID,$RoleID]);
+        if (!$affected_rows) {
+            echo 'Error: role/unassign(' . $RoleID . ', ' . $UserID . ') did not report any databasechange' . '<br>';
+        } else {
+            echo 'Unnasigned role(' . $RoleID . '), from user(' . $UserID . ')<br>';
+            return $affected_rows;
         }
     }
 
@@ -202,6 +215,20 @@ class UARPC_RoleManager
             return true;
         }
     }
+
+    public function unassign($PermissionID, $RoleID)
+    {
+        global $mysqli;
+
+        $affected_rows = $mysqli->prepared_query("DELETE FROM UARPC__rolepermissions WHERE RoleID=? AND PermissionID=?", 'ii', [$RoleID,$PermissionID]);
+        if (!$affected_rows) {
+            echo 'Error: permissions/unassign(' . $RoleID . ', ' . $UserID . ') did not report any databasechange' . '<br>';
+        } else {
+            echo 'Unnasigned permission(' . $PermissionID . '), from role(' . $RoleID . ')<br>';
+            return $affected_rows;
+        }
+    }
+
 
     /**
      * Return PermissionID for permission
