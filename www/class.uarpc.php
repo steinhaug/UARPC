@@ -86,6 +86,37 @@ class UARPC_RoleManager
     }
 
     /**
+     * Update a role
+     *
+     * @param int $RoleID RoleID to update
+     * @param string $title Role title
+     * @param string $description Optional, role description
+     *
+     * @return void
+     */
+    public function edit($RoleID, $title, $description='')
+    {
+        global $mysqli;
+
+        $sql = [
+            "UPDATE UARPC__roles SET `title`=?, `description`=? WHERE RoleID=?",
+            "ssi",
+            [$title,$description,$RoleID]
+        ];
+        $affected_rows = $mysqli->prepared_insert($sql);
+        if($affected_rows){
+            echo 'Role (' . $RoleID . ') was successfully updated.<br>';
+            return true;
+        } else {
+            echo 'Role (' . $RoleID . ') was NOT updated.<br>';
+            return false;
+        }
+
+    }
+
+
+
+    /**
      * Assign User to Role
      *
      * @param int $RoleID
@@ -148,6 +179,7 @@ class UARPC_RoleManager
         }
     }
 
+
 }
 
 /**
@@ -184,6 +216,35 @@ class UARPC_RoleManager
         } else {
             echo 'Permission (' . $res[0]['PermissionID'] . ') already exists.<br>';
             return $res[0]['PermissionID'];
+        }
+
+    }
+
+    /**
+     * Update a permission
+     *
+     * @param int $PermissionID PermissionID to update
+     * @param string $title Permission title
+     * @param string $description Optional, permission description
+     *
+     * @return void
+     */
+    public function edit($PermissionID, $title, $description='')
+    {
+        global $mysqli;
+
+        $sql = [
+            "UPDATE UARPC__permissions SET `title`=?, `description`=? WHERE PermissionID=?",
+            "ssi",
+            [$title,$description,$PermissionID]
+        ];
+        $affected_rows = $mysqli->prepared_insert($sql);
+        if($affected_rows){
+            echo 'Permission (' . $PermissionID . ') was successfully updated.<br>';
+            return true;
+        } else {
+            echo 'Permission (' . $PermissionID . ') was NOT updated.<br>';
+            return false;
         }
 
     }
