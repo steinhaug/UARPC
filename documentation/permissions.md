@@ -68,34 +68,34 @@ _Example #1 assigning role admins to write permission_
 
 ## <dd>**permissions->unassign**</dd>
 
-Delete the permission   the PermissionId of a permission, the function is available from the $uarpc object.
+Un-Assign a role to a permission, the function is available from the $uarpc object.
 
 ### **Description**
 
-    $uarpc->permissions->id( string $title ) : int
+    $uarpc->permissions->unassign( int $permissionId, int $RoleID ) : boolean
 
 ### **Parameters**
 
-_title_
-    Name of permission you want to look up
+_permissionId_
+    The PermissionId for the permissions you want to unassign
+_RoleID_
+    $RoleID of role.
 
 ### **Return Values**
 
-On success will return the PermissionId, false if fail.'
+On success returns true else returns false.
 
 ### **Examples**
 
-_Example #1 return the PermissionId for the admins role_
+_Example #1 unassigning role admins to write permission_
 
     $permissionId = $uarpc->permissions->add('write_access');
-    // Lets say the PermissionId from previous line was 8
-
-    $permissionId = $uarpc->permissions->id('write_access');
-    // $permissionId = 8
-
+    $roleId = $uarpc->roles->add('admins');
+    $uarpc->permissions->unassign($permissionId, $roleId);
 
 <hr>
 <hr>
+
 
 ## <dd>**permissions->id**</dd>
 
@@ -123,4 +123,52 @@ _Example #1 return the PermissionId for the admins role_
 
     $permissionId = $uarpc->permissions->id('write_access');
     // $permissionId = 8
+
+## <dd>**permissions->getTitle**</dd>
+
+Return the name of a permission, the function is available from the $uarpc object.
+
+### **Description**
+
+    $uarpc->permissions->getTitle( int $PermissionID ) : string
+
+### **Parameters**
+
+_PermissionID_
+    PermissionID you want to look up
+
+### **Return Values**
+
+Returns the name of the permission.
+
+### **Examples**
+
+_Example #1 return the PermissionId for the admins role_
+
+    echo $uarpc->permissions->getTitle(2);
+    // example outputs: /invoice/write_access
+
+## <dd>**permissions->getDescription**</dd>
+
+Return the description of a permission, the function is available from the $uarpc object.
+
+### **Description**
+
+    $uarpc->permissions->getDescription( int $PermissionID ) : string
+
+### **Parameters**
+
+_PermissionID_
+    PermissionID you want to look up
+
+### **Return Values**
+
+Returns the name of the permission.
+
+### **Examples**
+
+_Example #1 return the description for PermissionID 2
+
+    echo $uarpc->permissions->getDescription(2);
+    // example outputs: User can edit and write invoices
 

@@ -68,6 +68,31 @@ class UARPC_base {
         if($this->UserID === null)
             throw new Exception('No UserID');
 
+        // 1. check if permission is denied on user
+        $sql = 'SELECT * 
+                FROM uarpc__permissions up 
+                JOIN uarpc__userdenypermissions uudp ON ( uudp.PermissionID = up.PermissionID ) 
+                WHERE up.title=? AND uudp.UserID = ?
+                ';
+        $res = $mysqli->prepared_query($sql, 'si', [$PermissionTitle, $this->UserID]);
+        if (count($res)) {
+            echo 'User(' . $this->UserID . ') is denied permission \'' . $PermissionTitle . '\' as override<br>';
+            return false;
+        }
+
+        // 2. Check if permission is allowed for user
+        $sql = 'SELECT * 
+                FROM uarpc__permissions up 
+                JOIN uarpc__userallowpermissions uudp ON ( uudp.PermissionID = up.PermissionID ) 
+                WHERE up.title=? AND uudp.UserID = ?
+                ';
+        $res = $mysqli->prepared_query($sql, 'si', [$PermissionTitle, $this->UserID]);
+        if (count($res)) {
+            echo 'User(' . $this->UserID . ') is allowed permission \'' . $PermissionTitle . '\' as override<br>';
+            return true;
+        }
+
+        // 3. Check if permission is allowed for role belonging to user
         $sql = 'SELECT * 
                 FROM uarpc__permissions up 
                 JOIN uarpc__rolepermissions urp ON ( urp.PermissionID = up.PermissionID ) 
@@ -77,12 +102,13 @@ class UARPC_base {
                 ';
 
         $res = $mysqli->prepared_query($sql, 'si', [$PermissionTitle, $this->UserID]);
-        if (!count($res)) {
-        } else {
+        if (count($res)) {
+            echo 'User(' . $this->UserID . ') is allowed permission \'' . $PermissionTitle . '\' from roles<br>';
+            return true;
         }
 
-        return count($res);
-
+        // User is not permitted
+        return false;
     }
 
 }
