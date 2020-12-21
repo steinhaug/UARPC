@@ -18,12 +18,20 @@ class UARPC_base {
     public $permissions;
     public $users;
 
-    public function __construct()
+    public $UserID = null;
+
+    public function __construct($UserID = null)
     {
         echo 'UARPC init: ' . time() . '<br>';
+        if( $UserID !== null ){
+            $this->UserID = $UserID;
+            echo 'UserID set for ' . $this->UserID . '<br>';
+        }
+
         $this->roles = new UARPC_RoleManager ();
         $this->permissions = new UARPC_PermissionManager ();
-        $this->users = new UARPC_UserManager ();
+        $this->users = new UARPC_UserManager ($this->UserID);
+
     }
 
     public function addRole($title, $description='')
@@ -44,6 +52,37 @@ class UARPC_base {
     public function assignPermission($PermissionID, $RoleID)
     {
         return $this->permissions->assign($PermissionID, $RoleID);
+    }
+
+
+    /**
+     * Check if user have permission
+     *
+     * @param string $PermissionTitle Permission name
+     *
+     * @return int Returns 0 if no persmission or >0 if permitted
+     */
+    public function havePermission($PermissionTitle)
+    {
+        global $mysqli;
+        if($this->UserID === null)
+            throw new Exception('No UserID');
+
+        $sql = 'SELECT * 
+                FROM uarpc__permissions up 
+                JOIN uarpc__rolepermissions urp ON ( urp.PermissionID = up.PermissionID ) 
+                JOIN uarpc__userroles uur ON ( uur.RoleID = urp.RoleID ) 
+                JOIN uarpc__roles ur ON ( ur.RoleID = uur.RoleID ) 
+                WHERE up.title=? AND uur.UserID = ?
+                ';
+
+        $res = $mysqli->prepared_query($sql, 'si', [$PermissionTitle, $this->UserID]);
+        if (!count($res)) {
+        } else {
+        }
+
+        return count($res);
+
     }
 
 }
@@ -439,8 +478,131 @@ class UARPC_RoleManager
 
 class UARPC_UserManager
 {
-    public function __construct()
+
+    var $UserID = null;
+
+    public function __construct($UserID = null)
     {
         echo 'UARPC_UserManager init: ' . time() . '<br>';
+        if( $UserID !== null ){
+            $this->UserID = $UserID;
+            echo 'UserID set for ' . $this->UserID . '<br>';
+        }
     }
+
+
+
+    /**
+     * Assign UserID to Permission
+     *
+     * @param int $PermissionID
+     * @param int $UserID
+     *
+     * @return boolean Returns true on success
+     */
+    public function allow($PermissionID, $UserID=null)
+    {
+        global $mysqli;
+
+        if( $UserID === null ){
+            $UserID = $this->UserID;
+        }
+
+        if($UserID === null)
+            throw new Exception('UserManager, cannot assign permission no UserID');
+
+        $res = $mysqli->prepared_query("SELECT `UserID`,`PermissionID` from uarpc__userallowpermissions WHERE UserID=? AND PermissionID=?", 'ii', [$UserID,$PermissionID]);
+        if (!count($res)) {
+            $sql = [
+                "INSERT INTO uarpc__userallowpermissions (`UserID`,`PermissionID`,`AssignmentDate`) VALUES (?,?,?)",
+                "iii",
+                [$UserID,$PermissionID,time()]
+            ];
+            $result = $mysqli->prepared_insert($sql);
+            echo 'UserID (' . $UserID . ') allowed PermissionID (' . $PermissionID . ') successfully.<br>';
+            return true;
+        } else {
+            echo 'UserID (' . $UserID . ') already allowed PermissionID (' . $PermissionID . ').' . '<br>';
+            return true;
+        }
+    }
+
+    public function unallow($PermissionID, $UserID=null)
+    {
+        global $mysqli;
+
+        if( $UserID === null ){
+            $UserID = $this->UserID;
+        }
+
+        if($UserID === null)
+            throw new Exception('UserManager, cannot allow permission no UserID');
+
+        $affected_rows = $mysqli->prepared_query("DELETE FROM uarpc__userallowpermissions WHERE UserID=? AND PermissionID=?", 'ii', [$UserID,$PermissionID]);
+        if (!$affected_rows) {
+            echo 'Error: permissions/unallow(' . $PermissionID . ', ' . $UserID . ') did not report any databasechange' . '<br>';
+        } else {
+            echo 'Unallow permission(' . $PermissionID . ') for user(' . $UserID . ')<br>';
+            return $affected_rows;
+        }
+    }
+
+
+
+    /**
+     * Assign UserID to Permission
+     *
+     * @param int $PermissionID
+     * @param int $UserID
+     *
+     * @return boolean Returns true on success
+     */
+    public function deny($PermissionID, $UserID=null)
+    {
+        global $mysqli;
+
+        if( $UserID === null ){
+            $UserID = $this->UserID;
+        }
+
+        if($UserID === null)
+            throw new Exception('UserManager, cannot deny permission no UserID');
+
+        $res = $mysqli->prepared_query("SELECT `UserID`,`PermissionID` from uarpc__userdenypermissions WHERE UserID=? AND PermissionID=?", 'ii', [$UserID,$PermissionID]);
+        if (!count($res)) {
+            $sql = [
+                "INSERT INTO uarpc__userdenypermissions (`UserID`,`PermissionID`,`AssignmentDate`) VALUES (?,?,?)",
+                "iii",
+                [$UserID,$PermissionID,time()]
+            ];
+            $result = $mysqli->prepared_insert($sql);
+            echo 'UserID (' . $UserID . ') denied PermissionID (' . $PermissionID . ') successfully.<br>';
+            return true;
+        } else {
+            echo 'UserID (' . $UserID . ') already denied PermissionID (' . $PermissionID . ').' . '<br>';
+            return true;
+        }
+    }
+
+    public function undeny($PermissionID, $UserID=null)
+    {
+        global $mysqli;
+
+        if( $UserID === null ){
+            $UserID = $this->UserID;
+        }
+
+        if($UserID === null)
+            throw new Exception('UserManager, cannot deny permission no UserID');
+
+        $affected_rows = $mysqli->prepared_query("DELETE FROM uarpc__userdenypermissions WHERE UserID=? AND PermissionID=?", 'ii', [$UserID,$PermissionID]);
+        if (!$affected_rows) {
+            echo 'Error: permissions/undeny(' . $PermissionID . ', ' . $UserID . ') did not report any databasechange' . '<br>';
+        } else {
+            echo 'Undenied permission(' . $PermissionID . ') for user(' . $UserID . ')<br>';
+            return $affected_rows;
+        }
+    }
+
+
 }

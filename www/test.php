@@ -4,17 +4,30 @@ require 'class.mysqli.php';
 require 'class.uarpc.php';
 
 define('USER_KIM', 999);
-define('ROLE1','Manager');
+define('ROLE1','Manager');              // 7
 define('ROLE2','Boss');
-define('PERM1','/invoice/read');
-define('PERM2','/invoice/write');
+define('PERM1','/invoice/read');        // 1
+define('PERM2','/invoice/write-delay'); // 4
 
-$uarpc = new UARPC_base;
+$uarpc = new UARPC_base(USER_KIM);
+
+$PermissionID = $uarpc->permissions->id(PERM2);
+$uarpc->users->allow($PermissionID,USER_KIM);
+#$uarpc->users->unallow($PermissionID,USER_KIM);
+$uarpc->users->deny($PermissionID,USER_KIM);
+#$uarpc->users->undeny($PermissionID,USER_KIM);
+
+#$uarpc->users->assign($PermissionID,USER_KIM);
+#$uarpc->users->unassign($PermissionID,USER_KIM);
+
+//var_dump( $uarpc->havePermission(PERM2) );
+
+//var_dump( $uarpc->users->roles() );
 
 
-var_dump( $uarpc->roles->list() );
-echo $uarpc->roles->getTitle(7);
-echo $uarpc->roles->getDescription(7);
+#var_dump( $uarpc->roles->list() );
+#echo $uarpc->roles->getTitle(7);
+#echo $uarpc->roles->getDescription(7);
 
 
 #var_dump( $uarpc->permissions->list() );
