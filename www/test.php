@@ -12,9 +12,12 @@ define('PERM2','/invoice/write-delay'); // 4
 $uarpc = new UARPC_base(USER_KIM);
 
 $PermissionID = $uarpc->permissions->id(PERM2);
-$uarpc->users->allow($PermissionID,USER_KIM);
+var_dump( $uarpc->havePermission(PERM2) );
+
+
+#$uarpc->users->allow($PermissionID,USER_KIM);
 #$uarpc->users->unallow($PermissionID,USER_KIM);
-$uarpc->users->deny($PermissionID,USER_KIM);
+#$uarpc->users->deny($PermissionID,USER_KIM);
 #$uarpc->users->undeny($PermissionID,USER_KIM);
 
 #$uarpc->users->assign($PermissionID,USER_KIM);
