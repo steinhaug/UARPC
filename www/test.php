@@ -11,8 +11,20 @@ define('PERM2','/invoice/write');
 
 $uarpc = new UARPC_base;
 
+
+var_dump( $uarpc->roles->list() );
+echo $uarpc->roles->getTitle(7);
+echo $uarpc->roles->getDescription(7);
+
+
+#var_dump( $uarpc->permissions->list() );
+#echo $uarpc->permissions->getTitle(1);
+#echo $uarpc->permissions->getDescription(1);
+
+/*
 $uarpc->roles->edit(9, 'Updated boss', 'Description');
 $uarpc->permissions->edit(3, '/invoice/write-delay', 'User cannot read invoice');
+*/
 
 /*
 // Unassigned test

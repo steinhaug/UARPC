@@ -180,6 +180,69 @@ class UARPC_RoleManager
     }
 
 
+
+    public function list($UserID=null)
+    {
+        global $mysqli;
+
+        $res = $mysqli->query("SELECT `RoleID`, `title`, `description` from UARPC__roles");
+        if( $res->num_rows ){
+            $roles = [];
+            while( $row = $res->fetch_assoc() ){
+                $roles[ $row['RoleID'] ] = $row;
+            }
+            return $roles;
+        } else {
+            return [];
+        }
+   
+    }
+
+
+
+    /**
+     * Return role title
+     *
+     * @param int $RoleID
+     *
+     * @return string Role title
+     */
+    public function getTitle($RoleID)
+    {
+        global $mysqli;
+        $res = $mysqli->prepared_query("SELECT `title` from UARPC__roles WHERE RoleID=?", 'i', [$RoleID]);
+        if (!count($res)) {
+            echo 'Role(' . $RoleID . ') does not exist' . '<br>';
+            return false;
+        } else {
+            echo 'Role title returned is ' . $res[0]['title'] . '<br>';
+            return $res[0]['title'];
+        }
+    }
+
+    /**
+     * Return role description
+     *
+     * @param int $RoleID
+     *
+     * @return string Role description
+     */
+    public function getDescription($RoleID)
+    {
+        global $mysqli;
+        $res = $mysqli->prepared_query("SELECT `description` from UARPC__roles WHERE RoleID=?", 'i', [$RoleID]);
+        if (!count($res)) {
+            echo 'Role(' . $RoleID . ') does not exist' . '<br>';
+            return false;
+        } else {
+            echo 'Role description returned is ' . $res[0]['description'] . '<br>';
+            return $res[0]['description'];
+        }
+    }
+
+
+
+
 }
 
 /**
@@ -312,6 +375,62 @@ class UARPC_RoleManager
         }
     }
 
+    public function list()
+    {
+        global $mysqli;
+
+        $res = $mysqli->query("SELECT `PermissionID`, `title`, `description` from UARPC__permissions");
+        if( $res->num_rows ){
+            $roles = [];
+            while( $row = $res->fetch_assoc() ){
+                $roles[ $row['PermissionID'] ] = $row;
+            }
+            return $roles;
+        } else {
+            return [];
+        }
+   
+    }
+
+
+    /**
+     * Return permission title
+     *
+     * @param int $PermissionID
+     *
+     * @return string Permission title
+     */
+    public function getTitle($PermissionID)
+    {
+        global $mysqli;
+        $res = $mysqli->prepared_query("SELECT `title` from UARPC__permissions WHERE PermissionID=?", 'i', [$PermissionID]);
+        if (!count($res)) {
+            echo 'Permission(' . $PermissionID . ') does not exist' . '<br>';
+            return false;
+        } else {
+            echo 'Permission title returned is ' . $res[0]['title'] . '<br>';
+            return $res[0]['title'];
+        }
+    }
+
+    /**
+     * Return permission description
+     *
+     * @param int $PermissionID
+     *
+     * @return string Permission description
+     */
+    public function getDescription($PermissionID)
+    {
+        global $mysqli;
+        $res = $mysqli->prepared_query("SELECT `description` from UARPC__permissions WHERE PermissionID=?", 'i', [$PermissionID]);
+        if (!count($res)) {
+            echo 'Permission(' . $PermissionID . ') does not exist' . '<br>';
+            return false;
+        } else {
+            echo 'Permission description returned is ' . $res[0]['description'] . '<br>';
+            return $res[0]['description'];
+        }
+    }
+
 }
-
-
