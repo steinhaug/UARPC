@@ -16,12 +16,14 @@ class UARPC_base {
 
     public $roles;
     public $permissions;
+    public $users;
 
     public function __construct()
     {
         echo 'UARPC init: ' . time() . '<br>';
         $this->roles = new UARPC_RoleManager ();
         $this->permissions = new UARPC_PermissionManager ();
+        $this->users = new UARPC_UserManager ();
     }
 
     public function addRole($title, $description='')
@@ -433,4 +435,12 @@ class UARPC_RoleManager
         }
     }
 
+}
+
+class UARPC_UserManager
+{
+    public function __construct()
+    {
+        echo 'UARPC_UserManager init: ' . time() . '<br>';
+    }
 }
