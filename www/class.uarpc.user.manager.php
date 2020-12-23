@@ -130,4 +130,72 @@ class UARPC_UserManager
     }
 
 
+    /**
+     * Get list of permissions allowed for a user
+     *
+     * @param int $UserID Userid to list permissions, optional or will use instantiated $UserID
+     *
+     * @return array Associated array of permissions, PermissionID as key and permission name as value.
+     */
+    public function list($UserID=null)
+    {
+        global $mysqli;
+        if( $UserID === null ){
+            $UserID = $this->UserID;
+        }
+
+        if($UserID === null)
+            throw new Exception('UserManager, cannot deny permission no UserID');
+
+        $sql = "SELECT up.`PermissionID`  
+                FROM uarpc__permissions up 
+                JOIN uarpc__userdenypermissions udp  ON ( udp.PermissionID = up.PermissionID ) 
+                WHERE udp.UserID=? 
+                ";
+
+        $res = $mysqli->prepared_query($sql, 'i', [$UserID]);
+        $remove_ids = [];
+        if ($res) {
+            foreach($res as $item){
+                $remove_ids[] = $item['PermissionID'];
+            }
+        }
+
+        $sql = "SELECT up.`PermissionID`, up.`title` 
+                FROM uarpc__permissions up 
+                JOIN uarpc__rolepermissions urp ON ( urp.PermissionID = up.PermissionID ) 
+                JOIN uarpc__userroles uur ON ( uur.RoleID = urp.RoleID ) 
+                WHERE uur.UserID=? 
+                GROUP BY up.PermissionID 
+                UNION
+                SELECT up.`PermissionID`, up.`title` 
+                FROM uarpc__permissions up 
+                JOIN uarpc__userallowpermissions uap  ON ( uap.PermissionID = up.PermissionID ) 
+                WHERE uap.UserID=? 
+                ";
+
+        $res = $mysqli->prepared_query($sql, 'ii', [$UserID,$UserID]);
+
+        $permissions = [];
+
+        if ($res) {
+            foreach($res as $item){
+
+                if( count($remove_ids) ){
+                    if( !in_array($item['PermissionID'], $remove_ids) ){
+                        $permissions[$item['PermissionID']] = $item['title'];
+                    }
+                } else {
+                    $permissions[$item['PermissionID']] = $item['title'];
+                }
+
+            }
+
+        }
+
+        echo 'User(' . $UserID . ') returned a total of ' . count($permissions) . ' permissions.<br>';
+        return $permissions;
+    }
+
+
 }
