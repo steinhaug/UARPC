@@ -1,7 +1,11 @@
 <?php
 require '../credentials.php';
 require 'class.mysqli.php';
+require 'class.uarpc.permission.manager.php';
+require 'class.uarpc.role.manager.php';
+require 'class.uarpc.user.manager.php';
 require 'class.uarpc.php';
+
 
 define('USER_KIM', 999);
 define('ROLE1','Manager');              // 7
@@ -11,6 +15,10 @@ define('PERM2','/invoice/write-delay'); // 4
 
 $uarpc = new UARPC_base(USER_KIM);
 
+$uarpc->users->deny(1,USER_KIM);
+$uarpc->users->deny(2,USER_KIM);
+
+$uarpc->users->list();
 #$PermissionID = $uarpc->permissions->id(PERM2);
 #var_dump( $uarpc->havePermission(PERM2) );
 
