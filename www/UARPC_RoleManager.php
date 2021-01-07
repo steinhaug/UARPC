@@ -6,9 +6,14 @@
  */
 class UARPC_RoleManager 
 {
-    public function __construct()
+
+    public $verbose_actions = false;
+
+    public function __construct($verbose_actions = false)
     {
-        echo 'UARPC_RoleManager init: ' . time() . '<br>';
+        $this->verbose_actions = $verbose_actions;
+
+        if($this->verbose_actions) echo 'UARPC_RoleManager init: ' . time() . '<br>';
     }
 
 
@@ -31,10 +36,10 @@ class UARPC_RoleManager
                 [$title,$description]
             ];
             $result = $mysqli->prepared_insert($sql);
-            echo 'Role created successfully, RoleID: ' . $result . '<br>';
+            if($this->verbose_actions) echo 'Role created successfully, RoleID: ' . $result . '<br>';
             return $result;
         } else {
-            echo 'Role (' . $res[0]['RoleID'] . ') already exists.<br>';
+            if($this->verbose_actions) echo 'Role (' . $res[0]['RoleID'] . ') already exists.<br>';
             return $res[0]['RoleID'];
         }
 
@@ -60,10 +65,10 @@ class UARPC_RoleManager
         ];
         $affected_rows = $mysqli->prepared_insert($sql);
         if($affected_rows){
-            echo 'Role (' . $RoleID . ') was successfully updated.<br>';
+            if($this->verbose_actions) echo 'Role (' . $RoleID . ') was successfully updated.<br>';
             return true;
         } else {
-            echo 'Role (' . $RoleID . ') was NOT updated.<br>';
+            if($this->verbose_actions) echo 'Role (' . $RoleID . ') was NOT updated.<br>';
             return false;
         }
 
@@ -91,10 +96,10 @@ class UARPC_RoleManager
                 [$UserID,$RoleID,time()]
             ];
             $result = $mysqli->prepared_insert($sql);
-            echo 'UserID (' . $UserID . ') assigned to RoleID (' . $RoleID . ') successfully.<br>';
+            if($this->verbose_actions) echo 'UserID (' . $UserID . ') assigned to RoleID (' . $RoleID . ') successfully.<br>';
             return true;
         } else {
-            echo 'UserID (' . $UserID . ') already assigned to RoleID (' . $RoleID . ').' . '<br>';
+            if($this->verbose_actions) echo 'UserID (' . $UserID . ') already assigned to RoleID (' . $RoleID . ').' . '<br>';
             return true;
         }
     }
@@ -105,9 +110,9 @@ class UARPC_RoleManager
 
         $affected_rows = $mysqli->prepared_query("DELETE FROM UARPC__userroles WHERE UserID=? AND RoleID=?", 'ii', [$UserID,$RoleID]);
         if (!$affected_rows) {
-            echo 'Error: role/unassign(' . $RoleID . ', ' . $UserID . ') did not report any databasechange' . '<br>';
+            if($this->verbose_actions) echo 'Error: role/unassign(' . $RoleID . ', ' . $UserID . ') did not report any databasechange' . '<br>';
         } else {
-            echo 'Unnasigned role(' . $RoleID . '), from user(' . $UserID . ')<br>';
+            if($this->verbose_actions) echo 'Unnasigned role(' . $RoleID . '), from user(' . $UserID . ')<br>';
             return $affected_rows;
         }
     }
@@ -126,10 +131,10 @@ class UARPC_RoleManager
 
         $res = $mysqli->prepared_query("SELECT RoleID from UARPC__roles WHERE title=?", 's', [$title]);
         if (!count($res)) {
-            echo 'RoleID for ' . $title . ' does not exist' . '<br>';
+            if($this->verbose_actions) echo 'RoleID for ' . $title . ' does not exist' . '<br>';
             return false;
         } else {
-            echo 'RoleId returned is ' . $res[0]['RoleID'] . '<br>';
+            if($this->verbose_actions) echo 'RoleId returned is ' . $res[0]['RoleID'] . '<br>';
             return $res[0]['RoleID'];
         }
     }
@@ -167,10 +172,10 @@ class UARPC_RoleManager
         global $mysqli;
         $res = $mysqli->prepared_query("SELECT `title` from UARPC__roles WHERE RoleID=?", 'i', [$RoleID]);
         if (!count($res)) {
-            echo 'Role(' . $RoleID . ') does not exist' . '<br>';
+            if($this->verbose_actions) echo 'Role(' . $RoleID . ') does not exist' . '<br>';
             return false;
         } else {
-            echo 'Role title returned is ' . $res[0]['title'] . '<br>';
+            if($this->verbose_actions) echo 'Role title returned is ' . $res[0]['title'] . '<br>';
             return $res[0]['title'];
         }
     }
@@ -187,10 +192,10 @@ class UARPC_RoleManager
         global $mysqli;
         $res = $mysqli->prepared_query("SELECT `description` from UARPC__roles WHERE RoleID=?", 'i', [$RoleID]);
         if (!count($res)) {
-            echo 'Role(' . $RoleID . ') does not exist' . '<br>';
+            if($this->verbose_actions) echo 'Role(' . $RoleID . ') does not exist' . '<br>';
             return false;
         } else {
-            echo 'Role description returned is ' . $res[0]['description'] . '<br>';
+            if($this->verbose_actions) echo 'Role description returned is ' . $res[0]['description'] . '<br>';
             return $res[0]['description'];
         }
     }

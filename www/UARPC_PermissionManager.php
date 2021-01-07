@@ -5,9 +5,14 @@
  */
 class UARPC_PermissionManager 
 {
-    public function __construct()
+
+    public $verbose_actions = false;
+
+    public function __construct($verbose_actions = false)
     {
-        echo 'UARPC_PermissionManager init: ' . time() . '<br>';
+        $this->verbose_actions = $verbose_actions;
+
+        if($this->verbose_actions) echo 'UARPC_PermissionManager init: ' . time() . '<br>';
     }
 
     /**
@@ -30,10 +35,10 @@ class UARPC_PermissionManager
                 [$title,$description]
             ];
             $result = $mysqli->prepared_insert($sql);
-            echo 'Permission created successfully, PermissionID: ' . $result . '<br>';
+            if($this->verbose_actions) echo 'Permission created successfully, PermissionID: ' . $result . '<br>';
             return $result;
         } else {
-            echo 'Permission (' . $res[0]['PermissionID'] . ') already exists.<br>';
+            if($this->verbose_actions) echo 'Permission (' . $res[0]['PermissionID'] . ') already exists.<br>';
             return $res[0]['PermissionID'];
         }
 
@@ -59,10 +64,10 @@ class UARPC_PermissionManager
         ];
         $affected_rows = $mysqli->prepared_insert($sql);
         if($affected_rows){
-            echo 'Permission (' . $PermissionID . ') was successfully updated.<br>';
+            if($this->verbose_actions) echo 'Permission (' . $PermissionID . ') was successfully updated.<br>';
             return true;
         } else {
-            echo 'Permission (' . $PermissionID . ') was NOT updated.<br>';
+            if($this->verbose_actions) echo 'Permission (' . $PermissionID . ') was NOT updated.<br>';
             return false;
         }
 
@@ -88,10 +93,10 @@ class UARPC_PermissionManager
                 [$RoleID,$PermissionID,time()]
             ];
             $result = $mysqli->prepared_insert($sql);
-            echo 'RoleID (' . $RoleID . ') assigned to PermissionID (' . $PermissionID . ') successfully.<br>';
+            if($this->verbose_actions) echo 'RoleID (' . $RoleID . ') assigned to PermissionID (' . $PermissionID . ') successfully.<br>';
             return true;
         } else {
-            echo 'RoleID (' . $RoleID . ') already assigned to PermissionID (' . $PermissionID . ').' . '<br>';
+            if($this->verbose_actions) echo 'RoleID (' . $RoleID . ') already assigned to PermissionID (' . $PermissionID . ').' . '<br>';
             return true;
         }
     }
@@ -102,9 +107,9 @@ class UARPC_PermissionManager
 
         $affected_rows = $mysqli->prepared_query("DELETE FROM UARPC__rolepermissions WHERE RoleID=? AND PermissionID=?", 'ii', [$RoleID,$PermissionID]);
         if (!$affected_rows) {
-            echo 'Error: permissions/unassign(' . $RoleID . ', ' . $UserID . ') did not report any databasechange' . '<br>';
+            if($this->verbose_actions) echo 'Error: permissions/unassign(' . $RoleID . ', ' . $UserID . ') did not report any databasechange' . '<br>';
         } else {
-            echo 'Unnasigned permission(' . $PermissionID . '), from role(' . $RoleID . ')<br>';
+            if($this->verbose_actions) echo 'Unnasigned permission(' . $PermissionID . '), from role(' . $RoleID . ')<br>';
             return $affected_rows;
         }
     }
@@ -123,10 +128,10 @@ class UARPC_PermissionManager
 
         $res = $mysqli->prepared_query("SELECT PermissionID from UARPC__permissions WHERE title=?", 's', [$title]);
         if (!count($res)) {
-            echo 'PermissionID for ' . $title . ' does not exist' . '<br>';
+            if($this->verbose_actions) echo 'PermissionID for ' . $title . ' does not exist' . '<br>';
             return false;
         } else {
-            echo 'PermissionID returned is ' . $res[0]['PermissionID'] . '<br>';
+            if($this->verbose_actions) echo 'PermissionID returned is ' . $res[0]['PermissionID'] . '<br>';
             return $res[0]['PermissionID'];
         }
     }
@@ -161,10 +166,10 @@ class UARPC_PermissionManager
         global $mysqli;
         $res = $mysqli->prepared_query("SELECT `title` from UARPC__permissions WHERE PermissionID=?", 'i', [$PermissionID]);
         if (!count($res)) {
-            echo 'Permission(' . $PermissionID . ') does not exist' . '<br>';
+            if($this->verbose_actions) echo 'Permission(' . $PermissionID . ') does not exist' . '<br>';
             return false;
         } else {
-            echo 'Permission title returned is ' . $res[0]['title'] . '<br>';
+            if($this->verbose_actions) echo 'Permission title returned is ' . $res[0]['title'] . '<br>';
             return $res[0]['title'];
         }
     }
@@ -181,10 +186,10 @@ class UARPC_PermissionManager
         global $mysqli;
         $res = $mysqli->prepared_query("SELECT `description` from UARPC__permissions WHERE PermissionID=?", 'i', [$PermissionID]);
         if (!count($res)) {
-            echo 'Permission(' . $PermissionID . ') does not exist' . '<br>';
+            if($this->verbose_actions) echo 'Permission(' . $PermissionID . ') does not exist' . '<br>';
             return false;
         } else {
-            echo 'Permission description returned is ' . $res[0]['description'] . '<br>';
+            if($this->verbose_actions) echo 'Permission description returned is ' . $res[0]['description'] . '<br>';
             return $res[0]['description'];
         }
     }

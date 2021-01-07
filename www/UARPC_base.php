@@ -20,18 +20,21 @@ class UARPC_base {
     public $users;
 
     public $UserID = null;
+    public $verbose_actions = false;
 
-    public function __construct($UserID = null)
+    public function __construct($UserID = null, $verbose_actions = false)
     {
-        echo 'UARPC init: ' . time() . '<br>';
+        $this->verbose_actions = $verbose_actions;
+
+        if($this->verbose_actions) echo 'UARPC init: ' . time() . '<br>';
         if( $UserID !== null ){
             $this->UserID = $UserID;
-            echo 'UserID set for ' . $this->UserID . '<br>';
+            if($this->verbose_actions) echo 'UserID set for ' . $this->UserID . '<br>';
         }
 
-        $this->roles = new UARPC_RoleManager ();
-        $this->permissions = new UARPC_PermissionManager ();
-        $this->users = new UARPC_UserManager ($this->UserID);
+        $this->roles = new UARPC_RoleManager ($this->verbose_actions);
+        $this->permissions = new UARPC_PermissionManager ($this->verbose_actions);
+        $this->users = new UARPC_UserManager ($this->UserID, $this->verbose_actions);
 
     }
 
@@ -77,7 +80,7 @@ class UARPC_base {
                 ';
         $res = $mysqli->prepared_query($sql, 'si', [$PermissionTitle, $this->UserID]);
         if (count($res)) {
-            echo 'User(' . $this->UserID . ') is denied permission \'' . $PermissionTitle . '\' as override<br>';
+            if($this->verbose_actions) echo 'User(' . $this->UserID . ') is denied permission \'' . $PermissionTitle . '\' as override<br>';
             return false;
         }
 
@@ -89,7 +92,7 @@ class UARPC_base {
                 ';
         $res = $mysqli->prepared_query($sql, 'si', [$PermissionTitle, $this->UserID]);
         if (count($res)) {
-            echo 'User(' . $this->UserID . ') is allowed permission \'' . $PermissionTitle . '\' as override<br>';
+            if($this->verbose_actions) echo 'User(' . $this->UserID . ') is allowed permission \'' . $PermissionTitle . '\' as override<br>';
             return true;
         }
 
@@ -104,7 +107,7 @@ class UARPC_base {
 
         $res = $mysqli->prepared_query($sql, 'si', [$PermissionTitle, $this->UserID]);
         if (count($res)) {
-            echo 'User(' . $this->UserID . ') is allowed permission \'' . $PermissionTitle . '\' from roles<br>';
+            if($this->verbose_actions) echo 'User(' . $this->UserID . ') is allowed permission \'' . $PermissionTitle . '\' from roles<br>';
             return true;
         }
 

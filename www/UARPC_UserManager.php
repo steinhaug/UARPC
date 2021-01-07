@@ -5,13 +5,17 @@ class UARPC_UserManager
 {
 
     var $UserID = null;
+    public $verbose_actions = false;
 
-    public function __construct($UserID = null)
+    public function __construct($UserID = null, $verbose_actions = false)
     {
-        echo 'UARPC_UserManager init: ' . time() . '<br>';
+        $this->verbose_actions = $verbose_actions;
+
+        if($this->verbose_actions) echo 'UARPC_UserManager init: ' . time() . '<br>';
+
         if( $UserID !== null ){
             $this->UserID = $UserID;
-            echo 'UserID set for ' . $this->UserID . '<br>';
+            if($this->verbose_actions) echo 'UserID set for ' . $this->UserID . '<br>';
         }
     }
 
@@ -44,10 +48,10 @@ class UARPC_UserManager
                 [$UserID,$PermissionID,time()]
             ];
             $result = $mysqli->prepared_insert($sql);
-            echo 'UserID (' . $UserID . ') allowed PermissionID (' . $PermissionID . ') successfully.<br>';
+            if($this->verbose_actions) echo 'UserID (' . $UserID . ') allowed PermissionID (' . $PermissionID . ') successfully.<br>';
             return true;
         } else {
-            echo 'UserID (' . $UserID . ') already allowed PermissionID (' . $PermissionID . ').' . '<br>';
+            if($this->verbose_actions) echo 'UserID (' . $UserID . ') already allowed PermissionID (' . $PermissionID . ').' . '<br>';
             return true;
         }
     }
@@ -65,9 +69,9 @@ class UARPC_UserManager
 
         $affected_rows = $mysqli->prepared_query("DELETE FROM uarpc__userallowpermissions WHERE UserID=? AND PermissionID=?", 'ii', [$UserID,$PermissionID]);
         if (!$affected_rows) {
-            echo 'Error: permissions/unallow(' . $PermissionID . ', ' . $UserID . ') did not report any databasechange' . '<br>';
+            if($this->verbose_actions) echo 'Error: permissions/unallow(' . $PermissionID . ', ' . $UserID . ') did not report any databasechange' . '<br>';
         } else {
-            echo 'Unallow permission(' . $PermissionID . ') for user(' . $UserID . ')<br>';
+            if($this->verbose_actions) echo 'Unallow permission(' . $PermissionID . ') for user(' . $UserID . ')<br>';
             return $affected_rows;
         }
     }
@@ -101,10 +105,10 @@ class UARPC_UserManager
                 [$UserID,$PermissionID,time()]
             ];
             $result = $mysqli->prepared_insert($sql);
-            echo 'UserID (' . $UserID . ') denied PermissionID (' . $PermissionID . ') successfully.<br>';
+            if($this->verbose_actions) echo 'UserID (' . $UserID . ') denied PermissionID (' . $PermissionID . ') successfully.<br>';
             return true;
         } else {
-            echo 'UserID (' . $UserID . ') already denied PermissionID (' . $PermissionID . ').' . '<br>';
+            if($this->verbose_actions) echo 'UserID (' . $UserID . ') already denied PermissionID (' . $PermissionID . ').' . '<br>';
             return true;
         }
     }
@@ -122,9 +126,9 @@ class UARPC_UserManager
 
         $affected_rows = $mysqli->prepared_query("DELETE FROM uarpc__userdenypermissions WHERE UserID=? AND PermissionID=?", 'ii', [$UserID,$PermissionID]);
         if (!$affected_rows) {
-            echo 'Error: permissions/undeny(' . $PermissionID . ', ' . $UserID . ') did not report any databasechange' . '<br>';
+            if($this->verbose_actions) echo 'Error: permissions/undeny(' . $PermissionID . ', ' . $UserID . ') did not report any databasechange' . '<br>';
         } else {
-            echo 'Undenied permission(' . $PermissionID . ') for user(' . $UserID . ')<br>';
+            if($this->verbose_actions) echo 'Undenied permission(' . $PermissionID . ') for user(' . $UserID . ')<br>';
             return $affected_rows;
         }
     }
@@ -193,7 +197,7 @@ class UARPC_UserManager
 
         }
 
-        echo 'User(' . $UserID . ') returned a total of ' . count($permissions) . ' permissions.<br>';
+        if($this->verbose_actions) echo 'User(' . $UserID . ') returned a total of ' . count($permissions) . ' permissions.<br>';
         return $permissions;
     }
 
