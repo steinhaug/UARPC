@@ -19,10 +19,12 @@
     "require-dev": {
     },
     "autoload": {
-        "psr-0": {"UARPC_PermissionManager": "www/"},
-        "psr-0": {"UARPC_RoleManager": "www/"},
-        "psr-0": {"UARPC_UserManager": "www/"},
-        "psr-0": {"UARPC_base": "www/"}
+        "psr-0": {
+            "UARPC_PermissionManager": "www/",
+            "UARPC_RoleManager": "www/",
+            "UARPC_UserManager": "www/",
+            "UARPC_base": "www/"
+        }
     },
     "autoload-dev": {
         "psr-0": {
