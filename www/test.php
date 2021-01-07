@@ -1,14 +1,17 @@
 <?php
 require '../credentials.php';
 require 'class.mysqli.php';
-require 'UARPC_base.php';
+//require 'UARPC_base.php';
 
+require 'uarpc.php';
+new uarpc;
 
 define('USER_KIM', 999);
 define('ROLE1','Manager');              // 7
 define('ROLE2','Boss');
 define('PERM1','/invoice/read');        // 1
 define('PERM2','/invoice/write-delay'); // 4
+
 
 $uarpc = new UARPC_base(USER_KIM);
 
