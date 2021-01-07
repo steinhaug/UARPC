@@ -1,5 +1,5 @@
 <?php
-class testuarpc extends uarpc
+class testUARPC_base extends UARPC_base
 {
     public function getversion()
     {
