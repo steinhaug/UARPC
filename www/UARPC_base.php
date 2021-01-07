@@ -1,4 +1,10 @@
 <?php
+
+require 'UARPC_PermissionManager.php';
+require 'UARPC_RoleManager.php';
+require 'UARPC_UserManager.php';
+
+
 /**
  * UARPC - User Access Roles Permissions Configuration v0.1.0
  * 
