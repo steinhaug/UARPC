@@ -20,12 +20,12 @@
     },
     "autoload": {
         "psr-0": {
-            "UARPC_base": "www/"
+            "uarpc": "www/"
         }
     },
     "autoload-dev": {
         "psr-0": {
-            "testUARPC_base": "test/"
+            "testuarpc": "test/"
         }
     }
 }

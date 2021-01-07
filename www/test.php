@@ -1,9 +1,6 @@
 <?php
 require '../credentials.php';
 require 'class.mysqli.php';
-require 'UARPC_PermissionManager.php';
-require 'UARPC_RoleManager.php';
-require 'UARPC_UserManager.php';
 require 'UARPC_base.php';
 
 
