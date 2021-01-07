@@ -1,0 +1,32 @@
+{
+    "name": "steinhaug/uarpc",
+    "description": "User access role permission configurations",
+    "keywords": ["roles"],
+    "homepage": "https://kim.steinhaug.com",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Kim Steinhaug",
+            "email": "kim@steinhaug.com",
+            "homepage": "http://kim.steinhaug.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0.0",
+        "ext-mbstring": "*"
+    },
+    "require-dev": {
+    },
+    "autoload": {
+        "psr-0": {"UARPC_PermissionManager": "www/"},
+        "psr-0": {"UARPC_RoleManager": "www/"},
+        "psr-0": {"UARPC_UserManager": "www/"},
+        "psr-0": {"UARPC_base": "www/"}
+    },
+    "autoload-dev": {
+        "psr-0": {
+            "testUARPC_base": "test/"
+        }
+    }
+}

@@ -1,10 +1,10 @@
 <?php
 require '../credentials.php';
 require 'class.mysqli.php';
-require 'class.uarpc.permission.manager.php';
-require 'class.uarpc.role.manager.php';
-require 'class.uarpc.user.manager.php';
-require 'class.uarpc.php';
+require 'UARPC_PermissionManager.php';
+require 'UARPC_RoleManager.php';
+require 'UARPC_UserManager.php';
+require 'UARPC_base.php';
 
 
 define('USER_KIM', 999);
