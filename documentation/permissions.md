@@ -6,6 +6,19 @@
 
 The permissions object has several functions for administering the permissions.
 
+    $uarpc->permissions->add($title,? $desc,? int $enabled) : PermID
+    $uarpc->permissions->assign( int $PermID, $RoldId) : bool
+    $uarpc->permissions->unassign( int $PermID, $RoldId) : bool
+    $uarpc->permissions->getTitle( int $PermID ) : string
+    $uarpc->permissions->getDescription( int $PermID ) : string
+
+    $uarpc->permissions->id($title) : PermID
+    $uarpc->permissions->edit($PermID,$title,? $description,? $enabled) : bool
+    $uarpc->permissions->list() : [PermID=>[obj]]
+
+    $uarpc->permissions->state(PermID) : bool
+    $uarpc->permissions->enable(PermID) : bool
+    $uarpc->permissions->disable(PermID) : bool
 ## <dd>**permissions->add**</dd>
 
 Add a permission to the system, the function is available from the $uarpc object.
@@ -62,6 +75,7 @@ _Example #1 assigning role admins to write permission_
     $permissionId = $uarpc->permissions->add('write_access');
     $roleId = $uarpc->roles->add('admins');
     $uarpc->permissions->assign($permissionId, $roleId);
+    $uarpc->permissions->id( string $title ) : int
 
 <hr>
 <hr>

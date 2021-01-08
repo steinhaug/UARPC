@@ -14,6 +14,9 @@ Instantiates the class with required sub classes.
     or
     $uarpc = new UARPC_BASE($UserID);
 
+    $uarpc->havePermission( string $PermTitle, ? int $UserID ) : boolean
+    $uarpc->permEnabled( string $PermTitle ) : boolean
+
 ## <dd>**havePermission()**</dd>
 
 Check if a user have permission. Logic first checks if the user is denied a permission, then if the permission is specifically allowed for the user and finally if the permission is allowed by the role(s) assigned to the user.
@@ -44,21 +47,51 @@ _Example #1 check if user 999 are allowed /invoice/write_
 <hr>
 <hr>
 
+
+## <dd>**permEnabled()**</dd>
+
+Check if the permission is enabled from a system perspective.
+
+### **Description**
+
+    $uarpc->permEnabled( string $PermissionTitle ) : boolean
+
+### **Parameters**
+
+_PermissionTitle_  
+Name of permission to check.  
+
+### **Return Values**
+
+If enabled returns true else returns false.
+
+### **Examples**
+
+_Example #1 check if /invoice/write is enabled_
+
+    $uarpc = new UARPC_BASE(999);
+    if( $uarpc->permEnabled('/invoice/write') ){
+        // Permission is enabled
+    }
+
+<hr>
+<hr>
+
 ## Documentation for sub classes
 
 
-[\$uarpc->roles](roles.md),
-[\$uarpc->permissions](permissions.md)
-[\$uarpc->users](users.md)
+roles class: [\$uarpc->roles](roles.md)  
+permissions class: [\$uarpc->permissions](permissions.md)  
+users class: [\$uarpc->users](users.md)  
 
-    // Roles class
-    $uarpc->roles
+    // Roles class function paths
+    $uarpc->roles->
 
-    // Permissions class
-    $uarpc->permissions
+    // Permissions class function paths
+    $uarpc->permissions->
 
-    // Users class
-    $uarpc->users
+    // Users class function paths
+    $uarpc->users->
 
 ## Example
 

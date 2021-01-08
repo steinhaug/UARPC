@@ -2,6 +2,17 @@
 
 The roles object has several functions for administering the roles.
 
+    $uarpc->roles->add( string $title, string $description ) : int
+    $uarpc->roles->assign( int $RoleID, int $UserID ) : boolean
+    $uarpc->roles->unassign( int $RoleID, int $UserID ) : boolean
+    $uarpc->roles->id( string $title ) : int
+    $uarpc->roles->getTitle( int $RoleID ) : string
+    $uarpc->roles->getDescription( int $RoleID ) : string
+
+    $uarpc->roles->id($title) : RoleID
+    $uarpc->roles->edit($RoleID, $title, ? $description) : bool
+    $uarpc->roles->list() : [RoleID=>[obj]]
+
 ## <dd>**roles->add**</dd>
 
 Add a role to the system, the function is available from the $uarpc object.

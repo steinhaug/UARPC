@@ -2,6 +2,13 @@
 
 The users object has several functions for administering the users.
 
+    $uarpc->users->deny( int $PermissionID, ? int $UserID ) : boolean
+    $uarpc->users->undeny( int $PermissionID, ? int $UserID ) : boolean
+    $uarpc->users->allow( int $PermissionID, ? int $UserID ) : boolean
+    $uarpc->users->unallow( int $PermissionID, ? int $UserID ) : boolean
+
+    $uarpc->users->list() : [PermID=>PermTitle]
+
 ## <dd>**users->deny**</dd>
 
 Deny a user one particular permission, the function is available from the $uarpc object.
