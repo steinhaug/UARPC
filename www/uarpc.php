@@ -41,11 +41,12 @@ class uarpc
         if(!$mysqli->table_exist('uarpc__permissions')){
             $mysqli->query("CREATE TABLE IF NOT EXISTS `uarpc__permissions` (
             `PermissionID` int NOT NULL AUTO_INCREMENT,
-            `title` char(64) COLLATE " . $collate['utf8'] . " NOT NULL,
-            `description` text COLLATE " . $collate['utf8'] . " NOT NULL,
+            `enabled` tinyint unsigned NOT NULL DEFAULT '1',
+            `title` char(64) CHARACTER SET utf8 COLLATE " . $collate['utf8'] . " NOT NULL,
+            `description` text CHARACTER SET utf8 COLLATE " . $collate['utf8'] . " NOT NULL,
             PRIMARY KEY (`PermissionID`),
             KEY `title` (`title`)
-            ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=" . $collate['utf8']);
+            ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=" . $collate['utf8']);
             $tables[] = 'uarpc__permissions';
         }
         if(!$mysqli->table_exist('uarpc__rolepermissions')){
