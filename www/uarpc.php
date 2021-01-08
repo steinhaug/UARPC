@@ -33,6 +33,7 @@ class uarpc
      */
     public function setup()
     {
+        global $mysqli;
 
         $collate = $mysqli->return_charset_and_collate(['utf8'=>'utf8_bin', 'utf8mb4'=>'utf8mb4_bin']);
         $tables = [];
