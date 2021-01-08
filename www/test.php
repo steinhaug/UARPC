@@ -13,14 +13,24 @@ define('PERM1','/invoice/read');        // 1
 define('PERM2','/invoice/write-delay'); // 4
 
 
-$uarpc = new UARPC_base(USER_KIM, 0);
+$uarpc = new UARPC_base(USER_KIM, 1);
 
-$uarpc->users->deny(1,USER_KIM);
-$uarpc->users->deny(2,USER_KIM);
+$pid = $uarpc->permissions->add('Dummy/subplot','Description',1);
 
-$uarpc->users->list();
+$uarpc->permissions->state($pid);
+$uarpc->permissions->disable($pid);
+$uarpc->permissions->state($pid);
+$uarpc->permissions->enable($pid);
+$uarpc->permissions->state($pid);
 
-echo 'done';
+
+#enabledPerm
+#$uarpc->users->deny(1,USER_KIM);
+#$uarpc->users->deny(2,USER_KIM);
+
+#$uarpc->users->list();
+
+#echo 'done';
 
 #$PermissionID = $uarpc->permissions->id(PERM2);
 #var_dump( $uarpc->havePermission(PERM2) );

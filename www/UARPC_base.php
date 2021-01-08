@@ -115,4 +115,35 @@ class UARPC_base {
         return false;
     }
 
+
+    /**
+     * Check if a module is enabled from system perspective
+     *
+     * @param string $PermissionTitle
+     *
+     * @return bool Returns true for enabled and active modules, false for disabled or not enabled ones 
+     */
+    public function permEnabled($PermissionTitle)
+    {
+        global $mysqli;
+
+        $sql = 'SELECT * 
+                FROM uarpc__permissions up 
+                WHERE up.title=?
+                ';
+        $res = $mysqli->prepared_query($sql, 's', [$PermissionTitle]);
+
+        if (count($res)) {
+            if($this->verbose_actions) echo 'permEnabled(' . $res[0]['enabled'] . ') returned for \'' . $PermissionTitle . '\'<br>';
+            return boolval($res[0]['enabled']);
+        } else {
+            if($this->verbose_actions) echo 'permEnabled() error, permission does not exist:  \'' . $PermissionTitle . '\'<br>';
+            return false;
+        }
+
+    }
+
 }
+
+
+
