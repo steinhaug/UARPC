@@ -20,19 +20,20 @@ class UARPC_PermissionManager
      *
      * @param string $title
      * @param string $description
+     * @param int $enabled Boolval for stating if a permission is enabled or valid from a system perspective
      *
      * @return int Returns PermissionId on success
      */
-    public function add($title, $description='')
+    public function add($title, $description='', $enabled = 1)
     {
         global $mysqli;
 
         $res = $mysqli->prepared_query("SELECT PermissionID from UARPC__permissions WHERE title=?", 's', [$title]);
         if( !count($res) ){
             $sql = [
-                "INSERT INTO UARPC__permissions (`title`,`description`) VALUES (?,?)",
-                "ss",
-                [$title,$description]
+                "INSERT INTO UARPC__permissions (`enabled`,`title`,`description`) VALUES (?,?,?)",
+                "iss",
+                [boolval($enabled)?1:0,$title,$description]
             ];
             $result = $mysqli->prepared_insert($sql);
             if($this->verbose_actions) echo 'Permission created successfully, PermissionID: ' . $result . '<br>';
@@ -50,18 +51,28 @@ class UARPC_PermissionManager
      * @param int $PermissionID PermissionID to update
      * @param string $title Permission title
      * @param string $description Optional, permission description
+     * @param mixed $enabled Optional, if other than null will update state
      *
      * @return void
      */
-    public function edit($PermissionID, $title, $description='')
+    public function edit($PermissionID, $title, $description='', $enabled = null)
     {
         global $mysqli;
 
-        $sql = [
-            "UPDATE UARPC__permissions SET `title`=?, `description`=? WHERE PermissionID=?",
-            "ssi",
-            [$title,$description,$PermissionID]
-        ];
+        if( $enabled !== null ){
+            $sql = [
+                "UPDATE UARPC__permissions SET `enabled`=?, `title`=?, `description`=? WHERE PermissionID=?",
+                "issi",
+                [boolval($enabled)?1:0,$title,$description,$PermissionID]
+            ];
+        } else {
+            $sql = [
+                "UPDATE UARPC__permissions SET `title`=?, `description`=? WHERE PermissionID=?",
+                "ssi",
+                [$title,$description,$PermissionID]
+            ];
+        }
+
         $affected_rows = $mysqli->prepared_insert($sql);
         if($affected_rows){
             if($this->verbose_actions) echo 'Permission (' . $PermissionID . ') was successfully updated.<br>';
@@ -71,6 +82,82 @@ class UARPC_PermissionManager
             return false;
         }
 
+    }
+
+    /**
+     * Return the permission state
+     *
+     * @param int $PermissionID PermissionID to check
+     *
+     * @return bool Returns true for a valid and enabled permission, false otherwise
+     */
+    public function state($PermissionID)
+    {
+        global $mysqli;
+
+        $sql = 'SELECT * 
+                FROM uarpc__permissions up 
+                WHERE up.PermissionID=?
+                ';
+        $res = $mysqli->prepared_query($sql, 'i', [$PermissionID]);
+        if (count($res)) {
+            if($this->verbose_actions) echo 'Permission (' . $PermissionID . ') state is: ' . $res[0]['enabled'] . '<br>';
+            return boolval($res[0]['enabled']);
+        } else {
+            if($this->verbose_actions) echo 'Permission (' . $PermissionID . ') state is: error, does not exist<br>';
+            return false;
+        }
+
+    }
+
+    /**
+     * Set permission state to enabled / active
+     *
+     * @param int $PermissionID PermissionID you want to update
+     *
+     * @return bool True for successfull update, else false
+     */
+    public function enable($PermissionID)
+    {
+        global $mysqli;
+        $sql = [
+            "UPDATE UARPC__permissions SET `enabled`=? WHERE PermissionID=?",
+            "ii",
+            [1,$PermissionID]
+        ];
+        $affected_rows = $mysqli->prepared_insert($sql);
+        if($affected_rows){
+            if($this->verbose_actions) echo 'Permission (' . $PermissionID . ') is enabled.<br>';
+            return true;
+        } else {
+            if($this->verbose_actions) echo 'Permission (' . $PermissionID . ') could not be enabled.<br>';
+            return false;
+        }
+    }
+
+    /**
+     * Set permission state to disabled / not active
+     *
+     * @param int $PermissionID PermissionID you want to update
+     *
+     * @return bool True for successfull update, else false
+     */
+    public function disable($PermissionID)
+    {
+        global $mysqli;
+        $sql = [
+            "UPDATE UARPC__permissions SET `enabled`=? WHERE PermissionID=?",
+            "ii",
+            [0,$PermissionID]
+        ];
+        $affected_rows = $mysqli->prepared_insert($sql);
+        if($affected_rows){
+            if($this->verbose_actions) echo 'Permission (' . $PermissionID . ') is now disabled.<br>';
+            return true;
+        } else {
+            if($this->verbose_actions) echo 'Permission (' . $PermissionID . ') could not be disabled.<br>';
+            return false;
+        }
     }
 
     /**
@@ -136,6 +223,11 @@ class UARPC_PermissionManager
         }
     }
 
+    /**
+    * List all allowed permissions
+    *
+    * @return array Returns all of the enabled $PermissionsIDs  
+    */
     public function list()
     {
         global $mysqli;
