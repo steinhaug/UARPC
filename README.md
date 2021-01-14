@@ -1,7 +1,9 @@
 # UARPC v1.0
 
 User Access, Roles, Permissions and Configurations framework
-Tools for administering user access.
+Tools for administering user access. 
+
+https://gitlab.com/steinhaug/uarpc/-/wikis/home
 
 https://lucid.app/lucidspark/invitations/accept/19b35103-eaa4-4b0c-82c4-c124a1ac8880
 
