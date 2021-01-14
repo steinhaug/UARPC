@@ -22,6 +22,9 @@ Make sure that project is running **class.mysqli.php** as this is required for U
     $uarpc = new UARPC_base($UserId);
     ... see docs for rest
 
+## Documentation
+
+Use the [WIKI pages documentation](https://gitlab.com/steinhaug/uarpc/-/wikis/home) or the markdown files inside the /docs folder.
 
 ## Functions
 
