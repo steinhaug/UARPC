@@ -19,6 +19,7 @@
 
         <!-- whitespace indentation and line endings rules -->
 
+        <exclude name="Generic.NamingConventions.UpperCaseConstantName.ConstantNotUpperCase"/>
         <exclude name="Generic.WhiteSpace.DisallowTabIndent.TabsUsed"/>
         <exclude name="Generic.WhiteSpace.ScopeIndent.Incorrect"/>
         <exclude name="Generic.WhiteSpace.ScopeIndent.IncorrectExact"/>
