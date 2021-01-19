@@ -1,7 +1,7 @@
 {
     "name": "steinhaug/uarpc",
     "description": "User access role permission configurations",
-    "keywords": ["roles"],
+    "keywords": ["roles","permissions","user access"],
     "homepage": "https://kim.steinhaug.com",
     "type": "library",
     "license": "MIT",
