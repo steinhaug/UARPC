@@ -9,6 +9,7 @@ The roles object has several functions for administering the roles.
     $uarpc->roles->getTitle( int $RoleID ) : string
     $uarpc->roles->getDescription( int $RoleID ) : string
 
+    $uarpc->roles->delete($RoleID) : bool
     $uarpc->roles->id($title) : RoleID
     $uarpc->roles->edit($RoleID, $title, ? $description) : bool
     $uarpc->roles->list() : [RoleID=>[obj]]

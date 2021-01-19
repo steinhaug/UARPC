@@ -16,6 +16,7 @@ The permissions object has several functions for administering the permissions.
     $uarpc->permissions->edit($PermID,$title,? $description,? $enabled) : bool
     $uarpc->permissions->list() : [PermID=>[obj]]
 
+    $uarpc->permissions->delete(PermID) : bool
     $uarpc->permissions->state(PermID) : bool
     $uarpc->permissions->enable(PermID) : bool
     $uarpc->permissions->disable(PermID) : bool
