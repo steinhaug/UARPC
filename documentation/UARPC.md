@@ -80,9 +80,9 @@ _Example #1 check if /invoice/write is enabled_
 ## Documentation for sub classes
 
 
-roles class: [\$uarpc->roles](uarpc_roles.md)  
-permissions class: [\$uarpc->permissions](uarpc_permissions.md)  
-users class: [\$uarpc->users](uarpc_users.md)  
+roles class: [\$uarpc->roles](UARPC.Roles.md)  
+permissions class: [\$uarpc->permissions](UARPC.Permissions.md)  
+users class: [\$uarpc->users](UARPC.Users.md)  
 
     // Roles class function paths
     $uarpc->roles->

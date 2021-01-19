@@ -1,7 +1,3 @@
-<style>
-
-</style>
-
 # PERMISSIONS OBJECT METHODS
 
 The permissions object has several methods:
@@ -40,10 +36,10 @@ Add a permission to the system, the method is available from the $uarpc object.
 
 #### **Parameters**
 
-_title_
-    Unique name of permission
-_description_
-    Descripption of the permission, used in admin explaining the permission
+_title_  
+    Unique name of permission  
+_description_  
+    Descripption of the permission, used in admin explaining the permission  
 
 #### **Return Values**
 
@@ -55,6 +51,96 @@ _Example #1 adding 2 new permissions
 
     $uarpc->permissions->add('/invoice/read','');
     $uarpc->permissions->add('/invoice/write','');
+
+<hr>
+<hr>
+
+## <dd>**permissions->delete**</dd>
+
+Permission to delete.
+
+#### **Description**
+
+    $uarpc->permissions->delete( int $PermissionID ) : boolean
+
+#### **Parameters**
+
+_permissionId_  
+    The PermissionId for the permissions you want to edit  
+
+#### **Return Values**
+
+On success returns true else returns false.
+
+#### **Examples**
+
+_Example #1 Delete permission 'write_access'_
+
+    $permissionId = $uarpc->permissions->add('write_access');
+    $uarpc->permissions->delete($permissionId);
+
+<hr>
+<hr>
+
+## <dd>**permissions->edit**</dd>
+
+Set permission state to enabled / active.
+
+#### **Description**
+
+    $uarpc->permissions->enable( $PermID, $title, ? $desc, ? $enabled) : bool
+
+#### **Parameters**
+
+_PermID_  
+    The PermissionId for the permissions you want to edit  
+_title_  
+    Unique name of permission  
+_description_  
+    Optional, descripption of the permission, used in admin explaining the permission  
+_enabled_  
+    Optional, Boolean if permission is enabled or not. Defaults to 1.
+
+#### **Return Values**
+
+On success returns true else returns false.
+
+#### **Examples**
+
+_Example #1 Edit permission 'write_access'_
+
+    $permissionId = $uarpc->permissions->add('write_access');
+    $uarpc->permissions->edit($permissionId, '/write access allowed');
+
+<hr>
+<hr>
+
+## <dd>**permissions->state**</dd>
+
+Return the permission state.
+
+#### **Description**
+
+    $uarpc->permissions->state( int $PermissionID ) : boolean
+
+#### **Parameters**
+
+_PermissionID_  
+    The PermissionId for the permissions you want to check state  
+
+#### **Return Values**
+
+Returns true if permission is valid and enabled, false if else or fail.
+
+#### **Examples**
+
+_Example #1 Check state for 'write_access'_
+
+    $permissionId = $uarpc->permissions->add('write_access');
+    if( $uarpc->permissions->state($permissionId) );
+        echo 'Enabled';
+        else
+        echo 'Disabled';
 
 <hr>
 <hr>
@@ -124,10 +210,10 @@ Assign a role to a permission, the function is available from the $uarpc object.
 
 #### **Parameters**
 
-_permissionId_
-    The PermissionId for the permissions you want
-_RoleID_
-    $RoleID of role.
+_permissionId_  
+    The PermissionId for the permissions you want  
+_RoleID_  
+    $RoleID of role.  
 
 #### **Return Values**
 
@@ -155,10 +241,10 @@ Un-Assign a role to a permission, the function is available from the $uarpc obje
 
 #### **Parameters**
 
-_permissionId_
-    The PermissionId for the permissions you want to unassign
-_RoleID_
-    $RoleID of role.
+_permissionId_  
+    The PermissionId for the permissions you want to unassign  
+_RoleID_  
+    $RoleID of role.  
 
 #### **Return Values**
 
@@ -186,8 +272,8 @@ Return the PermissionId of a permission, the function is available from the $uar
 
 #### **Parameters**
 
-_title_
-    Name of permission you want to look up
+_title_  
+    Name of permission you want to look up  
 
 #### **Return Values**
 
@@ -270,8 +356,8 @@ Return the name of a permission, the function is available from the $uarpc objec
 
 #### **Parameters**
 
-_PermissionID_
-    PermissionID you want to look up
+_PermissionID_  
+    PermissionID you want to look up  
 
 #### **Return Values**
 
@@ -297,8 +383,8 @@ Return the description of a permission, the function is available from the $uarp
 
 #### **Parameters**
 
-_PermissionID_
-    PermissionID you want to look up
+_PermissionID_  
+    PermissionID you want to look up  
 
 #### **Return Values**
 
