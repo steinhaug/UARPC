@@ -234,21 +234,42 @@ class UARPC_PermissionManager
     *
     * @return array Returns all of the enabled $PermissionsIDs  
     */
-    public function list()
+    public function list($RoleID = null)
     {
         global $mysqli;
 
-        $res = $mysqli->query("SELECT `PermissionID`, `title`, `description` from UARPC__permissions");
-        if( $res->num_rows ){
-            $roles = [];
-            while( $row = $res->fetch_assoc() ){
-                $roles[ $row['PermissionID'] ] = $row;
+        if( $RoleID !== null ){
+
+            $sql = 'SELECT up.PermissionID, up.title, up.description 
+                    FROM uarpc__permissions up 
+                    JOIN uarpc__rolepermissions urp ON ( urp.PermissionID = up.PermissionID ) 
+                    JOIN uarpc__roles ur ON ( ur.RoleID = urp.RoleID ) 
+                    WHERE ur.RoleID = ?
+                    ';
+            $res = $mysqli->prepared_query($sql, 'i', [$RoleID]);
+
+            $items = [];
+            if (count($res)) {
+                foreach($res as $item){
+                    $items[ $item['PermissionID'] ] = $item;
+                }
             }
-            return $roles;
+            return $items;
+
         } else {
-            return [];
-        }
+
+            $res = $mysqli->query("SELECT `PermissionID`, `title`, `description` from UARPC__permissions");
+            if( $res->num_rows ){
+                $roles = [];
+                while( $row = $res->fetch_assoc() ){
+                    $roles[ $row['PermissionID'] ] = $row;
+                }
+                return $roles;
+            } else {
+                return [];
+            }
    
+        }
     }
 
 
