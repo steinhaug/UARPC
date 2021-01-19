@@ -7,45 +7,102 @@
 The permissions object has several functions for administering the permissions.
 
     $uarpc->permissions->add($title,? $desc,? int $enabled) : PermID
-    $uarpc->permissions->assign( int $PermID, $RoldId) : bool
-    $uarpc->permissions->unassign( int $PermID, $RoldId) : bool
-    $uarpc->permissions->getTitle( int $PermID ) : string
-    $uarpc->permissions->getDescription( int $PermID ) : string
-
-    $uarpc->permissions->id($title) : PermID
-    $uarpc->permissions->edit($PermID,$title,? $description,? $enabled) : bool
-    $uarpc->permissions->list() : [PermID=>[obj]]
-
     $uarpc->permissions->delete(PermID) : bool
+    $uarpc->permissions->edit(PermID, $title, ? $desc, ? $enabled) : bool
+    
     $uarpc->permissions->state(PermID) : bool
     $uarpc->permissions->enable(PermID) : bool
     $uarpc->permissions->disable(PermID) : bool
+    $uarpc->permissions->assign( int $PermID, $RoldId) : bool
+    $uarpc->permissions->unassign( int $PermID, $RoldId) : bool
+    
+    $uarpc->permissions->id($title) : PermID
+    $uarpc->permissions->edit($PermID,$title,? $description,? $enabled) : bool
+    $uarpc->permissions->list() : [PermID=>[obj]]
+    
+    $uarpc->permissions->getTitle( int $PermID ) : string
+    $uarpc->permissions->getDescription( int $PermID ) : string
+
 ## <dd>**permissions->add**</dd>
 
 Add a permission to the system, the function is available from the $uarpc object.
 
-### **Description**
+#### **Description**
 
     $uarpc->permissions->add( string $title, string $description ) : int
 
-### **Parameters**
+#### **Parameters**
 
 _title_
     Unique name of permission
 _description_
     Descripption of the permission, used in admin explaining the permission
 
-### **Return Values**
+#### **Return Values**
 
 On success returns the PermissionId, else it will return 0.
 
-### **Examples**
+#### **Examples**
 
 _Example #1 adding 2 new permissions
 
     $uarpc->permissions->add('/invoice/read','');
     $uarpc->permissions->add('/invoice/write','');
 
+<hr>
+<hr>
+
+## <dd>**permissions->enable**</dd>
+
+Set permission state to enabled / active.
+
+#### **Description**
+
+    $uarpc->permissions->enable( int $PermissionID ) : boolean
+
+#### **Parameters**
+
+_permissionId_
+    The PermissionId for the permissions you want to edit
+
+#### **Return Values**
+
+On success returns true else returns false.
+
+#### **Examples**
+
+_Example #1 enable permission 'write_access'_
+
+    $permissionId = $uarpc->permissions->add('write_access');
+    $uarpc->permissions->enable($permissionId);
+
+
+<hr>
+<hr>
+
+## <dd>**permissions->disable**</dd>
+
+Set permission state to disabled / not active
+
+#### **Description**
+
+    $uarpc->permissions->disable( int $PermissionID ) : boolean
+
+#### **Parameters**
+
+_permissionId_
+    The PermissionId for the permissions you want to edit
+
+#### **Return Values**
+
+On success returns true else returns false.
+
+#### **Examples**
+
+_Example #1 disable permission 'write_access'_
+
+    $permissionId = $uarpc->permissions->add('write_access');
+    $uarpc->permissions->disable($permissionId);
 
 <hr>
 <hr>
@@ -54,22 +111,22 @@ _Example #1 adding 2 new permissions
 
 Assign a role to a permission, the function is available from the $uarpc object.
 
-### **Description**
+#### **Description**
 
     $uarpc->permissions->assign( int $permissionId, int $RoleID ) : boolean
 
-### **Parameters**
+#### **Parameters**
 
 _permissionId_
     The PermissionId for the permissions you want
 _RoleID_
     $RoleID of role.
 
-### **Return Values**
+#### **Return Values**
 
 On success returns true else returns false.
 
-### **Examples**
+#### **Examples**
 
 _Example #1 assigning role admins to write permission_
 
@@ -85,22 +142,22 @@ _Example #1 assigning role admins to write permission_
 
 Un-Assign a role to a permission, the function is available from the $uarpc object.
 
-### **Description**
+#### **Description**
 
     $uarpc->permissions->unassign( int $permissionId, int $RoleID ) : boolean
 
-### **Parameters**
+#### **Parameters**
 
 _permissionId_
     The PermissionId for the permissions you want to unassign
 _RoleID_
     $RoleID of role.
 
-### **Return Values**
+#### **Return Values**
 
 On success returns true else returns false.
 
-### **Examples**
+#### **Examples**
 
 _Example #1 unassigning role admins to write permission_
 
@@ -116,20 +173,20 @@ _Example #1 unassigning role admins to write permission_
 
 Return the PermissionId of a permission, the function is available from the $uarpc object.
 
-### **Description**
+#### **Description**
 
     $uarpc->permissions->id( string $title ) : int
 
-### **Parameters**
+#### **Parameters**
 
 _title_
     Name of permission you want to look up
 
-### **Return Values**
+#### **Return Values**
 
 On success will return the PermissionId, false if fail.'
 
-### **Examples**
+#### **Examples**
 
 _Example #1 return the PermissionId for the admins role_
 
@@ -139,48 +196,108 @@ _Example #1 return the PermissionId for the admins role_
     $permissionId = $uarpc->permissions->id('write_access');
     // $permissionId = 8
 
+<hr>
+<hr>
+
+## <dd>**permissions->list**</dd>
+
+List all allowed permissions.
+
+#### **Description**
+
+    $uarpc->permissions->list( ? int $RoleID ) : array
+
+#### **Parameters**
+
+_RoleID_  
+    Optional, $RoleID for permissions.  
+
+
+#### **Return Values**
+
+An associated array: PermissionID=> [PermissionID, title, description].
+
+#### **Examples**
+
+_Example #1 Listing all permission_
+
+```LESS
+    $permissions = $uarpc->permissions->list();
+    // example, where two permissions are returned,
+    // array (size=2)
+    //   1 => 
+    //     array (size=3)
+    //        'PermissionID' => string '1' (length=1)
+    //       'title' => string '/invoice/read' (length=13)
+    //       'description' => string 'User can read invoice' (length=21)
+    //   2 => 
+    //     array (size=3)
+    //       'PermissionID' => string '2' (length=1)
+    //       'title' => string '/invoice/read3' (length=14)
+    //       'description' => string 'User can read invoice' (length=21)
+```
+
+_Example #2 Listing all permission belonging to RoleID 7_
+
+```LESS
+    $permissions = $uarpc->permissions->list(7);
+    // example, where one permission is returned,
+    // array (size=1)
+    //   2 => 
+    //     array (size=3)
+    //       'PermissionID' => string '2' (length=1)
+    //       'title' => string '/invoice/read3' (length=14)
+    //       'description' => string 'User can read invoice' (length=21)
+```
+
+<hr>
+<hr>
+
 ## <dd>**permissions->getTitle**</dd>
 
 Return the name of a permission, the function is available from the $uarpc object.
 
-### **Description**
+#### **Description**
 
     $uarpc->permissions->getTitle( int $PermissionID ) : string
 
-### **Parameters**
+#### **Parameters**
 
 _PermissionID_
     PermissionID you want to look up
 
-### **Return Values**
+#### **Return Values**
 
 Returns the name of the permission.
 
-### **Examples**
+#### **Examples**
 
 _Example #1 return the PermissionId for the admins role_
 
     echo $uarpc->permissions->getTitle(2);
     // example outputs: /invoice/write_access
 
+<hr>
+<hr>
+
 ## <dd>**permissions->getDescription**</dd>
 
 Return the description of a permission, the function is available from the $uarpc object.
 
-### **Description**
+#### **Description**
 
     $uarpc->permissions->getDescription( int $PermissionID ) : string
 
-### **Parameters**
+#### **Parameters**
 
 _PermissionID_
     PermissionID you want to look up
 
-### **Return Values**
+#### **Return Values**
 
 Returns the name of the permission.
 
-### **Examples**
+#### **Examples**
 
 _Example #1 return the description for PermissionID 2
 
