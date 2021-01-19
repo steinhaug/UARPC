@@ -2,30 +2,37 @@
 
 </style>
 
-# PERMISSIONS OBJECT FUNCTIONS
+# PERMISSIONS OBJECT METHODS
 
-The permissions object has several functions for administering the permissions.
+The permissions object has several methods:
 
-    $uarpc->permissions->add($title,? $desc,? int $enabled) : PermID
-    $uarpc->permissions->delete(PermID) : bool
-    $uarpc->permissions->edit(PermID, $title, ? $desc, ? $enabled) : bool
+[\$uarpc->permissions->add($title,? $desc,? int $enabled) : PermID](UARPC-Permissions#permissions-add)
+
+[\$uarpc->permissions->delete(PermID) : bool](UARPC-Permissions#permissions-delete)
+
+[\$uarpc->permissions->edit(PermID, $title, ? $desc, ? $enabled) : bool](UARPC-Permissions#permissions-edit)
+
+[\$uarpc->permissions->state(PermID) : bool](UARPC-Permissions#permissions-state)
+
+[\$uarpc->permissions->enable(PermID) : bool](UARPC-Permissions#permissions-enable)
+
+[\$uarpc->permissions->disable(PermID) : bool](UARPC-Permissions#permissions-disable)
+
+[\$uarpc->permissions->assign( int $PermID, $RoldId) : bool](UARPC-Permissions#permissions-assign)
+
+[\$uarpc->permissions->unassign( int $PermID, $RoldId) : bool](UARPC-Permissions#permissions-unassign)
     
-    $uarpc->permissions->state(PermID) : bool
-    $uarpc->permissions->enable(PermID) : bool
-    $uarpc->permissions->disable(PermID) : bool
-    $uarpc->permissions->assign( int $PermID, $RoldId) : bool
-    $uarpc->permissions->unassign( int $PermID, $RoldId) : bool
+[\$uarpc->permissions->id($title) : PermID](UARPC-Permissions#permissions-id)
+
+[\$uarpc->permissions->list() : [PermID=>[obj]]](UARPC-Permissions#permissions-list)
     
-    $uarpc->permissions->id($title) : PermID
-    $uarpc->permissions->edit($PermID,$title,? $description,? $enabled) : bool
-    $uarpc->permissions->list() : [PermID=>[obj]]
-    
-    $uarpc->permissions->getTitle( int $PermID ) : string
-    $uarpc->permissions->getDescription( int $PermID ) : string
+[\$uarpc->permissions->getTitle( int $PermID ) : string](UARPC-Permissions#permissions-getTitle)
+
+[\$uarpc->permissions->getDescription( int $PermID ) : string](UARPC-Permissions#permissions-getDescription)
 
 ## <dd>**permissions->add**</dd>
 
-Add a permission to the system, the function is available from the $uarpc object.
+Add a permission to the system, the method is available from the $uarpc object.
 
 #### **Description**
 
