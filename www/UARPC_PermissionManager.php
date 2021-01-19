@@ -45,8 +45,29 @@ class UARPC_PermissionManager
 
     }
 
+    /**
+     * Delete a permission from the DB
+     *
+     * @param int $PermissionID PermissionID to delete
+     *
+     * @return boolean True on success, false on failure
+     */
     public function delete($PermissionID){
         global $mysqli;
+
+        if ($mysqli->prepared_query1("SELECT count(*) as `count` FROM `uarpc__rolepermissions` WHERE `PermissionID`=?", 'i', [$PermissionID], 0)){
+            if($this->verbose_actions) echo 'Delete permission (' . $PermissionID . ') error, connected to roles.<br>';
+            return false;
+        }
+        if( $mysqli->prepared_query1("SELECT count(*) FROM `uarpc__userallowpermissions` WHERE `PermissionID`=?", 'i', [$PermissionID], 0) ){
+            if($this->verbose_actions) echo 'Delete permission (' . $PermissionID . ') error, connected to user override.<br>';
+            return false;
+        }
+        if( $mysqli->prepared_query1("SELECT count(*) FROM `uarpc__userdenypermissions` WHERE `PermissionID`=?", 'i', [$PermissionID], 0) ){
+            if($this->verbose_actions) echo 'Delete permission (' . $PermissionID . ') error, connected to user deny.<br>';
+            return false;
+        }
+
         $res = $mysqli->prepared_query("DELETE FROM UARPC__permissions WHERE PermissionID=?", 'i', [$PermissionID]);
         return $res;
     }

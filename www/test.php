@@ -15,13 +15,13 @@ define('PERM2','/invoice/write-delay'); // 4
 
 $uarpc = new UARPC_base(USER_KIM, 1);
 
-$uarpc->permissions->unassign(2, 7);
-
+$PermID = $uarpc->permissions->delete('2');
+/*
 $list = $uarpc->permissions->list();
 var_dump($list);
 $list = $uarpc->permissions->list(7);
 var_dump($list);
-
+*/
 
 #$pid = $uarpc->permissions->add('Dummy/subplot','Description',1);
 //$list = $uarpc->permissions->list();

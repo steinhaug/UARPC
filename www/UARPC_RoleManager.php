@@ -45,9 +45,22 @@ class UARPC_RoleManager
 
     }
 
+    /**
+     * Delete a role from DB
+     *
+     * @param int $RoleID The role you want to delete, by ID
+     *
+     * @return boolean True if success and false if failure
+     */
     public function delete($RoleID){
         global $mysqli;
-        $res = $mysqli->prepared_query("DELETE FROM UARPC__roles WHERE RoleID=?", 'i', [$RoleID]);
+
+        if ($mysqli->prepared_query1("SELECT count(*) as `count` FROM `uarpc__rolepermissions` WHERE `RoleID`=?", 'i', [$RoleID], 0)){
+            if($this->verbose_actions) echo 'Delete role (' . $RoleID . ') error, connected to permissions.<br>';
+            return false;
+        }
+
+        $res = $mysqli->prepared_query("DELETE FROM `UARPC__roles` WHERE `RoleID`=?", 'i', [$RoleID]);
         return $res;
     }
 
