@@ -45,6 +45,12 @@ class UARPC_PermissionManager
 
     }
 
+    public function delete($PermissionID){
+        global $mysqli;
+        $res = $mysqli->prepared_query("DELETE FROM UARPC__permissions WHERE PermissionID=?", 'i', [$PermissionID]);
+        return $res;
+    }
+
     /**
      * Update a permission
      *

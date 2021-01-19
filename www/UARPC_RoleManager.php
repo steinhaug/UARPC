@@ -45,6 +45,12 @@ class UARPC_RoleManager
 
     }
 
+    public function delete($RoleID){
+        global $mysqli;
+        $res = $mysqli->prepared_query("DELETE FROM UARPC__roles WHERE RoleID=?", 'i', [$RoleID]);
+        return $res;
+    }
+
     /**
      * Update a role
      *
