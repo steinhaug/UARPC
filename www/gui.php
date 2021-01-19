@@ -37,12 +37,24 @@ if( !empty($_POST['value']) and !empty($_POST['command']) ){
                 $jsondata['command'] = '$uarpc->permissions->list(' . $val . ')';
                 break;
             case 'deleteRole':
-                $jsondata['id'] = $uarpc->roles->delete($val);
+                $jsondata['return'] = $uarpc->roles->delete($val);
                 $jsondata['command'] = '$uarpc->roles->delete(' . $val . ')';
+                if ($jsondata['return']) {
+                    $jsondata['deleteCSSID'] = $jsondata['ref'];
+                    unset($jsondata['ref']);
+                } else {
+                    $jsondata['error'] = 'Could not delete role ' . $val . '.';
+                }
                 break;
             case 'deletePerm':
-                $jsondata['id'] = $uarpc->permissions->delete($val);
+                $jsondata['return'] = $uarpc->permissions->delete($val);
                 $jsondata['command'] = '$uarpc->permissions->delete(' . $val . ')';
+                if ($jsondata['return']) {
+                    $jsondata['deleteCSSID'] = $jsondata['ref'];
+                    unset($jsondata['ref']);
+                } else {
+                    $jsondata['error'] = 'Could not delete permission ' . $val . '.';
+                }
                 break;
             case 'getpermissionid':
                 $jsondata['id'] = $uarpc->permissions->id($val);
@@ -247,6 +259,7 @@ function thats_it_for_now_incomming_payload($jsondata){
 
 
         <h5 class="mt-3">OARPC</h5>
+        <div class="row"><div class="col" id="error"></div></div>
         <div class="row">
             <div class="col-lg-4">
 
@@ -365,11 +378,34 @@ function thats_it_for_now_incomming_payload($jsondata){
 
 <script>
 
+/**
+* Deliver unique numerical numbers needed for IDs 
+*/
+function* infinite() {
+    let index = 0;
+
+    while (true) {
+        yield index++;
+    }
+}
+const generator = infinite();
+
+/**
+* Return a valid document ID used by selectors
+*
+* @return string A valid HTML document ID
+*/
+function getNewId(){
+    return 'css' + generator.next().value
+}
+
 let icon_branch_filled = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none"><path d="M4 5.5a3.5 3.5 0 1 1 4.489 3.358a5.502 5.502 0 0 0 5.261 3.892h.33a3.501 3.501 0 0 1 6.92.75a3.5 3.5 0 0 1-6.92.75h-.33a6.988 6.988 0 0 1-5.5-2.67v3.5A3.501 3.501 0 0 1 7.5 22a3.5 3.5 0 0 1-.75-6.92V8.92A3.501 3.501 0 0 1 4 5.5z" fill="#626262"/></g></svg>';
 let icon_branch_regular = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none"><path d="M4 5.5a3.5 3.5 0 1 1 4.489 3.358a5.502 5.502 0 0 0 5.261 3.892h.33a3.501 3.501 0 0 1 6.92.75a3.5 3.5 0 0 1-6.92.75h-.33a6.987 6.987 0 0 1-5.5-2.67v3.5A3.501 3.501 0 0 1 7.5 22a3.5 3.5 0 0 1-.75-6.92V8.92A3.501 3.501 0 0 1 4 5.5zm3.5-2a2 2 0 1 0 0 4a2 2 0 0 0 0-4zm0 13a2 2 0 1 0 0 4a2 2 0 0 0 0-4zm8-3a2 2 0 1 0 4 0a2 2 0 0 0-4 0z" fill="#626262"/></g></svg>';
 
 let RoleID          = null;
 let PermissionID    = null;
+
+
 
 $(document).ready(function(){
 
@@ -409,8 +445,9 @@ $(document).ready(function(){
         event.preventDefault();
         var id = $(this).parent().parent().children().first().html();
         if( $(this).data('command') == 'delete' ){
-            ajaxCall(id, 'deleteRole');
-            $(this).parent().parent().remove();
+            var CSSID = getNewId();
+            $(this).parent().parent().attr('id',CSSID);
+            ajaxCall(id, 'deleteRole', CSSID);
         }
     });
     // ACTIONS FOR PERMISSIONS
@@ -418,8 +455,9 @@ $(document).ready(function(){
         event.preventDefault();
         var id = $(this).parent().parent().children().first().html();
         if( $(this).data('command') == 'delete' ){
-            ajaxCall(id, 'deletePerm');
-            $(this).parent().parent().remove();
+            var CSSID = getNewId();
+            $(this).parent().parent().attr('id',CSSID);
+            ajaxCall(id, 'deletePerm', CSSID);
         } else if( $(this).data('command') == 'disconnect' ){
             ajaxCall(id + ',' + RoleID, 'unassign');
             el = $(this).closest('.item');
@@ -507,6 +545,17 @@ function ajaxCall(value, command, reference){
 
                 if (response.hasOwnProperty('command')) {
                     $('#commandLog').append( response.command + '<br>' );
+                }
+
+                if (response.hasOwnProperty('deleteCSSID')) {
+                    $('#' + response.deleteCSSID).remove();
+                }
+                if (response.hasOwnProperty('error')) {
+                    var msg = '<div class="alert alert-danger alert-with-icon alert-dismissible fade show" role="alert">'
+                            + '<span class="alert-icon-wrap"><span class="iconify" data-icon="fluent:error-circle-20-filled" data-inline="false"></span></span> ' + response.error
+                            + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>'
+                            + '</div>';
+                    $('#error').append( msg );
                 }
 
                 if (response.hasOwnProperty('permissions')) {
