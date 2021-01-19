@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Mysqli Abstraction Layer v1.3.2
+ * Mysqli Abstraction Layer v1.4
  *
  * Description:
  * Mainly for development and logging of queries, but now that the class is up and running
@@ -47,7 +47,7 @@
 class Mysqli2 extends mysqli
 {
 
-    private $version = '1.3';
+    private $version = '1.4';
 
     protected static $instance;
     protected static $options = [];
@@ -1086,7 +1086,7 @@ class Mysqli2 extends mysqli
         return $result;
     }
 
-    public function prepared_query1($sql, $types = false, $variables = false)
+    public function prepared_query1($sql, $types = false, $variables = false, $return = 'default')
     {
 
         if( (strlen($types) == 1) and !is_array($variables) ){
@@ -1097,7 +1097,12 @@ class Mysqli2 extends mysqli
         }
 
         $res = $this->prepared_query($sql, $types, $variables);
-        return $res[0];
+
+        if($return === 0){
+            return array_shift($res[0]);
+        } else {
+            return $res[0];
+        }
     }
 
     /**
