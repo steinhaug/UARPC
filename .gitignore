@@ -2,3 +2,4 @@ credentials.php
 /logs/**/*
 /files/**/*
 /PhpRbac/
+/www/dist/
