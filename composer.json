@@ -4,7 +4,7 @@
     "keywords": ["roles","permissions","user access"],
     "homepage": "https://kim.steinhaug.com",
     "type": "library",
-    "license": "MIT",
+    "license": "proprietary",
     "authors": [
         {
             "name": "Kim Steinhaug",
