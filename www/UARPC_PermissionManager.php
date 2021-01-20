@@ -20,21 +20,30 @@ class UARPC_PermissionManager
      *
      * @param string $title
      * @param string $description
+     * @param int $parentId PermissionID for parent node, or null. Strictly for presentational purposes
      * @param int $enabled Boolval for stating if a permission is enabled or valid from a system perspective
      *
      * @return int Returns PermissionId on success
      */
-    public function add($title, $description='', $enabled = 1)
+    public function add($title, $description='', $parentId = null, $enabled = 1)
     {
         global $mysqli;
 
         $res = $mysqli->prepared_query("SELECT PermissionID from UARPC__permissions WHERE title=?", 's', [$title]);
         if( !count($res) ){
-            $sql = [
-                "INSERT INTO UARPC__permissions (`enabled`,`title`,`description`) VALUES (?,?,?)",
-                "iss",
-                [boolval($enabled)?1:0,$title,$description]
-            ];
+            if ($parentId === null) {
+                $sql = [
+                    "INSERT INTO UARPC__permissions (`parentid`,`enabled`,`title`,`description`) VALUES (null,?,?,?)",
+                    "iss",
+                    [boolval($enabled)?1:0,$title,$description]
+                ];
+            } else {
+                $sql = [
+                    "INSERT INTO UARPC__permissions (`parentid`,`enabled`,`title`,`description`) VALUES (?,?,?,?)",
+                    "iiss",
+                    [$parentId,boolval($enabled)?1:0,$title,$description]
+                ];
+            }
             $result = $mysqli->prepared_insert($sql);
             if($this->verbose_actions) echo 'Permission created successfully, PermissionID: ' . $result . '<br>';
             return $result;
@@ -78,29 +87,47 @@ class UARPC_PermissionManager
      * @param int $PermissionID PermissionID to update
      * @param string $title Permission title
      * @param string $description Optional, permission description
-     * @param mixed $enabled Optional, if other than null will update state
+     * @param int $parentId Optional, PermissionID for parent node, or null. Strictly for presentational purposes
+     * @param bool $enabled Optional, True or false for enabled or not, null indicates no change
      *
      * @return void
      */
-    public function edit($PermissionID, $title, $description='', $enabled = null)
+    public function edit($PermissionID, $title, $description='', $parentId = null, $enabled = null)
     {
         global $mysqli;
 
         if( $enabled !== null ){
-            $sql = [
-                "UPDATE UARPC__permissions SET `enabled`=?, `title`=?, `description`=? WHERE PermissionID=?",
-                "issi",
-                [boolval($enabled)?1:0,$title,$description,$PermissionID]
-            ];
+            if( $parentId === null ){
+                $sql = [
+                    "UPDATE UARPC__permissions SET `parentId`=null, `enabled`=?, `title`=?, `description`=? WHERE PermissionID=?",
+                    "issi",
+                    [boolval($enabled)?1:0,$title,$description,$PermissionID]
+                ];
+            } else {
+                $sql = [
+                    "UPDATE UARPC__permissions SET `parentId`=?, `enabled`=?, `title`=?, `description`=? WHERE PermissionID=?",
+                    "iissi",
+                    [$parentId,boolval($enabled)?1:0,$title,$description,$PermissionID]
+                ];
+            }
         } else {
-            $sql = [
-                "UPDATE UARPC__permissions SET `title`=?, `description`=? WHERE PermissionID=?",
-                "ssi",
-                [$title,$description,$PermissionID]
-            ];
+            if ($parentId === null) {
+                $sql = [
+                    "UPDATE UARPC__permissions SET `parentId`=null, `title`=?, `description`=? WHERE PermissionID=?",
+                    "ssi",
+                    [$title,$description,$PermissionID]
+                ];
+            } else {
+                $sql = [
+                    "UPDATE UARPC__permissions SET `parentId`=?, `title`=?, `description`=? WHERE PermissionID=?",
+                    "issi",
+                    [$parentId,$title,$description,$PermissionID]
+                ];
+            }
         }
 
         $affected_rows = $mysqli->prepared_insert($sql);
+
         if($affected_rows){
             if($this->verbose_actions) echo 'Permission (' . $PermissionID . ') was successfully updated.<br>';
             return true;
@@ -254,20 +281,42 @@ class UARPC_PermissionManager
     /**
     * List all allowed permissions
     *
+    * @param mixed $RoleID Either the RoleID to check for connections, or a configuration object
+    *
     * @return array Returns all of the enabled $PermissionsIDs  
     */
     public function list($RoleID = null)
     {
         global $mysqli;
 
+
+        $__orderby = '';
+
+        if( is_array($RoleID) ){
+
+            if( isset($RoleID['sort']) and in_array($RoleID['sort'], ['asc','desc']) ){
+                if( $RoleID['sort'] == 'asc' )
+                    $__orderby = ' ORDER BY `up`.`title` ASC';
+                if( $RoleID['sort'] == 'desc' )
+                    $__orderby = ' ORDER BY `up`.`title` DESC';
+            }
+
+            if (isset($RoleID['RoleID']) and (int) $RoleID['RoleID']) {
+                $RoleID = (int) $RoleID['RoleID'];
+            } else {
+                $RoleID = null;
+            }
+        }
+
+
         if( $RoleID !== null ){
 
-            $sql = 'SELECT up.PermissionID, up.title, up.description 
-                    FROM uarpc__permissions up 
-                    JOIN uarpc__rolepermissions urp ON ( urp.PermissionID = up.PermissionID ) 
-                    JOIN uarpc__roles ur ON ( ur.RoleID = urp.RoleID ) 
-                    WHERE ur.RoleID = ?
-                    ';
+            $sql = 'SELECT `up`.`PermissionID`, `up`.`parentId`, `up`.`title`, `up`.`description` 
+                    FROM `uarpc__permissions` `up` 
+                    JOIN `uarpc__rolepermissions` `urp` ON ( `urp`.`PermissionID` = `up`.`PermissionID` ) 
+                    JOIN `uarpc__roles` `ur` ON ( `ur`.`RoleID` = `urp`.`RoleID` ) 
+                    WHERE `ur`.`RoleID` = ?
+                    ' . $__orderby;
             $res = $mysqli->prepared_query($sql, 'i', [$RoleID]);
 
             $items = [];
@@ -280,13 +329,13 @@ class UARPC_PermissionManager
 
         } else {
 
-            $res = $mysqli->query("SELECT `PermissionID`, `title`, `description` from UARPC__permissions");
+            $res = $mysqli->query("SELECT `up`.`PermissionID`, `up`.`parentId`, `up`.`title`, `up`.`description` FROM `UARPC__permissions` `up`" . $__orderby);
             if( $res->num_rows ){
-                $roles = [];
+                $items = [];
                 while( $row = $res->fetch_assoc() ){
-                    $roles[ $row['PermissionID'] ] = $row;
+                    $items[ $row['PermissionID'] ] = $row;
                 }
-                return $roles;
+                return $items;
             } else {
                 return [];
             }
