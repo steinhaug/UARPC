@@ -32,7 +32,7 @@ Add a permission to the system, the method is available from the $uarpc object.
 
 #### **Description**
 
-    $uarpc->permissions->add( string $title, string $description ) : int
+    $uarpc->permissions->add( string $title, string $description, ? int $parentId ) : int
 
 #### **Parameters**
 
@@ -40,6 +40,8 @@ _title_
     Unique name of permission  
 _description_  
     Descripption of the permission, used in admin explaining the permission  
+_parentId_   
+    Optional. The PermissionID for the parent node, strictly for presentational purposes when describing the permissions in admin for users who admninisters the UARPC object.  
 
 #### **Return Values**
 
@@ -49,8 +51,13 @@ On success returns the PermissionId, else it will return 0.
 
 _Example #1 adding 2 new permissions
 
-    $uarpc->permissions->add('/invoice/read','');
-    $uarpc->permissions->add('/invoice/write','');
+    $uarpc->permissions->add('/invoice/read');
+    $uarpc->permissions->add('/invoice/write','Write access for invoicing module');
+
+_Example #2 adding permissison with all parameters
+
+    $PermID = $uarpc->permissions->add('/invoice');
+    $uarpc->permissions->add('/invoice-write','Write access for invoicing module', $PermID);
 
 <hr>
 <hr>
@@ -88,7 +95,7 @@ Set permission state to enabled / active.
 
 #### **Description**
 
-    $uarpc->permissions->enable( $PermID, $title, ? $desc, ? $enabled) : bool
+    $uarpc->permissions->enable( $PermID, $title, ? $desc, ? $parentID, ? $enabled ) : bool
 
 #### **Parameters**
 
@@ -98,8 +105,10 @@ _title_
     Unique name of permission  
 _description_  
     Optional, descripption of the permission, used in admin explaining the permission  
+_parentId_  
+    Optional. The PermissionID for the parent node, strictly for presentational purposes when describing the permissions in admin for users who admninisters the UARPC object.  
 _enabled_  
-    Optional, Boolean if permission is enabled or not. Defaults to 1.
+    Optional, Boolean if permission is enabled or not. Defaults to 1.  
 
 #### **Return Values**
 
@@ -111,6 +120,13 @@ _Example #1 Edit permission 'write_access'_
 
     $permissionId = $uarpc->permissions->add('write_access');
     $uarpc->permissions->edit($permissionId, '/write access allowed');
+
+_Example #2 Edit permission, disable and connect to parentID
+
+    $parentId = $uarpc->permissions->add('skills/');
+    $permissionId = $uarpc->permissions->add('write_access');
+    $uarpc->permissions->edit($permissionId, '/write access allowed', $parentId, false);
+
 
 <hr>
 <hr>
@@ -320,12 +336,14 @@ _Example #1 Listing all permission_
     // array (size=2)
     //   1 => 
     //     array (size=3)
-    //        'PermissionID' => string '1' (length=1)
+    //       'PermissionID' => string '1' (length=1)
+    //       'parentId' => bool false (length=1)
     //       'title' => string '/invoice/read' (length=13)
     //       'description' => string 'User can read invoice' (length=21)
     //   2 => 
     //     array (size=3)
     //       'PermissionID' => string '2' (length=1)
+    //       'parentId' => int 1 (length=1)
     //       'title' => string '/invoice/read3' (length=14)
     //       'description' => string 'User can read invoice' (length=21)
 ```
@@ -339,6 +357,7 @@ _Example #2 Listing all permission belonging to RoleID 7_
     //   2 => 
     //     array (size=3)
     //       'PermissionID' => string '2' (length=1)
+    //       'parentId' => bool false (length=1)
     //       'title' => string '/invoice/read3' (length=14)
     //       'description' => string 'User can read invoice' (length=21)
 ```
