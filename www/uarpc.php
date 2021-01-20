@@ -41,6 +41,7 @@ class uarpc
         if(!$mysqli->table_exist('uarpc__permissions')){
             $mysqli->query("CREATE TABLE IF NOT EXISTS `uarpc__permissions` (
             `PermissionID` int NOT NULL AUTO_INCREMENT,
+            `parentId` int DEFAULT NULL,
             `enabled` tinyint unsigned NOT NULL DEFAULT '1',
             `title` char(64) CHARACTER SET utf8 COLLATE " . $collate['utf8'] . " NOT NULL,
             `description` text CHARACTER SET utf8 COLLATE " . $collate['utf8'] . " NOT NULL,
