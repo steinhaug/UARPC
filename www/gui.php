@@ -316,7 +316,7 @@ function thats_it_for_now_incomming_payload($jsondata){
                     <div class="card-body" id="permList">
                         <div id="permLoader"><div class="loaderBack"></div><div class="loader">Loading...</div></div>
                         <?php
-                            $items = $uarpc->permissions->list();
+                            $items = $uarpc->permissions->list(['sort'=>'asc']);
                             foreach ($items as $perm) {
                                 // PermissionID, title, description
                                 echo '
