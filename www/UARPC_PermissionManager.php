@@ -283,6 +283,8 @@ class UARPC_PermissionManager
     /**
     * List all allowed permissions
     *
+    * MySQL references: https://www.codeproject.com/Articles/818694/SQL-Queries-to-Manage-Hierarchical-or-Parent-child
+    * 
     * @param mixed $RoleID Either the RoleID to check for connections, or a configuration object
     *
     * @return array Returns all of the enabled $PermissionsIDs  
@@ -291,7 +293,7 @@ class UARPC_PermissionManager
     {
         global $mysqli;
 
-
+        $__listType = 'default';
         $__orderby = '';
 
         if( is_array($RoleID) ){
@@ -301,6 +303,10 @@ class UARPC_PermissionManager
                     $__orderby = ' ORDER BY `up`.`title` ASC';
                 if( $RoleID['sort'] == 'desc' )
                     $__orderby = ' ORDER BY `up`.`title` DESC';
+            }
+
+            if (isset($RoleID['list']) and in_array($RoleID['list'], ['default','parent'])) {
+                $__listType = $RoleID['list'];
             }
 
             if (isset($RoleID['RoleID']) and (int) $RoleID['RoleID']) {
@@ -313,12 +319,23 @@ class UARPC_PermissionManager
 
         if( $RoleID !== null ){
 
-            $sql = 'SELECT `up`.`PermissionID`, `up`.`parentId`, `up`.`title`, `up`.`description` 
-                    FROM `uarpc__permissions` `up` 
-                    JOIN `uarpc__rolepermissions` `urp` ON ( `urp`.`PermissionID` = `up`.`PermissionID` ) 
-                    JOIN `uarpc__roles` `ur` ON ( `ur`.`RoleID` = `urp`.`RoleID` ) 
-                    WHERE `ur`.`RoleID` = ?
-                    ' . $__orderby;
+            if ($__listType == 'parent') {
+                $sql = 'SELECT `up`.`PermissionID`, `up`.`parentId`, `up`.`title`, `up`.`description` 
+                        , CONCAT( COALESCE(`parent`.`title`, \'\'), `up`.`title`) AS title, COALESCE(`parent`.`title`,\'\') AS paTitle, `up`.`title` AS elTitle
+                        FROM `uarpc__permissions` `up` 
+                        JOIN `uarpc__rolepermissions` `urp` ON ( `urp`.`PermissionID` = `up`.`PermissionID` ) 
+                        JOIN `uarpc__roles` `ur` ON ( `ur`.`RoleID` = `urp`.`RoleID` ) 
+                        LEFT JOIN `uarpc__permissions` AS `parent` ON `up`.`parentId` = `parent`.`PermissionID`
+                        WHERE `ur`.`RoleID` = ?
+                        ' . $__orderby;
+            } else {
+                $sql = 'SELECT `up`.`PermissionID`, `up`.`parentId`, `up`.`title`, `up`.`description` 
+                        FROM `uarpc__permissions` `up` 
+                        JOIN `uarpc__rolepermissions` `urp` ON ( `urp`.`PermissionID` = `up`.`PermissionID` ) 
+                        JOIN `uarpc__roles` `ur` ON ( `ur`.`RoleID` = `urp`.`RoleID` ) 
+                        WHERE `ur`.`RoleID` = ?
+                        ' . $__orderby;
+            }
             $res = $mysqli->prepared_query($sql, 'i', [$RoleID]);
 
             $items = [];
@@ -331,7 +348,11 @@ class UARPC_PermissionManager
 
         } else {
 
-            $res = $mysqli->query("SELECT `up`.`PermissionID`, `up`.`parentId`, `up`.`title`, `up`.`description` FROM `UARPC__permissions` `up`" . $__orderby);
+            if ($__listType == 'parent') {
+                $res = $mysqli->query("SELECT `up`.`PermissionID`, `up`.`parentId`, `up`.`title`, `up`.`description`, CONCAT( COALESCE(parent.title, ''), `up`.`title`) AS title, COALESCE(parent.title,'') AS paTitle, `up`.`title` AS elTitle FROM `UARPC__permissions` `up` LEFT JOIN `UARPC__permissions` AS `parent` ON `up`.`parentId` = `parent`.`PermissionID`" . $__orderby);
+            } else {
+                $res = $mysqli->query("SELECT `up`.`PermissionID`, `up`.`parentId`, `up`.`title`, `up`.`description` FROM `UARPC__permissions` `up`" . $__orderby);
+            }
             if( $res->num_rows ){
                 $items = [];
                 while( $row = $res->fetch_assoc() ){

@@ -65,12 +65,17 @@ if( !empty($_POST['value']) and !empty($_POST['command']) ){
                 $jsondata['command'] = '$uarpc->roles->id(' . $val . ')';
                 break;
             case 'addpermission':
-                $jsondata['id'] = $uarpc->permissions->add($val,'');
-                $jsondata['command'] = '$uarpc->permissions->add(' . $val . ',\'\')';
+                if( !empty($val['parentId']) ){
+                    $jsondata['id'] = $uarpc->permissions->add($val['title'], '', (int) $val['parentId']);
+                    $jsondata['command'] = '$uarpc->permissions->add(' . $val['title'] . ',\'\',' . (int) $val['parentId'] . ')';
+                } else {
+                    $jsondata['id'] = $uarpc->permissions->add($val['title'], '');
+                    $jsondata['command'] = '$uarpc->permissions->add(' . $val['title'] . ',\'\')';
+                }
                 $jsondata['html5id'] = 'permList';
                 $jsondata['html'] = '<div class="d-flex align-items-center item">
                     <div class="flex-shrink-0 w-5 tx-10">' . $jsondata['id'] . '</div>
-                    <div class="flex-grow-1">' . $val . '</div>
+                    <div class="flex-grow-1">' . $val['title'] . '</div>
                     <div class="flex-shrink-0 actions w-6 tx-20">
                         <a href="#" class="action" data-command="delete"><span class="iconify" data-icon="fluent:delete-dismiss-24-regular" data-inline="false"></span></a>
                     </div>
@@ -248,6 +253,23 @@ function thats_it_for_now_incomming_payload($jsondata){
                 transform: rotate(360deg);
         }
         }
+
+        .form-control.extraid {
+            width: 90px;
+        }
+
+        /* Make text smaller for permissions */
+        #permList .item:hover {
+            background-color: #ffb;
+        }
+        #permList .item {
+            font-size: 12px;
+            line-height: 12px;
+        }
+        #permList .item .actions.tx-20 {
+            font-size: 17px !important;
+        }
+
     </style>
     <link href="/dist/css/arbeidsflyt.css" rel="stylesheet" id="pagemode">
     <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
@@ -316,7 +338,7 @@ function thats_it_for_now_incomming_payload($jsondata){
                     <div class="card-body" id="permList">
                         <div id="permLoader"><div class="loaderBack"></div><div class="loader">Loading...</div></div>
                         <?php
-                            $items = $uarpc->permissions->list(['sort'=>'asc']);
+                            $items = $uarpc->permissions->list(['sort'=>'asc', 'list'=>'parent']);
                             foreach ($items as $perm) {
                                 // PermissionID, title, description
                                 echo '
@@ -357,6 +379,7 @@ function thats_it_for_now_incomming_payload($jsondata){
                     <div class="input-group">
                         <input type="text" class="form-control" placeholder="Permission name to add">
                         <div class="input-group-append">
+                            <input type="text" class="form-control extraid" placeholder="ParentID">
                             <button class="btn btn-primary btn-icon" id="addperm"><span class="iconify" data-icon="fluent:apps-add-in-20-filled" data-inline="false"></span></button>
                         </div>
                     </div>
@@ -365,6 +388,11 @@ function thats_it_for_now_incomming_payload($jsondata){
             </div>
 
         </div>
+
+
+
+
+
 
         <div class="row">
             <div class="col">
@@ -424,22 +452,29 @@ $(document).ready(function(){
             $(this).parent().parent().find('input[type="text"]').val('');
         }
     });
-    // ADD
+    // ADD 
     $("#addperm").on('click', function() {
-        var dataTitle = $(this).parent().parent().find('input[type="text"]').val();
+        var item = $(this).parent().parent();
+        var dataTitle = $(item).find('input[type="text"]').val();
         if( dataTitle.length ){
-            ajaxCall(dataTitle, 'addpermission');
-            $(this).parent().parent().find('input[type="text"]').val('')
+            var parentId = $(item).find('input.extraid').val();
+
+            ajaxCall({title: dataTitle, parentId: parentId}, 'addpermission');
+            $(item).find('input[type="text"]').val('')
+            $(item).find('input.extraid').val(parentId)
         }
     });
+
     $("#addrole").on('click', function() {
-        var dataTitle = $(this).parent().parent().find('input[type="text"]').val();
+        var item = $(this).parent().parent();
+        var dataTitle = $(item).find('input[type="text"]').val();
         if( dataTitle.length ){
             // ajax call
             ajaxCall(dataTitle, 'addrole');
-            $(this).parent().parent().find('input[type="text"]').val('')
+            $(item).find('input[type="text"]').val('')
         }
     });
+
     // ACTIONS FOR ROLES
     $("#roleList").on('click.action', 'a.action', function(event) {
         event.preventDefault();
