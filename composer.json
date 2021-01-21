@@ -1,19 +1,32 @@
 {
     "name": "steinhaug/uarpc",
-    "description": "User access role permission configurations",
+    "description": "User access role permission configuration - framework",
     "keywords": ["roles","permissions","user access"],
-    "homepage": "https://kim.steinhaug.com",
+    "homepage": "https://gitlab.com/steinhaug/uarpc",
     "type": "library",
     "license": "proprietary",
     "authors": [
         {
             "name": "Kim Steinhaug",
             "email": "kim@steinhaug.com",
-            "homepage": "http://kim.steinhaug.com"
+            "homepage": "http://kim.steinhaug.com",
+            "role": "developer"
+        }
+    ],
+    "support": {
+        "email": "kim@fibersor.no",
+        "source": "https://gitlab.com/steinhaug/uarpc",
+        "docs": "https://gitlab.com/steinhaug/uarpc/-/wikis/home",
+        "issues": "https://gitlab.com/steinhaug/uarpc/-/issues"
+    },
+    "funding": [
+        {
+            "type": "Suck up to the developer",
+            "url": "https://steinhaug.com/donate/"
         }
     ],
     "require": {
-        "php": ">=7.0.0",
+        "php": ">=7.2.0",
         "ext-mbstring": "*"
     },
     "require-dev": {
