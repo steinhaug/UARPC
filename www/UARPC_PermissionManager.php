@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * UARPC - Permission Manager v1.3.0
+ * 
  * All permission based operations and functions goes into this class.
  */
 class UARPC_PermissionManager 

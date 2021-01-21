@@ -1,7 +1,7 @@
 <?php
 
 /**
- * UARPC - User Access Roles Permissions Configuration v0.1.0
+ * UARPC - User Access Roles Permissions Configuration v1.3.0
  * 
  * Framework for managing and checking all rights for a particular user.
  * 

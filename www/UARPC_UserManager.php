@@ -1,6 +1,10 @@
 <?php
 
-
+/**
+ * UARPC - User Manager v1.3.0
+ * 
+ * All role based functions and operations goes into this class
+ */
 class UARPC_UserManager
 {
 
