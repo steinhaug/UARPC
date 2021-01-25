@@ -17,10 +17,25 @@ if( !empty($_POST['value']) and !empty($_POST['command']) ){
     $desc               = $_POST['desc'] ?? '';
     $jsondata['ref']    = $_POST['reference'] ?? '';
 
-    $allowed_commands = ['assign','unassign','listPermissions','getpermissionid', 'getroleid', 'addpermission', 'addrole', 'deleteRole', 'deletePerm'];
+    $allowed_commands = ['listUsers','assignUser2Role','unassignUser2Role','assign','unassign','listPermissions','getpermissionid', 'getroleid', 'addpermission', 'addrole', 'deleteRole', 'deletePerm'];
     if( in_array($cmd, $allowed_commands) ){
 
-        switch ($cmd) {
+       switch ($cmd) {
+            case 'unassignUser2Role':
+
+                $jsondata['return'] = $uarpc->roles->unassign((int) $val['roleID'], (int) $val['userID']);
+                $jsondata['command'] = '$uarpc->roles->unassign(' . (int) $val['roleID'] . ',' . (int) $val['userID'] . ')';
+                if(!$jsondata['return'])
+                    $jsondata['error'] = 'User ' . (int) $val['userID'] . ' was not unassigned to role ' . (int) $val['roleID'] . '!';
+                    else
+                    $jsondata['deleteCSSID'] = $jsondata['ref'];
+                break;
+            case 'assignUser2Role':
+                $jsondata['return'] = $uarpc->roles->assign((int) $val['roleID'], (int) $val['userID']);
+                $jsondata['command'] = '$uarpc->roles->assign(' . (int) $val['roleID'] . ',' . (int) $val['userID'] . ')';
+                if(!$jsondata['return'])
+                    $jsondata['error'] = 'User ' . (int) $val['userID'] . ' was not assigned to role ' . (int) $val['roleID'] . '!';
+                break;
             case 'assign':
                 $vals = explode(',', $val);
                 $jsondata['return'] = $uarpc->permissions->assign($vals[0], $vals[1]);
@@ -35,6 +50,22 @@ if( !empty($_POST['value']) and !empty($_POST['command']) ){
                 $list = $uarpc->permissions->list($val);
                 $jsondata['permissions'] = array_keys($list);
                 $jsondata['command'] = '$uarpc->permissions->list(' . $val . ')';
+                break;
+            case 'listUsers':
+                $list = $uarpc->roles->listUsers($val);
+                $jsondata['command'] = '$uarpc->roles->listUsers(' . $val . ')';
+                $jsondata['html5id'] = 'userList';
+                $jsondata['html'] = '';
+                foreach($list as $item){
+                    $jsondata['html'] .= '
+                                            <div class="d-flex align-items-center item" data-userid="' . $item['UserID'] . '">
+                                                <div class="flex-grow-1">' . $item['UserID'] . '</div>
+                                                <div class="flex-shrink-0 actions w-6 tx-20">
+                                                    <a href="#" class="action" data-command="delete"><span class="iconify" data-icon="fluent:delete-dismiss-24-regular" data-inline="false"></span></a>
+                                                </div>
+                                            </div>
+                                        ';
+                }
                 break;
             case 'deleteRole':
                 $jsondata['return'] = $uarpc->roles->delete($val);
@@ -254,9 +285,24 @@ function thats_it_for_now_incomming_payload($jsondata){
         }
         }
 
+        .input-group > .form-control.integer {
+            
+        }
         .form-control.extraid {
             width: 90px;
         }
+
+        .addUserInp {
+            width: 200px;
+            display: inline-block;
+        }
+        .addUserInp .input-group {
+            flex-wrap: nowrap;
+        }
+        .addUserInp .input-group .form-control.integer {
+            width: 80px;
+        }
+
 
         /* Make text smaller for permissions */
         #permList .item:hover {
@@ -269,6 +315,45 @@ function thats_it_for_now_incomming_payload($jsondata){
         #permList .item .actions.tx-20 {
             font-size: 17px !important;
         }
+
+
+#userList {
+    position: relative;
+}
+.spinner {
+    position: absolute;
+    top: 0;
+    width: calc(100% - 40px);
+}
+.spinner span {
+    background-color: #840;
+    display: block;
+    width: 100%;
+    height: 100%;
+    display: none;
+}
+.spinner svg {
+    opacity: 0.75;
+    position: absolute;
+    top: 0;
+    margin: auto 0;
+    height: 100%;
+    width: 100%;
+}
+/* The spinner itself:https://codepen.io/thebabydino/pen/yjoPMJ */
+.spinner svg {
+	max-width: 25em;
+	background: #fff;
+	fill: none;
+	stroke: #fff;
+	stroke-linecap: round;
+	stroke-width: 8%
+}
+.spinner use {
+	stroke: #000;
+	animation: svga 2s linear infinite
+}
+@keyframes svga { to { stroke-dashoffset: 0px } }
 
     </style>
     <link href="/dist/css/arbeidsflyt.css" rel="stylesheet" id="pagemode">
@@ -331,12 +416,21 @@ function thats_it_for_now_incomming_payload($jsondata){
                     ?>
                     </div>
                 </div>
+
+                <div class="card">
+                    <div class="card-header card-title">USERS</div>
+                    <div class="card-body" id="userList">
+
+
+                    </div>
+                </div>
+
             </div>
             <div class="col-lg-4">
                 <div class="card">
                     <div class="card-header card-title">PERMISSIONS</div>
                     <div class="card-body" id="permList">
-                        <div id="permLoader"><div class="loaderBack"></div><div class="loader">Loading...</div></div>
+                        <div id="permLoader" class="loaderWrap"><div class="loaderBack"></div><div class="loader">Loading...</div></div>
                         <?php
                             $items = $uarpc->permissions->list(['sort'=>'asc', 'list'=>'parent']);
                             foreach ($items as $perm) {
@@ -361,7 +455,7 @@ function thats_it_for_now_incomming_payload($jsondata){
         <div class="row">
             <div class="col-lg-4">
             </div>
-            <div class="col-lg-4">
+            <div class="col-lg-4" style="text-align: right;">
 
                 <div class="form-group">
                     <div class="input-group">
@@ -372,6 +466,17 @@ function thats_it_for_now_incomming_payload($jsondata){
                     </div>
                 </div>
 
+                <div class="form-group addUserInp">
+                    <div class="input-group">
+                        <input type="text" class="form-control integer" placeholder="UserID">
+                        <div class="input-group-append">
+                            <input type="text" class="form-control integer extraid" placeholder="RoleID">
+                            <button class="btn btn-primary btn-icon" id="addUser"><span class="iconify" data-icon="fluent:plug-disconnected-20-filled" data-inline="false"></span></button>
+                        </div>
+                    </div>
+                </div>
+
+
             </div>
             <div class="col-lg-4">
 
@@ -379,7 +484,7 @@ function thats_it_for_now_incomming_payload($jsondata){
                     <div class="input-group">
                         <input type="text" class="form-control" placeholder="Permission name to add">
                         <div class="input-group-append">
-                            <input type="text" class="form-control extraid" placeholder="ParentID">
+                            <input type="text" class="form-control integer extraid" placeholder="ParentID">
                             <button class="btn btn-primary btn-icon" id="addperm"><span class="iconify" data-icon="fluent:apps-add-in-20-filled" data-inline="false"></span></button>
                         </div>
                     </div>
@@ -427,6 +532,8 @@ function getNewId(){
     return 'css' + generator.next().value
 }
 
+const loaderSVG = '<div class="spinner"><span></span><svg viewBox="-2000 -1000 4000 2000"><path id="inf" d="M354-354A500 500 0 1 1 354 354L-354-354A500 500 0 1 0-354 354z"></path><use xlink:href="#inf" stroke-dasharray="1570 5143" stroke-dashoffset="6713px"></use></svg></div>';
+
 let icon_branch_filled = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none"><path d="M4 5.5a3.5 3.5 0 1 1 4.489 3.358a5.502 5.502 0 0 0 5.261 3.892h.33a3.501 3.501 0 0 1 6.92.75a3.5 3.5 0 0 1-6.92.75h-.33a6.988 6.988 0 0 1-5.5-2.67v3.5A3.501 3.501 0 0 1 7.5 22a3.5 3.5 0 0 1-.75-6.92V8.92A3.501 3.501 0 0 1 4 5.5z" fill="#626262"/></g></svg>';
 let icon_branch_regular = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none"><path d="M4 5.5a3.5 3.5 0 1 1 4.489 3.358a5.502 5.502 0 0 0 5.261 3.892h.33a3.501 3.501 0 0 1 6.92.75a3.5 3.5 0 0 1-6.92.75h-.33a6.987 6.987 0 0 1-5.5-2.67v3.5A3.501 3.501 0 0 1 7.5 22a3.5 3.5 0 0 1-.75-6.92V8.92A3.501 3.501 0 0 1 4 5.5zm3.5-2a2 2 0 1 0 0 4a2 2 0 0 0 0-4zm0 13a2 2 0 1 0 0 4a2 2 0 0 0 0-4zm8-3a2 2 0 1 0 4 0a2 2 0 0 0-4 0z" fill="#626262"/></g></svg>';
 
@@ -452,6 +559,7 @@ $(document).ready(function(){
             $(this).parent().parent().find('input[type="text"]').val('');
         }
     });
+
     // ADD 
     $("#addperm").on('click', function() {
         var item = $(this).parent().parent();
@@ -464,7 +572,6 @@ $(document).ready(function(){
             $(item).find('input.extraid').val(parentId)
         }
     });
-
     $("#addrole").on('click', function() {
         var item = $(this).parent().parent();
         var dataTitle = $(item).find('input[type="text"]').val();
@@ -474,6 +581,18 @@ $(document).ready(function(){
             $(item).find('input[type="text"]').val('')
         }
     });
+    $("#addUser").on('click', function() {
+        var item = $(this).parent().parent();
+        var userID = $(item).find('input[type="text"]').val();
+        var roleID = $(item).find('input.extraid').val();
+        if( userID.length && roleID.length ){
+            console.log( userID + ',' + roleID );
+            ajaxCall({userID: userID, roleID: roleID}, 'assignUser2Role');
+            $(item).find('input[type="text"]').val('')
+            $(item).find('input.extraid').val('')
+        }
+    });
+
 
     // ACTIONS FOR ROLES
     $("#roleList").on('click.action', 'a.action', function(event) {
@@ -485,7 +604,6 @@ $(document).ready(function(){
             ajaxCall(id, 'deleteRole', CSSID);
         }
     });
-    // ACTIONS FOR PERMISSIONS
     $("#permList").on('click.action', 'a.action', function(event) {
         event.preventDefault();
         var id = $(this).parent().parent().children().first().html();
@@ -507,6 +625,16 @@ $(document).ready(function(){
             console.log( 'ERROR: command missing, ' + $(this).data('command') ); 
         }
     });
+    $("#userList").on('click.action', 'a.action', function(event) {
+        event.preventDefault();
+        var id = $(this).parent().parent().data('userid');
+        if( $(this).data('command') == 'delete' ){
+            var CSSID = getNewId();
+            $(this).parent().parent().attr('id',CSSID);
+            ajaxCall({roleID: RoleID, userID: id}, 'unassignUser2Role', CSSID);
+        }
+    });
+
 
     // SETTING THE ROLE
     $("#roleList").on('click.action', 'div.item', function(event) {
@@ -516,7 +644,7 @@ $(document).ready(function(){
             $(this).removeClass('selected');
             RoleID = null;
             PermissionID = null;
-
+            $('#userList').html('');
             $('#permList .item').each(function(index, value){
                 $(this).removeClass('connected');
                 $(this).find('.actions').html('<a href="#" class="action" data-command="delete"><span class="iconify" data-icon="fluent:delete-dismiss-24-regular" data-inline="false"></span></a>');
@@ -540,6 +668,10 @@ $(document).ready(function(){
         ajaxCall(RoleID,'listPermissions');
         var height = $('#permLoader').parent().height();
         $('#permLoader .loaderBack').height( height ).parent().show();
+
+        $('#userList').html('');
+        addLoader('userList');
+        ajaxCall(RoleID,'listUsers','listUsers');
     });
 
     /*
@@ -553,9 +685,21 @@ $(document).ready(function(){
         $(this).addClass('selected');
     });
     */
+        var height = $('#permLoader').parent().height();
+        $('#permLoader .loaderBack').height( height ).parent().show();
 
 });
 
+
+function addLoader(cssID){
+    var height = $('#' + cssID).height();
+    if( height < 200 )
+        height = 200;
+    $('#' + cssID).html(loaderSVG).first().height( height ).children().first().height( height );
+}
+function removeLoader(cssID){
+    $('#' + cssID).css('height','auto').find('.spinner').remove();
+}
 
 function ajaxCall(value, command, reference){
 
@@ -606,6 +750,7 @@ function ajaxCall(value, command, reference){
                     $('#permLoader').hide();
                 } else if(response.hasOwnProperty('html')){
                     $("#" + response.html5id).append(response.html);
+                    removeLoader(response.html5id);
                 } else if(response.ref == 'insertPermId'){
                     $("#permid").html( response.id ).closest('.id-fetch').children().addClass('trans-25').first().removeClass('trans-25').addClass('add-focus');
                 } else if(response.ref == 'insertRoleId'){
