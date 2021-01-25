@@ -15,6 +15,12 @@ define('PERM2','/invoice/write-delay'); // 4
 
 $uarpc = new UARPC_base(USER_KIM, 1);
 
+$list = $uarpc->roles->listUsers(1);
+var_dump($list);
+#echo '<hr>';
+#$list = $uarpc->users->list(1);
+#var_dump($list);
+
 //$PermID = $uarpc->permissions->edit(13, '/start2', 'my descriotion', 14, false);
 //$PermID = $uarpc->permissions->edit(13, '/start', 'my descriotion2', 14, null);
 //$PermID = $uarpc->permissions->edit(13, '/start', '', null, true);
