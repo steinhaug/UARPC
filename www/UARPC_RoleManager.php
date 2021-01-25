@@ -178,7 +178,32 @@ class UARPC_RoleManager
    
     }
 
+    /**
+     * List users belonging to a role
+     *
+     * @param int $RoleID ID
+     *
+     * @return void
+     */
+    public function listUsers($RoleID)
+    {
+        global $mysqli;
 
+        $sql = "SELECT * FROM `uarpc__userroles` `ur` 
+                JOIN `uarpc__roles` `r` ON `r`.`RoleID` = `ur`.`RoleID` 
+                WHERE `ur`.`RoleID` = ?";
+        $res = $mysqli->prepared_query($sql, 'i', [$RoleID]);
+
+        $users = [];
+        if (count($res)) {
+            foreach($res as $row){
+                $users[$row['UserID']] = [
+                                            'UserID' => $row['UserID']
+                                         ];
+            }
+        }
+        return $users;
+    }
 
     /**
      * Return role title
