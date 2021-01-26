@@ -326,7 +326,7 @@ class UARPC_PermissionManager
 
         if( $RoleID !== null ){
             if ($__listType == 'parent') {
-                $sql = 'SELECT `up`.`PermissionID`, `up`.`parentId`, `up`.`description`, 
+                $sql = 'SELECT `up`.`PermissionID`, `up`.`parentId`, `up`.`enabled`, `up`.`description`, 
                         CONCAT( COALESCE(`parent`.`title`, \'\'), `up`.`title`) AS `title`, COALESCE(`parent`.`title`,\'\') AS paTitle, `up`.`title` AS elTitle
                         FROM `uarpc__permissions` `up` 
                         JOIN `uarpc__rolepermissions` `urp` ON ( `urp`.`PermissionID` = `up`.`PermissionID` ) 
@@ -335,7 +335,7 @@ class UARPC_PermissionManager
                         WHERE `ur`.`RoleID` = ?
                         ' . $__orderby;
             } else {
-                $sql = 'SELECT `up`.`PermissionID`, `up`.`parentId`, `up`.`title`, `up`.`description` 
+                $sql = 'SELECT `up`.`PermissionID`, `up`.`parentId`, `up`.`enabled`, `up`.`title`, `up`.`description` 
                         FROM `uarpc__permissions` `up` 
                         JOIN `uarpc__rolepermissions` `urp` ON ( `urp`.`PermissionID` = `up`.`PermissionID` ) 
                         JOIN `uarpc__roles` `ur` ON ( `ur`.`RoleID` = `urp`.`RoleID` ) 
@@ -355,9 +355,9 @@ class UARPC_PermissionManager
         } else {
 
             if ($__listType == 'parent') {
-                $res = $mysqli->query("SELECT `up`.`PermissionID`, `up`.`parentId`, `up`.`description`, CONCAT( COALESCE(parent.title, ''), `up`.`title`) AS `title`, COALESCE(parent.title,'') AS paTitle, `up`.`title` AS elTitle FROM `UARPC__permissions` `up` LEFT JOIN `UARPC__permissions` AS `parent` ON `up`.`parentId` = `parent`.`PermissionID`" . $__orderby);
+                $res = $mysqli->query("SELECT `up`.`PermissionID`, `up`.`parentId`, `up`.`enabled`, `up`.`description`, CONCAT( COALESCE(parent.title, ''), `up`.`title`) AS `title`, COALESCE(parent.title,'') AS paTitle, `up`.`title` AS elTitle FROM `UARPC__permissions` `up` LEFT JOIN `UARPC__permissions` AS `parent` ON `up`.`parentId` = `parent`.`PermissionID`" . $__orderby);
             } else {
-                $res = $mysqli->query("SELECT `up`.`PermissionID`, `up`.`parentId`, `up`.`title`, `up`.`description` FROM `UARPC__permissions` `up`" . $__orderby);
+                $res = $mysqli->query("SELECT `up`.`PermissionID`, `up`.`parentId`, `up`.`enabled`, `up`.`title`, `up`.`description` FROM `UARPC__permissions` `up`" . $__orderby);
             }
             if( $res->num_rows ){
                 $items = [];
