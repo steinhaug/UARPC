@@ -366,35 +366,68 @@ function thats_it_for_now_incomming_payload($jsondata){
 
 
         <h5 class="mt-3">OARPC</h5>
-        <div class="row"><div class="col" id="error"></div></div>
+
         <div class="row">
             <div class="col-lg-4">
-
-                    <div class="form-group">
-                        <div class="input-group id-fetch">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="permid"><em>PID</em></span>
-                            </div>
-                            <input type="text" class="form-control" placeholder="Permission to get ID">
-                            <div class="input-group-append">
-                                <button class="btn btn-secondary btn-icon" id="permidbtn"><span class="iconify" data-icon="fluent:document-search-20-regular" data-inline="false"></span></button>
-                            </div>
+                <div class="form-group">
+                    <div class="input-group id-fetch">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="permid"><em>PID</em></span>
+                        </div>
+                        <input type="text" class="form-control" placeholder="Permission to get ID">
+                        <div class="input-group-append">
+                            <button class="btn btn-secondary btn-icon" id="permidbtn"><span class="iconify" data-icon="fluent:document-search-20-regular" data-inline="false"></span></button>
                         </div>
                     </div>
+                </div>
 
-                    <div class="form-group">
-                        <div class="input-group id-fetch">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="roleid"><em>RID</em></span>
-                            </div>
-                            <input type="text" class="form-control" placeholder="Role to get ID">
-                            <div class="input-group-append">
-                                <button class="btn btn-secondary btn-icon" id="roleidbtn"><span class="iconify" data-icon="fluent:document-search-20-regular" data-inline="false"></span></button>
-                            </div>
+                <div class="form-group">
+                    <div class="input-group id-fetch">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="roleid"><em>RID</em></span>
+                        </div>
+                        <input type="text" class="form-control" placeholder="Role to get ID">
+                        <div class="input-group-append">
+                            <button class="btn btn-secondary btn-icon" id="roleidbtn"><span class="iconify" data-icon="fluent:document-search-20-regular" data-inline="false"></span></button>
                         </div>
                     </div>
-                            
+                </div>
             </div>
+            <div class="col-lg-4" style="text-align: right;">
+                <div class="form-group">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Role name to add">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary btn-icon" id="addrole"><span class="iconify" data-icon="fluent:apps-add-in-20-filled" data-inline="false"></span></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group addUserInp">
+                    <div class="input-group">
+                        <input type="text" class="form-control integer" placeholder="UserID">
+                        <div class="input-group-append">
+                            <input type="text" class="form-control integer extraid" placeholder="RoleID">
+                            <button class="btn btn-primary btn-icon" id="addUser"><span class="iconify" data-icon="fluent:plug-disconnected-20-filled" data-inline="false"></span></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Permission name to add">
+                        <div class="input-group-append">
+                            <input type="text" class="form-control integer extraid" placeholder="ParentID">
+                            <button class="btn btn-primary btn-icon" id="addperm"><span class="iconify" data-icon="fluent:apps-add-in-20-filled" data-inline="false"></span></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row"><div class="col" id="error"></div></div>
+        <div class="row">
             <div class="col-lg-4">
                 <div class="card">
                     <div class="card-header card-title">ROLES</div>
@@ -416,15 +449,13 @@ function thats_it_for_now_incomming_payload($jsondata){
                     ?>
                     </div>
                 </div>
-
+            </div>
+            <div class="col-lg-4">
                 <div class="card">
                     <div class="card-header card-title">USERS</div>
                     <div class="card-body" id="userList">
-
-
                     </div>
                 </div>
-
             </div>
             <div class="col-lg-4">
                 <div class="card">
@@ -452,52 +483,6 @@ function thats_it_for_now_incomming_payload($jsondata){
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-lg-4">
-            </div>
-            <div class="col-lg-4" style="text-align: right;">
-
-                <div class="form-group">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Role name to add">
-                        <div class="input-group-append">
-                            <button class="btn btn-primary btn-icon" id="addrole"><span class="iconify" data-icon="fluent:apps-add-in-20-filled" data-inline="false"></span></button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group addUserInp">
-                    <div class="input-group">
-                        <input type="text" class="form-control integer" placeholder="UserID">
-                        <div class="input-group-append">
-                            <input type="text" class="form-control integer extraid" placeholder="RoleID">
-                            <button class="btn btn-primary btn-icon" id="addUser"><span class="iconify" data-icon="fluent:plug-disconnected-20-filled" data-inline="false"></span></button>
-                        </div>
-                    </div>
-                </div>
-
-
-            </div>
-            <div class="col-lg-4">
-
-                <div class="form-group">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Permission name to add">
-                        <div class="input-group-append">
-                            <input type="text" class="form-control integer extraid" placeholder="ParentID">
-                            <button class="btn btn-primary btn-icon" id="addperm"><span class="iconify" data-icon="fluent:apps-add-in-20-filled" data-inline="false"></span></button>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-        </div>
-
-
-
-
-
 
         <div class="row">
             <div class="col">
@@ -511,197 +496,193 @@ function thats_it_for_now_incomming_payload($jsondata){
 
 <script>
 
-/**
-* Deliver unique numerical numbers needed for IDs 
-*/
-function* infinite() {
-    let index = 0;
+    /**
+    * Deliver unique numerical numbers needed for IDs 
+    */
+    function* infinite() {
+        let index = 0;
 
-    while (true) {
-        yield index++;
+        while (true) {
+            yield index++;
+        }
     }
-}
-const generator = infinite();
+    const generator = infinite();
 
-/**
-* Return a valid document ID used by selectors
-*
-* @return string A valid HTML document ID
-*/
-function getNewId(){
-    return 'css' + generator.next().value
-}
+    /**
+    * Return a valid document ID used by selectors
+    *
+    * @return string A valid HTML document ID
+    */
+    function getNewId(){
+        return 'css' + generator.next().value
+    }
 
-const loaderSVG = '<div class="spinner"><span></span><svg viewBox="-2000 -1000 4000 2000"><path id="inf" d="M354-354A500 500 0 1 1 354 354L-354-354A500 500 0 1 0-354 354z"></path><use xlink:href="#inf" stroke-dasharray="1570 5143" stroke-dashoffset="6713px"></use></svg></div>';
+    const loaderSVG = '<div class="spinner"><span></span><svg viewBox="-2000 -1000 4000 2000"><path id="inf" d="M354-354A500 500 0 1 1 354 354L-354-354A500 500 0 1 0-354 354z"></path><use xlink:href="#inf" stroke-dasharray="1570 5143" stroke-dashoffset="6713px"></use></svg></div>';
 
-let icon_branch_filled = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none"><path d="M4 5.5a3.5 3.5 0 1 1 4.489 3.358a5.502 5.502 0 0 0 5.261 3.892h.33a3.501 3.501 0 0 1 6.92.75a3.5 3.5 0 0 1-6.92.75h-.33a6.988 6.988 0 0 1-5.5-2.67v3.5A3.501 3.501 0 0 1 7.5 22a3.5 3.5 0 0 1-.75-6.92V8.92A3.501 3.501 0 0 1 4 5.5z" fill="#626262"/></g></svg>';
-let icon_branch_regular = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none"><path d="M4 5.5a3.5 3.5 0 1 1 4.489 3.358a5.502 5.502 0 0 0 5.261 3.892h.33a3.501 3.501 0 0 1 6.92.75a3.5 3.5 0 0 1-6.92.75h-.33a6.987 6.987 0 0 1-5.5-2.67v3.5A3.501 3.501 0 0 1 7.5 22a3.5 3.5 0 0 1-.75-6.92V8.92A3.501 3.501 0 0 1 4 5.5zm3.5-2a2 2 0 1 0 0 4a2 2 0 0 0 0-4zm0 13a2 2 0 1 0 0 4a2 2 0 0 0 0-4zm8-3a2 2 0 1 0 4 0a2 2 0 0 0-4 0z" fill="#626262"/></g></svg>';
+    let icon_branch_filled = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none"><path d="M4 5.5a3.5 3.5 0 1 1 4.489 3.358a5.502 5.502 0 0 0 5.261 3.892h.33a3.501 3.501 0 0 1 6.92.75a3.5 3.5 0 0 1-6.92.75h-.33a6.988 6.988 0 0 1-5.5-2.67v3.5A3.501 3.501 0 0 1 7.5 22a3.5 3.5 0 0 1-.75-6.92V8.92A3.501 3.501 0 0 1 4 5.5z" fill="#626262"/></g></svg>';
+    let icon_branch_regular = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none"><path d="M4 5.5a3.5 3.5 0 1 1 4.489 3.358a5.502 5.502 0 0 0 5.261 3.892h.33a3.501 3.501 0 0 1 6.92.75a3.5 3.5 0 0 1-6.92.75h-.33a6.987 6.987 0 0 1-5.5-2.67v3.5A3.501 3.501 0 0 1 7.5 22a3.5 3.5 0 0 1-.75-6.92V8.92A3.501 3.501 0 0 1 4 5.5zm3.5-2a2 2 0 1 0 0 4a2 2 0 0 0 0-4zm0 13a2 2 0 1 0 0 4a2 2 0 0 0 0-4zm8-3a2 2 0 1 0 4 0a2 2 0 0 0-4 0z" fill="#626262"/></g></svg>';
 
-let RoleID          = null;
-let PermissionID    = null;
+    let RoleID          = null;
+    let PermissionID    = null;
 
+    $(document).ready(function(){
 
+        // GET ID
+        $("#permidbtn").on('click', function() {
+            var dataTitle = $(this).parent().parent().find('input[type="text"]').val();
+            if( dataTitle.length ){
+                ajaxCall(dataTitle, 'getpermissionid', 'insertPermId');
+                $(this).parent().parent().find('input[type="text"]').val('');
+            }
+        });
+        $("#roleidbtn").on('click', function() {
+            var dataTitle = $(this).parent().parent().find('input[type="text"]').val();
+            if( dataTitle.length ){
+                ajaxCall(dataTitle, 'getroleid', 'insertRoleId');
+                $(this).parent().parent().find('input[type="text"]').val('');
+            }
+        });
 
-$(document).ready(function(){
+        // ADD 
+        $("#addperm").on('click', function() {
+            var item = $(this).parent().parent();
+            var dataTitle = $(item).find('input[type="text"]').val();
+            if( dataTitle.length ){
+                var parentId = $(item).find('input.extraid').val();
 
-    // GET ID
-    $("#permidbtn").on('click', function() {
-        var dataTitle = $(this).parent().parent().find('input[type="text"]').val();
-        if( dataTitle.length ){
-            ajaxCall(dataTitle, 'getpermissionid', 'insertPermId');
-            $(this).parent().parent().find('input[type="text"]').val('');
-        }
-    });
-    $("#roleidbtn").on('click', function() {
-        var dataTitle = $(this).parent().parent().find('input[type="text"]').val();
-        if( dataTitle.length ){
-            ajaxCall(dataTitle, 'getroleid', 'insertRoleId');
-            $(this).parent().parent().find('input[type="text"]').val('');
-        }
-    });
-
-    // ADD 
-    $("#addperm").on('click', function() {
-        var item = $(this).parent().parent();
-        var dataTitle = $(item).find('input[type="text"]').val();
-        if( dataTitle.length ){
-            var parentId = $(item).find('input.extraid').val();
-
-            ajaxCall({title: dataTitle, parentId: parentId}, 'addpermission');
-            $(item).find('input[type="text"]').val('')
-            $(item).find('input.extraid').val(parentId)
-        }
-    });
-    $("#addrole").on('click', function() {
-        var item = $(this).parent().parent();
-        var dataTitle = $(item).find('input[type="text"]').val();
-        if( dataTitle.length ){
-            // ajax call
-            ajaxCall(dataTitle, 'addrole');
-            $(item).find('input[type="text"]').val('')
-        }
-    });
-    $("#addUser").on('click', function() {
-        var item = $(this).parent().parent();
-        var userID = $(item).find('input[type="text"]').val();
-        var roleID = $(item).find('input.extraid').val();
-        if( userID.length && roleID.length ){
-            console.log( userID + ',' + roleID );
-            ajaxCall({userID: userID, roleID: roleID}, 'assignUser2Role');
-            $(item).find('input[type="text"]').val('')
-            $(item).find('input.extraid').val('')
-        }
-    });
+                ajaxCall({title: dataTitle, parentId: parentId}, 'addpermission');
+                $(item).find('input[type="text"]').val('')
+                $(item).find('input.extraid').val(parentId)
+            }
+        });
+        $("#addrole").on('click', function() {
+            var item = $(this).parent().parent();
+            var dataTitle = $(item).find('input[type="text"]').val();
+            if( dataTitle.length ){
+                // ajax call
+                ajaxCall(dataTitle, 'addrole');
+                $(item).find('input[type="text"]').val('')
+            }
+        });
+        $("#addUser").on('click', function() {
+            var item = $(this).parent().parent();
+            var userID = $(item).find('input[type="text"]').val();
+            var roleID = $(item).find('input.extraid').val();
+            if( userID.length && roleID.length ){
+                console.log( userID + ',' + roleID );
+                ajaxCall({userID: userID, roleID: roleID}, 'assignUser2Role');
+                $(item).find('input[type="text"]').val('')
+                $(item).find('input.extraid').val('')
+            }
+        });
 
 
-    // ACTIONS FOR ROLES
-    $("#roleList").on('click.action', 'a.action', function(event) {
-        event.preventDefault();
-        var id = $(this).parent().parent().children().first().html();
-        if( $(this).data('command') == 'delete' ){
-            var CSSID = getNewId();
-            $(this).parent().parent().attr('id',CSSID);
-            ajaxCall(id, 'deleteRole', CSSID);
-        }
-    });
-    $("#permList").on('click.action', 'a.action', function(event) {
-        event.preventDefault();
-        var id = $(this).parent().parent().children().first().html();
-        if( $(this).data('command') == 'delete' ){
-            var CSSID = getNewId();
-            $(this).parent().parent().attr('id',CSSID);
-            ajaxCall(id, 'deletePerm', CSSID);
-        } else if( $(this).data('command') == 'disconnect' ){
-            ajaxCall(id + ',' + RoleID, 'unassign');
-            el = $(this).closest('.item');
-            $(el).removeClass('connected').find('[data-command="disconnect"]').remove();
-            $(el).find('.actions').append('<a href="#" data-command="connect" class="action">' + icon_branch_regular + '</a>');
-        } else if( $(this).data('command') == 'connect' ){
-            ajaxCall(id + ',' + RoleID, 'assign');
-            el = $(this).closest('.item');
-            $(el).addClass('connected').find('[data-command="connect"]').remove();
-            $(el).find('.actions').append('<a href="#" data-command="disconnect" class="action">' + icon_branch_filled + '</a>');
-        } else {
-            console.log( 'ERROR: command missing, ' + $(this).data('command') ); 
-        }
-    });
-    $("#userList").on('click.action', 'a.action', function(event) {
-        event.preventDefault();
-        var id = $(this).parent().parent().data('userid');
-        if( $(this).data('command') == 'delete' ){
-            var CSSID = getNewId();
-            $(this).parent().parent().attr('id',CSSID);
-            ajaxCall({roleID: RoleID, userID: id}, 'unassignUser2Role', CSSID);
-        }
-    });
+        // ACTIONS FOR ROLES
+        $("#roleList").on('click.action', 'a.action', function(event) {
+            event.preventDefault();
+            var id = $(this).parent().parent().children().first().html();
+            if( $(this).data('command') == 'delete' ){
+                var CSSID = getNewId();
+                $(this).parent().parent().attr('id',CSSID);
+                ajaxCall(id, 'deleteRole', CSSID);
+            }
+        });
+        $("#permList").on('click.action', 'a.action', function(event) {
+            event.preventDefault();
+            var id = $(this).parent().parent().children().first().html();
+            if( $(this).data('command') == 'delete' ){
+                var CSSID = getNewId();
+                $(this).parent().parent().attr('id',CSSID);
+                ajaxCall(id, 'deletePerm', CSSID);
+            } else if( $(this).data('command') == 'disconnect' ){
+                ajaxCall(id + ',' + RoleID, 'unassign');
+                el = $(this).closest('.item');
+                $(el).removeClass('connected').find('[data-command="disconnect"]').remove();
+                $(el).find('.actions').append('<a href="#" data-command="connect" class="action">' + icon_branch_regular + '</a>');
+            } else if( $(this).data('command') == 'connect' ){
+                ajaxCall(id + ',' + RoleID, 'assign');
+                el = $(this).closest('.item');
+                $(el).addClass('connected').find('[data-command="connect"]').remove();
+                $(el).find('.actions').append('<a href="#" data-command="disconnect" class="action">' + icon_branch_filled + '</a>');
+            } else {
+                console.log( 'ERROR: command missing, ' + $(this).data('command') ); 
+            }
+        });
+        $("#userList").on('click.action', 'a.action', function(event) {
+            event.preventDefault();
+            var id = $(this).parent().parent().data('userid');
+            if( $(this).data('command') == 'delete' ){
+                var CSSID = getNewId();
+                $(this).parent().parent().attr('id',CSSID);
+                ajaxCall({roleID: RoleID, userID: id}, 'unassignUser2Role', CSSID);
+            }
+        });
 
 
-    // SETTING THE ROLE
-    $("#roleList").on('click.action', 'div.item', function(event) {
-        event.preventDefault();
+        // SETTING THE ROLE
+        $("#roleList").on('click.action', 'div.item', function(event) {
+            event.preventDefault();
 
-        if( $(this).hasClass('selected') ){
-            $(this).removeClass('selected');
-            RoleID = null;
-            PermissionID = null;
-            $('#userList').html('');
-            $('#permList .item').each(function(index, value){
-                $(this).removeClass('connected');
-                $(this).find('.actions').html('<a href="#" class="action" data-command="delete"><span class="iconify" data-icon="fluent:delete-dismiss-24-regular" data-inline="false"></span></a>');
+            if( $(this).hasClass('selected') ){
+                $(this).removeClass('selected');
+                RoleID = null;
+                PermissionID = null;
+                $('#userList').html('');
+                $('#permList .item').each(function(index, value){
+                    $(this).removeClass('connected');
+                    $(this).find('.actions').html('<a href="#" class="action" data-command="delete"><span class="iconify" data-icon="fluent:delete-dismiss-24-regular" data-inline="false"></span></a>');
+                });
+
+                return false;
+            }
+
+            $(this).parent().children().each(function(index, value){
+                $(this).removeClass('selected');
             });
 
-            return false;
-        }
+            $(this).addClass('selected');
+            RoleID = $(this).children().first().html();
+            console.log( 'RoleID: ' + RoleID);
+            PermissionID = null;
 
-        $(this).parent().children().each(function(index, value){
-            $(this).removeClass('selected');
+            $('#permList .item').each(function(index, value){
+                $(this).removeClass('connected').find('.actions').html('<a href="#" data-command="connect" class="action">' + icon_branch_regular + '</a>');
+            });
+            ajaxCall(RoleID,'listPermissions');
+            var height = $('#permLoader').parent().height();
+            $('#permLoader .loaderBack').height( height ).parent().show();
+
+            $('#userList').html('');
+            addLoader('userList');
+            ajaxCall(RoleID,'listUsers','listUsers');
         });
 
-        $(this).addClass('selected');
-        RoleID = $(this).children().first().html();
-        console.log( 'RoleID: ' + RoleID);
-        PermissionID = null;
+        /*
+        $("#permList").on('click.action', 'div.item', function(event) {
+            event.preventDefault();
 
-        $('#permList .item').each(function(index, value){
-            $(this).removeClass('connected').find('.actions').html('<a href="#" data-command="connect" class="action">' + icon_branch_regular + '</a>');
+            $(this).parent().children().each(function(index, value){
+                $(this).removeClass('selected');
+            });
+
+            $(this).addClass('selected');
         });
-        ajaxCall(RoleID,'listPermissions');
-        var height = $('#permLoader').parent().height();
-        $('#permLoader .loaderBack').height( height ).parent().show();
+        */
 
-        $('#userList').html('');
-        addLoader('userList');
-        ajaxCall(RoleID,'listUsers','listUsers');
     });
 
-    /*
-    $("#permList").on('click.action', 'div.item', function(event) {
-        event.preventDefault();
 
-        $(this).parent().children().each(function(index, value){
-            $(this).removeClass('selected');
-        });
+    function addLoader(cssID){
+        var height = $('#' + cssID).height();
+        if( height < 200 )
+            height = 200;
+        $('#' + cssID).html(loaderSVG).first().height( height ).children().first().height( height );
+    }
+    function removeLoader(cssID){
+        $('#' + cssID).css('height','auto').find('.spinner').remove();
+    }
 
-        $(this).addClass('selected');
-    });
-    */
-        var height = $('#permLoader').parent().height();
-        $('#permLoader .loaderBack').height( height ).parent().show();
-
-});
-
-
-function addLoader(cssID){
-    var height = $('#' + cssID).height();
-    if( height < 200 )
-        height = 200;
-    $('#' + cssID).html(loaderSVG).first().height( height ).children().first().height( height );
-}
-function removeLoader(cssID){
-    $('#' + cssID).css('height','auto').find('.spinner').remove();
-}
-
-function ajaxCall(value, command, reference){
+    function ajaxCall(value, command, reference){
 
         if(typeof reference === 'undefined')  {
             var reference = 'false';
@@ -761,8 +742,7 @@ function ajaxCall(value, command, reference){
             //$('#spinner').hide();
         });
 
-
-}
+    }
 
     function __ajax_error_handler_v2(response, status, errorThrown) {
         $('#ajaxErrorModal').find(".modal-body").html( response.responseText );
