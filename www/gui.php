@@ -17,12 +17,25 @@ if( !empty($_POST['value']) and !empty($_POST['command']) ){
     $desc               = $_POST['desc'] ?? '';
     $jsondata['ref']    = $_POST['reference'] ?? '';
 
-    $allowed_commands = ['listUsers','assignUser2Role','unassignUser2Role','assign','unassign','listPermissions','getpermissionid', 'getroleid', 'addpermission', 'addrole', 'deleteRole', 'deletePerm'];
+    $allowed_commands = ['disablePerm','enablePerm','listUsers','assignUser2Role','unassignUser2Role','assign','unassign','listPermissions','getpermissionid', 'getroleid', 'addpermission', 'addrole', 'deleteRole', 'deletePerm'];
     if( in_array($cmd, $allowed_commands) ){
 
        switch ($cmd) {
+            case 'enablePerm':
+                $jsondata['return'] = $uarpc->permissions->enable((int) $val['PermID']);
+                $jsondata['command'] = '$uarpc->permissions->enable(' . (int) $val['PermID'] . ')';
+                $jsondata['state'] = $uarpc->permissions->state((int) $val['PermID']);
+                $jsondata['CSSID'] = $val['CSSID'];
+                $jsondata['cmd'] = $cmd;
+                break;
+            case 'disablePerm':
+                $jsondata['return'] = $uarpc->permissions->disable((int) $val['PermID']);
+                $jsondata['command'] = '$uarpc->permissions->disable(' . (int) $val['PermID'] . ')';
+                $jsondata['state'] = $uarpc->permissions->state((int) $val['PermID']);
+                $jsondata['CSSID'] = $val['CSSID'];
+                $jsondata['cmd'] = $cmd;
+                break;
             case 'unassignUser2Role':
-
                 $jsondata['return'] = $uarpc->roles->unassign((int) $val['roleID'], (int) $val['userID']);
                 $jsondata['command'] = '$uarpc->roles->unassign(' . (int) $val['roleID'] . ',' . (int) $val['userID'] . ')';
                 if(!$jsondata['return'])
@@ -312,49 +325,72 @@ function thats_it_for_now_incomming_payload($jsondata){
             font-size: 12px;
             line-height: 12px;
         }
+        #permList .item .elTitle {
+            width: 100px;
+        }
+        #permList .item .actions {
+            width: 50px;
+        }
         #permList .item .actions.tx-20 {
             font-size: 17px !important;
         }
+        #permList .item .actions a {
+            margin-right: 0px;
+        }
+        #permList .item .actions a:last-child {
+            margin-right: 0;
+        }
 
 
-#userList {
-    position: relative;
-}
-.spinner {
-    position: absolute;
-    top: 0;
-    width: calc(100% - 40px);
-}
-.spinner span {
-    background-color: #840;
-    display: block;
-    width: 100%;
-    height: 100%;
-    display: none;
-}
-.spinner svg {
-    opacity: 0.75;
-    position: absolute;
-    top: 0;
-    margin: auto 0;
-    height: 100%;
-    width: 100%;
-}
-/* The spinner itself:https://codepen.io/thebabydino/pen/yjoPMJ */
-.spinner svg {
-	max-width: 25em;
-	background: #fff;
-	fill: none;
-	stroke: #fff;
-	stroke-linecap: round;
-	stroke-width: 8%
-}
-.spinner use {
-	stroke: #000;
-	animation: svga 2s linear infinite
-}
-@keyframes svga { to { stroke-dashoffset: 0px } }
+        #userList {
+            position: relative;
+        }
+        .spinner {
+            position: absolute;
+            top: 0;
+            width: calc(100% - 40px);
+        }
+        .spinner span {
+            background-color: #840;
+            display: block;
+            width: 100%;
+            height: 100%;
+            display: none;
+        }
+        .spinner svg {
+            opacity: 0.75;
+            position: absolute;
+            top: 0;
+            margin: auto 0;
+            height: 100%;
+            width: 100%;
+        }
+        /* The spinner itself:https://codepen.io/thebabydino/pen/yjoPMJ */
+        .spinner svg {
+            max-width: 25em;
+            background: #fff;
+            fill: none;
+            stroke: #fff;
+            stroke-linecap: round;
+            stroke-width: 8%
+        }
+        .spinner use {
+            stroke: #000;
+            animation: svga 2s linear infinite
+        }
+        @keyframes svga { to { stroke-dashoffset: 0px } }
 
+
+        .perm_disabled {
+            color: #f99;
+            font-weight: bold;
+        }
+        .d-green {
+            color: #00b52c;
+        }
+        .d-red {
+            color: #f00;
+        }
     </style>
     <link href="/dist/css/arbeidsflyt.css" rel="stylesheet" id="pagemode">
     <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
@@ -465,13 +501,30 @@ function thats_it_for_now_incomming_payload($jsondata){
                         <?php
                             $items = $uarpc->permissions->list(['sort'=>'asc', 'list'=>'parent']);
                             foreach ($items as $perm) {
+#var_dump( $perm );
+#exit;
+                                $actions = [];
+                                $actions[] = '<a href="#" class="action" data-command="delete"><span class="iconify" data-icon="fluent:delete-dismiss-24-regular" data-inline="false"></span></a>';
+
                                 // PermissionID, title, description
+                                if( !$perm['enabled'] ) {
+                                    $enabledState = ' perm_disabled';
+                                    $dataValue = 'false';
+                                    $actions[] = '<a href="#" class="action d-red" data-command="perm-enable" title="Enable permission"><span class="iconify" data-icon="fluent:toggle-left-16-regular" data-inline="false"></span></a>';
+                                } else {
+                                    $enabledState = ' perm_enabled';
+                                    $dataValue = 'true';
+                                    $actions[] = '<a href="#" class="action d-green" data-command="perm-disable" title="Disable permission"><span class="iconify" data-icon="fluent:toggle-left-16-filled" data-inline="false"></span></a>';
+                                }
                                 echo '
-                                <div class="d-flex align-items-center item">
+                                <div class="d-flex align-items-center item ' . $enabledState . '" data-enabled="' . $dataValue . '" data-permid="' . $perm['PermissionID'] . '">
                                     <div class="flex-shrink-0 w-5 tx-10">' . $perm['PermissionID'] . '</div>
                                     <div class="flex-grow-1">' . $perm['title'] . '</div>
+                                    <div class="flex-shrink-0 elTitle">' . $perm['elTitle'] . '</div>
                                     <div class="flex-shrink-0 actions tx-20">
-                                        <a href="#" class="action" data-command="delete"><span class="iconify" data-icon="fluent:delete-dismiss-24-regular" data-inline="false"></span></a>
+                                ';
+                                echo implode("\n", $actions);
+                                echo '
                                     </div>
                                 </div>
                                 ';
@@ -482,7 +535,6 @@ function thats_it_for_now_incomming_payload($jsondata){
 
             </div>
         </div>
-
 
         <div class="row">
             <div class="col">
@@ -517,10 +569,36 @@ function thats_it_for_now_incomming_payload($jsondata){
         return 'css' + generator.next().value
     }
 
+    /**
+    * Get the existing CSS ID, if not create a new one and set it
+    * 
+    * param node el The node/element to check for the ID
+    * return string The CSS ID
+    */
+    function getCSSID(el){
+        if( $(el).hasAttr('id') ){
+            console.log('read');
+            var CSSID = $(el).attr('id');
+        } else {
+            console.log('set');
+            var CSSID = getNewId();
+            $(el).attr('id',CSSID);
+        }
+        return CSSID;
+    }
+
+    $.fn.hasAttr = function(name) {  
+        return this.attr(name) !== undefined;
+    };
+
+    const cmd_delete  = '<a href="#" class="action" data-command="delete" title="Delete permission"><span class="iconify" data-icon="fluent:delete-dismiss-24-regular" data-inline="false"></span></a>';
+    const cmd_enable  = '<a href="#" class="action d-red" data-command="perm-enable" title="Enable permission"><span class="iconify" data-icon="fluent:toggle-left-16-regular" data-inline="false"></span></a>';
+    const cmd_disable = '<a href="#" class="action d-green" data-command="perm-disable" title="Disable permission"><span class="iconify" data-icon="fluent:toggle-left-16-filled" data-inline="false"></span></a>';
+
     const loaderSVG = '<div class="spinner"><span></span><svg viewBox="-2000 -1000 4000 2000"><path id="inf" d="M354-354A500 500 0 1 1 354 354L-354-354A500 500 0 1 0-354 354z"></path><use xlink:href="#inf" stroke-dasharray="1570 5143" stroke-dashoffset="6713px"></use></svg></div>';
 
-    let icon_branch_filled = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none"><path d="M4 5.5a3.5 3.5 0 1 1 4.489 3.358a5.502 5.502 0 0 0 5.261 3.892h.33a3.501 3.501 0 0 1 6.92.75a3.5 3.5 0 0 1-6.92.75h-.33a6.988 6.988 0 0 1-5.5-2.67v3.5A3.501 3.501 0 0 1 7.5 22a3.5 3.5 0 0 1-.75-6.92V8.92A3.501 3.501 0 0 1 4 5.5z" fill="#626262"/></g></svg>';
-    let icon_branch_regular = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none"><path d="M4 5.5a3.5 3.5 0 1 1 4.489 3.358a5.502 5.502 0 0 0 5.261 3.892h.33a3.501 3.501 0 0 1 6.92.75a3.5 3.5 0 0 1-6.92.75h-.33a6.987 6.987 0 0 1-5.5-2.67v3.5A3.501 3.501 0 0 1 7.5 22a3.5 3.5 0 0 1-.75-6.92V8.92A3.501 3.501 0 0 1 4 5.5zm3.5-2a2 2 0 1 0 0 4a2 2 0 0 0 0-4zm0 13a2 2 0 1 0 0 4a2 2 0 0 0 0-4zm8-3a2 2 0 1 0 4 0a2 2 0 0 0-4 0z" fill="#626262"/></g></svg>';
+    const icon_branch_filled = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none"><path d="M4 5.5a3.5 3.5 0 1 1 4.489 3.358a5.502 5.502 0 0 0 5.261 3.892h.33a3.501 3.501 0 0 1 6.92.75a3.5 3.5 0 0 1-6.92.75h-.33a6.988 6.988 0 0 1-5.5-2.67v3.5A3.501 3.501 0 0 1 7.5 22a3.5 3.5 0 0 1-.75-6.92V8.92A3.501 3.501 0 0 1 4 5.5z" fill="#626262"/></g></svg>';
+    const icon_branch_regular = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none"><path d="M4 5.5a3.5 3.5 0 1 1 4.489 3.358a5.502 5.502 0 0 0 5.261 3.892h.33a3.501 3.501 0 0 1 6.92.75a3.5 3.5 0 0 1-6.92.75h-.33a6.987 6.987 0 0 1-5.5-2.67v3.5A3.501 3.501 0 0 1 7.5 22a3.5 3.5 0 0 1-.75-6.92V8.92A3.501 3.501 0 0 1 4 5.5zm3.5-2a2 2 0 1 0 0 4a2 2 0 0 0 0-4zm0 13a2 2 0 1 0 0 4a2 2 0 0 0 0-4zm8-3a2 2 0 1 0 4 0a2 2 0 0 0-4 0z" fill="#626262"/></g></svg>';
 
     let RoleID          = null;
     let PermissionID    = null;
@@ -604,6 +682,16 @@ function thats_it_for_now_incomming_payload($jsondata){
                 el = $(this).closest('.item');
                 $(el).addClass('connected').find('[data-command="connect"]').remove();
                 $(el).find('.actions').append('<a href="#" data-command="disconnect" class="action">' + icon_branch_filled + '</a>');
+            } else if( $(this).data('command') == 'perm-enable' ){
+                el = $(this).closest('.item');
+                var CSSID = getCSSID(el);
+                var PermID = $(el).data('permid');
+                ajaxCall({PermID: PermID, CSSID: CSSID}, 'enablePerm');
+            } else if( $(this).data('command') == 'perm-disable' ){
+                el = $(this).closest('.item');
+                var CSSID = getCSSID(el);
+                var PermID = $(el).data('permid');
+                ajaxCall({PermID: PermID, CSSID: CSSID}, 'disablePerm');
             } else {
                 console.log( 'ERROR: command missing, ' + $(this).data('command') ); 
             }
@@ -630,7 +718,11 @@ function thats_it_for_now_incomming_payload($jsondata){
                 $('#userList').html('');
                 $('#permList .item').each(function(index, value){
                     $(this).removeClass('connected');
-                    $(this).find('.actions').html('<a href="#" class="action" data-command="delete"><span class="iconify" data-icon="fluent:delete-dismiss-24-regular" data-inline="false"></span></a>');
+                    $(this).find('.actions').html('');
+                    if($(this).data('enabled'))
+                        $(this).find('.actions').append(cmd_delete).append(cmd_disable);
+                        else
+                        $(this).find('.actions').append(cmd_delete).append(cmd_enable);
                 });
 
                 return false;
@@ -703,6 +795,11 @@ function thats_it_for_now_incomming_payload($jsondata){
             success: function (response, status, obj) {
                 console.log( response );
 
+                let cmd = '';
+                if (response.hasOwnProperty('cmd')) {
+                    cmd = response.cmd;
+                }
+
                 if (response.hasOwnProperty('command')) {
                     $('#commandLog').append( response.command + '<br>' );
                 }
@@ -718,7 +815,17 @@ function thats_it_for_now_incomming_payload($jsondata){
                     $('#error').append( msg );
                 }
 
-                if (response.hasOwnProperty('permissions')) {
+                if( cmd == 'enablePerm' || cmd == 'disablePerm' ){
+                    $('#' + response.CSSID + ' .actions').find('[data-command="perm-enable"]').remove();
+                    $('#' + response.CSSID + ' .actions').find('[data-command="perm-disable"]').remove();
+                    if( response.state ){
+                        $('#' + response.CSSID).removeClass('perm_disabled perm_enabled').addClass('perm_enabled').data('enabled',true);
+                        $('#' + response.CSSID + ' .actions').append(cmd_disable);
+                    } else {
+                        $('#' + response.CSSID).removeClass('perm_disabled perm_enabled').addClass('perm_disabled').data('enabled',false);
+                        $('#' + response.CSSID + ' .actions').append(cmd_enable);
+                    }
+                } else if (response.hasOwnProperty('permissions')) {
                     console.log( response.permissions );
                     $('#permList .item').each(function(index, value){
                         var PID = parseInt( $(this).children().first().html(), 10 );
