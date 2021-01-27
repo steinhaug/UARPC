@@ -138,6 +138,12 @@ class UARPC_UserManager
     }
 
 
+    public function list($UserID=null)
+    {
+        return $this->permissions($UserID);
+
+    }
+
     /**
      * Get list of permissions allowed for a user
      *
@@ -145,9 +151,10 @@ class UARPC_UserManager
      *
      * @return array Associated array of permissions, PermissionID as key and permission name as value.
      */
-    public function list($UserID=null)
+    public function permissions($UserID=null)
     {
         global $mysqli;
+
         if( $UserID === null ){
             $UserID = $this->UserID;
         }
@@ -205,5 +212,36 @@ class UARPC_UserManager
         return $permissions;
     }
 
+    /**
+     * List roles belonging to user
+     *
+     * @param int $UserID Optional, UserID to lookup
+     *
+     * @return array List of roles connected to the user
+     */
+    public function roles($UserID=null)
+    {
+        global $mysqli;
+
+        if( $UserID === null )
+            $UserID = $this->UserID;
+
+        $sql = "SELECT * FROM `uarpc__userroles` `ur` 
+                JOIN `uarpc__roles` `r` ON `r`.`RoleID` = `ur`.`RoleID` 
+                WHERE `ur`.`UserID` = ?";
+        $res = $mysqli->prepared_query($sql, 'i', [$UserID]);
+
+        $roles = [];
+        if (count($res)) {
+            foreach($res as $row){
+                $roles[$row['RoleID']] = [
+                                            'RoleID' => $row['RoleID'],
+                                            'title' => $row['title'],
+                                            'description' => $row['description']
+                                         ];
+            }
+        }
+        return $roles;
+    }
 
 }
