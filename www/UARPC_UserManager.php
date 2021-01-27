@@ -8,8 +8,14 @@
 class UARPC_UserManager
 {
 
+    // default UserID
     var $UserID = null;
+
+    // if true will output lots of debugging info
     public $verbose_actions = false;
+
+    // method name to process the final returned data from list functions
+    public $returnMethod_formatter = null;
 
     public function __construct($UserID = null, $verbose_actions = false)
     {
@@ -22,8 +28,6 @@ class UARPC_UserManager
             if($this->verbose_actions) echo 'UserID set for ' . $this->UserID . '<br>';
         }
     }
-
-
 
     /**
      * Assign UserID to Permission
@@ -79,8 +83,6 @@ class UARPC_UserManager
             return $affected_rows;
         }
     }
-
-
 
     /**
      * Assign UserID to Permission
@@ -209,7 +211,12 @@ class UARPC_UserManager
         }
 
         if($this->verbose_actions) echo 'User(' . $UserID . ') returned a total of ' . count($permissions) . ' permissions.<br>';
-        return $permissions;
+
+        if( $this->returnMethod_formatter !== null )
+            return $this->{$this->returnMethod_formatter}($permissions, __FUNCTION__);
+            else
+            return $permissions;
+
     }
 
     /**
@@ -241,7 +248,58 @@ class UARPC_UserManager
                                          ];
             }
         }
-        return $roles;
+
+        if( $this->returnMethod_formatter !== null )
+            return $this->{$this->returnMethod_formatter}($roles, __FUNCTION__);
+            else
+            return $roles;
+    }
+
+    /**
+     * Chainable formatter setting
+     *
+     * @param string $format Name of format to be recieved
+     *
+     * @return void
+     */
+    public function format($format)
+    {
+        $valid_formatters = [','];
+        if( !in_array($format, $valid_formatters) )
+            die('<h1>$UARPC error - Must be fixed!</h1><div>-&gt;format(formatter) error: &quot;' . $format . '&quot;.<br>Possible formatters are: &quot;' . implode('&quot;, &quot;', $valid_formatters) . '&quot;</div>');
+
+        if($format == ',')
+            $this->returnMethod_formatter = 'format__comma_seperated';
+
+        return $this;
+    }
+
+    /**
+     * Formatter function: return str, str, str, str
+     *
+     * @param mixed $data The data normally returned by $UARPC
+     * @param string $caller_method Method name data comes from
+     *
+     * @return mixed The processed data
+     */
+    public function format__comma_seperated($data, $caller_method)
+    {
+
+        $this->returnMethod_formatter = null;
+        if( $caller_method == 'roles' ){
+            $txt = '';
+            foreach($data as $key=>$val){
+                if(mb_strlen($txt))
+                    $txt .= ', ';
+                $txt .= $val['title'];
+            }
+            return $txt;
+        } else if( $caller_method == 'permissions' ){
+            return implode(', ', $data);
+        }
+
+        return 'Formatter error, unknown caller: ' . $ref;
+
     }
 
 }
