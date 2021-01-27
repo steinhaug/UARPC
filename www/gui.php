@@ -398,7 +398,7 @@ function thats_it_for_now_incomming_payload($jsondata){
 <body>
 
     <!-- Page Content -->
-    <div class="container"><div id="contents-body">
+    <div class="container-fluid"><div id="contents-body">
 
 
         <h5 class="mt-3">OARPC</h5>
