@@ -310,17 +310,22 @@ _Example #1 return the PermissionId for the admins role_
 
 ## <dd>**permissions->list**</dd>
 
-List all allowed permissions.
+List all permissions.
 
 #### **Description**
 
-    $uarpc->permissions->list( ? int $RoleID ) : array
+    $uarpc->permissions->list( ? $conf ) : array
 
 #### **Parameters**
 
-_RoleID_  
-    Optional, $RoleID for permissions.  
+_conf_  
+    Optional. An array parameters, at the moment theese are the possible settings  
 
+    $conf = [
+        'RoleID' => 1, // int RoleID
+        'sort' => 'asc', // desc
+        'list' => 'parent' // default
+    ]
 
 #### **Return Values**
 
@@ -331,35 +336,52 @@ An associated array: PermissionID=> [PermissionID, title, description].
 _Example #1 Listing all permission_
 
 ```LESS
-    $permissions = $uarpc->permissions->list();
-    // example, where two permissions are returned,
-    // array (size=2)
-    //   1 => 
-    //     array (size=3)
-    //       'PermissionID' => string '1' (length=1)
-    //       'parentId' => bool false (length=1)
-    //       'title' => string '/invoice/read' (length=13)
-    //       'description' => string 'User can read invoice' (length=21)
-    //   2 => 
-    //     array (size=3)
-    //       'PermissionID' => string '2' (length=1)
-    //       'parentId' => int 1 (length=1)
-    //       'title' => string '/invoice/read3' (length=14)
-    //       'description' => string 'User can read invoice' (length=21)
+// Example returns 2 permissions
+$permissions = $uarpc->permissions->list();
+
+var_dump($permissions)
+array (size=2)
+  4 => 
+    array (size=5)
+      'PermissionID' => string '4' (length=1)
+      'parentId' => null
+      'enabled' => string '1' (length=1)
+      'title' => string '/order' (length=6)
+      'description' => string '' (length=0)
+  5 => 
+    array (size=5)
+      'PermissionID' => string '5' (length=1)
+      'parentId' => string '4' (length=1)
+      'enabled' => string '1' (length=1)
+      'title' => string '/visordre' (length=9)
+      'description' => string '' (length=0)
 ```
 
-_Example #2 Listing all permission belonging to RoleID 7_
+_Example #2 Using the parent list mode_
 
 ```LESS
-    $permissions = $uarpc->permissions->list(7);
-    // example, where one permission is returned,
-    // array (size=1)
-    //   2 => 
-    //     array (size=3)
-    //       'PermissionID' => string '2' (length=1)
-    //       'parentId' => bool false (length=1)
-    //       'title' => string '/invoice/read3' (length=14)
-    //       'description' => string 'User can read invoice' (length=21)
+$permissions = $uarpc->permissions->list(['list'=>'parent']);
+
+var_dump($permissions);
+array (size=2)
+  4 => 
+    array (size=7)
+      'PermissionID' => string '4' (length=1)
+      'parentId' => null
+      'enabled' => string '1' (length=1)
+      'description' => string '' (length=0)
+      'title' => string '/order' (length=6)
+      'paTitle' => string '' (length=0)
+      'elTitle' => string '/order' (length=6)
+  5 => 
+    array (size=7)
+      'PermissionID' => string '5' (length=1)
+      'parentId' => string '4' (length=1)
+      'enabled' => string '1' (length=1)
+      'description' => string '' (length=0)
+      'title' => string '/order/visordre' (length=15)
+      'paTitle' => string '/order' (length=6)
+      'elTitle' => string '/visordre' (length=9)
 ```
 
 <hr>
