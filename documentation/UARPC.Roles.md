@@ -13,6 +13,8 @@ The roles object has several functions for administering the roles.
     $uarpc->roles->id($title) : RoleID
     $uarpc->roles->edit($RoleID, $title, ? $description) : bool
     $uarpc->roles->list() : [RoleID=>[obj]]
+    $uarpc->roles->listUsers(RoleID) : [UserID=>[UserID]]
+
 
 ## <dd>**roles->add**</dd>
 
@@ -218,6 +220,44 @@ _Example #1 Listing all roles_
     //     'RoleID' => string '7' (length=1)
     //     'title' => string 'Manager' (length=7)
     //     'description' => string '' (length=0)
+```
+
+<hr>
+<hr>
+
+## <dd>**roles->listUsers**</dd>
+
+List users belonging to a role.
+
+#### **Description**
+
+    $uarpc->roles->listUsers($RoleID) : array
+
+#### **Parameters**
+
+_RoleID_  
+    The RoleID in question  
+
+#### **Return Values**
+
+An associated array: UserID => [ UserID ].
+
+#### **Examples**
+
+_Example #1 Listing all roles_
+
+```LESS
+// Example returns 2 users, 99 and 999
+$users = $uarpc->roles->listUsers(1);
+
+var_dump($users);
+array (size=2)
+  99 => 
+    array (size=1)
+      'UserID' => int 99
+  999 => 
+    array (size=1)
+      'UserID' => int 999
 ```
 
 <hr>
