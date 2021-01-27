@@ -8,6 +8,8 @@ The users object has several functions for administering the users.
     $uarpc->users->unallow( int $PermissionID, ? int $UserID ) : boolean
 
     $uarpc->users->list() : [PermID=>PermTitle]
+    $uarpc->users->permissions(? $UserID) : [PermID=>PermTitle]
+    $uarpc->users->roles(? $UserID) : [RoleID=>[Role data]]
 
 ## <dd>**users->deny**</dd>
 
@@ -24,7 +26,7 @@ This method is for overriding the default role model and making tweaking and cus
 _PermissionID_  
     The PermissionID for the permission you want to deny  
 _UserID_  
-    UserID from your own application logic, outside UARPC. Optional, or will use the instatianated UsedID from class.  
+    UserID from your own application logic, outside UARPC. Optional, or will use the instatianated UserID from class.  
 
 ### **Return Values**
 
@@ -56,7 +58,7 @@ This method is for overriding the default role model and making tweaking and cus
 _PermissionID_  
     The PermissionID for the permission you want to undeny  
 _UserID_  
-    UserID from your own application logic, outside UARPC. Optional, or will use the instatianated UsedID from class.  
+    UserID from your own application logic, outside UARPC. Optional, or will use the instatianated UserID from class.  
 
 ### **Return Values**
 
@@ -88,7 +90,7 @@ This method is for overriding the default role model and making tweaking and cus
 _PermissionID_  
     The PermissionID for the permission you want to allow  
 _UserID_  
-    UserID from your own application logic, outside UARPC. Optional, or will use the instatianated UsedID from class.  
+    UserID from your own application logic, outside UARPC. Optional, or will use the instatianated UserID from class.  
 
 ### **Return Values**
 
@@ -120,7 +122,7 @@ This method is for overriding the default role model and making tweaking and cus
 _PermissionID_  
     The PermissionID for the permission you want to unallow  
 _UserID_  
-    UserID from your own application logic, outside UARPC. Optional, or will use the instatianated UsedID from class.  
+    UserID from your own application logic, outside UARPC. Optional, or will use the instatianated UserID from class.  
 
 ### **Return Values**
 
@@ -136,3 +138,82 @@ _Example #1 Unallowing a permission from a user_
 
 <hr>
 <hr>
+
+## <dd>**users->list**</dd>
+
+Alias for users->permissions
+
+<hr>
+<hr>
+
+## <dd>**users->permissions**</dd>
+
+List all permissions belonging to a user.
+
+#### **Description**
+
+    $uarpc->users->permissions(? $UserID) : array
+
+#### **Parameters**
+
+_UserID_  
+    UserID from your own application logic, outside UARPC. Optional, or will use the instatianated UserID from class.  
+
+#### **Return Values**
+
+An associated array: PermissionID => Permission_title.
+
+#### **Examples**
+
+_Example #1 Listing permissions for default user_
+
+```LESS
+$permissions = $uarpc->users->permissions();
+
+var_dump($permissions);
+array (size=3)
+    5 => string '/visordre' (length=9)
+    6 => string '/regnskap' (length=9)
+    7 => string '/skrive' (length=7)
+```
+<hr>
+<hr>
+
+## <dd>**users->roles**</dd>
+
+List all roles belonging to a user.
+
+#### **Description**
+
+    $uarpc->users->roles(? $UserID) : array
+
+#### **Parameters**
+
+_UserID_  
+    UserID from your own application logic, outside UARPC. Optional, or will use the instatianated UserID from class.  
+
+#### **Return Values**
+
+An associated array: RoleID => [RoleID, title, description].
+
+#### **Examples**
+
+_Example #1 Listing roles for default user_
+
+```LESS
+// Example, user belonging to "admin" and "bruker".
+$roles = $uarpc->users->roles();
+
+var_dump($roles);
+array (size=2)
+  1 => 
+    array (size=3)
+      'RoleID' => int 1
+      'title' => string 'admin' (length=5)
+      'description' => string '' (length=0)
+  2 => 
+    array (size=3)
+      'RoleID' => int 2
+      'title' => string 'bruker' (length=6)
+      'description' => string '' (length=0)
+```
