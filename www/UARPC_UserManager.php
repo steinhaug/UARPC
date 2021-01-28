@@ -164,10 +164,10 @@ class UARPC_UserManager
         if($UserID === null)
             throw new Exception('UserManager, cannot deny permission no UserID');
 
-        $sql = "SELECT up.`PermissionID`  
-                FROM uarpc__permissions up 
-                JOIN uarpc__userdenypermissions udp  ON ( udp.PermissionID = up.PermissionID ) 
-                WHERE udp.UserID=? 
+        $sql = "SELECT `up`.`PermissionID`  
+                FROM `uarpc__permissions` `up` 
+                JOIN `uarpc__userdenypermissions` `udp` ON ( `udp`.`PermissionID` = `up`.`PermissionID` ) 
+                WHERE `udp`.`UserID`=? 
                 ";
 
         $res = $mysqli->prepared_query($sql, 'i', [$UserID]);
@@ -178,17 +178,17 @@ class UARPC_UserManager
             }
         }
 
-        $sql = "SELECT up.`PermissionID`, up.`title` 
-                FROM uarpc__permissions up 
-                JOIN uarpc__rolepermissions urp ON ( urp.PermissionID = up.PermissionID ) 
-                JOIN uarpc__userroles uur ON ( uur.RoleID = urp.RoleID ) 
-                WHERE uur.UserID=? 
-                GROUP BY up.PermissionID 
+        $sql = "SELECT `up`.`enabled`, `up`.`PermissionID`, `up`.`title` 
+                FROM `uarpc__permissions` `up` 
+                JOIN `uarpc__rolepermissions` `urp` ON ( `urp`.`PermissionID` = `up`.`PermissionID` ) 
+                JOIN `uarpc__userroles` `uur` ON ( `uur`.`RoleID` = `urp`.`RoleID` ) 
+                WHERE `uur`.`UserID`=? 
+                GROUP BY `up`.`PermissionID` 
                 UNION
-                SELECT up.`PermissionID`, up.`title` 
-                FROM uarpc__permissions up 
-                JOIN uarpc__userallowpermissions uap  ON ( uap.PermissionID = up.PermissionID ) 
-                WHERE uap.UserID=? 
+                SELECT `up`.`enabled`, `up`.`PermissionID`, `up`.`title` 
+                FROM `uarpc__permissions` `up` 
+                JOIN `uarpc__userallowpermissions` `uap`  ON ( `uap`.`PermissionID` = `up`.`PermissionID` ) 
+                WHERE `uap`.`UserID`=? 
                 ";
 
         $res = $mysqli->prepared_query($sql, 'ii', [$UserID,$UserID]);
@@ -197,6 +197,9 @@ class UARPC_UserManager
 
         if ($res) {
             foreach($res as $item){
+
+                if( !$item['enabled'] )
+                    continue;
 
                 if( count($remove_ids) ){
                     if( !in_array($item['PermissionID'], $remove_ids) ){
