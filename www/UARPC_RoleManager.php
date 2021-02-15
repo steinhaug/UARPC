@@ -146,6 +146,28 @@ class UARPC_RoleManager
         }
     }
 
+    /**
+     * Check if a user is assigned to a role
+     *
+     * @param [type] $RoleID RoleID to check
+     * @param [type] $UserID UserID to check
+     *
+     * @return bool True if user is assigned and false if user is not.
+     */
+    public function isAssigned($RoleID, $UserID)
+    {
+        global $mysqli;
+
+        $res = $mysqli->prepared_query("SELECT * from UARPC__userroles WHERE UserID=? and RoleID=?", 'ii', [$UserID,$RoleID]);
+        if (count($res)) {
+            if($this->verbose_actions) echo 'isAssigned, user ' . $UserID . ' IS assigned for role ' . $RoleID;
+            return true;
+        } else {
+            if($this->verbose_actions) echo 'isAssigned, user ' . $UserID . ' IS NOT assigned for role ' . $RoleID;
+            return false;
+        }
+
+    }
 
     /**
      * Return RoleID from role

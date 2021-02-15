@@ -16,7 +16,15 @@ $uarpc = new UARPC_base(USER_KIM, 1);
 
 
 $roles = $uarpc->roles->list(99);
-var_dump($roles);
+
+var_dump( $uarpc->roles->isAssigned(1, 99) );
+var_dump( $uarpc->roles->isAssigned(2, 99) );
+var_dump( $uarpc->roles->isAssigned(3, 99) );
+var_dump( $uarpc->roles->isAssigned(2, 199) );
+exit;
+
+$permissions = $uarpc->permissions->list(['onlyEnabled'=>true]);
+var_dump($permissions);
 exit;
 
 var_dump( $uarpc->havePermission('/order') );

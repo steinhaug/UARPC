@@ -3,18 +3,20 @@
 The roles object has several functions for administering the roles.
 
     $uarpc->roles->add( string $title, string $description ) : int
+    $uarpc->roles->delete($RoleID) : bool
+    $uarpc->roles->edit($RoleID, $title, ? $description) : bool
+
     $uarpc->roles->assign( int $RoleID, int $UserID ) : boolean
     $uarpc->roles->unassign( int $RoleID, int $UserID ) : boolean
-    $uarpc->roles->id( string $title ) : int
-    $uarpc->roles->getTitle( int $RoleID ) : string
-    $uarpc->roles->getDescription( int $RoleID ) : string
+    $uarpc->roles->isAssigned( int $RoleID, int $UserID ) : boolean
 
-    $uarpc->roles->delete($RoleID) : bool
-    $uarpc->roles->id($title) : RoleID
-    $uarpc->roles->edit($RoleID, $title, ? $description) : bool
-    $uarpc->roles->list() : [RoleID=>[obj]]
+    $uarpc->roles->id( string $title ) : int
+
+    $uarpc->roles->list(? $UserID) : [RoleID=>[obj]]
     $uarpc->roles->listUsers(RoleID) : [UserID=>[UserID]]
 
+    $uarpc->roles->getTitle( int $RoleID ) : string
+    $uarpc->roles->getDescription( int $RoleID ) : string
 
 ## <dd>**roles->add**</dd>
 
@@ -152,6 +154,35 @@ _Example #1 assigning user 490 to Role admins_
 
     $roleid = $uarpc->roles->add('admins');
     $uarpc->roles->unassign($roleid, 490);
+
+<hr>
+<hr>
+
+## <dd>**roles->isAssigned**</dd>
+
+Check if a user is assigned to a role, the function is available from the $uarpc object.
+
+#### **Description**
+
+    $uarpc->roles->isAssigned( int $RoleID, int $UserID ) : boolean
+
+#### **Parameters**
+
+_RoleID_  
+    The RoleID for the Role you want  
+_UserID_  
+    UserID from your own application logic, outside UARPC  
+
+#### **Return Values**
+
+On success returns true else returns false.
+
+#### **Examples**
+
+_Example #1 check if UserID 490 is assigned to RoleID 2_
+
+    $signal = $uarpc->roles->isAssigned(2, 490);
+    // $signal is boolean
 
 <hr>
 <hr>
