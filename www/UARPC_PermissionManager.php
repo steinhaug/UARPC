@@ -304,6 +304,9 @@ class UARPC_PermissionManager
 
         $__listType = 'default';
         $__orderby = '';
+        $__conf = [
+            'onlyEnabled' => false
+        ];
 
         if( is_array($RoleID) ){
 
@@ -324,6 +327,10 @@ class UARPC_PermissionManager
                     if( $RoleID['sort'] == 'desc' )
                         $__orderby = ' ORDER BY `up`.`title` DESC';
                 }
+            }
+
+            if( isset($RoleID['onlyEnabled']) and in_array($RoleID['onlyEnabled'], [true,'1','true','yes']) ){
+                $__conf['onlyEnabled'] = true;
             }
 
             if (isset($RoleID['RoleID']) and (int) $RoleID['RoleID']) {
@@ -356,6 +363,16 @@ class UARPC_PermissionManager
             $items = [];
             if (count($res)) {
                 foreach($res as $item){
+
+                    if ($__conf['onlyEnabled'] and $item['enabled']) {
+                        unset($item['enabled']);
+                        $items[ $item['PermissionID'] ] = $item;
+                    } else if($__conf['onlyEnabled'] and !$item['enabled']) {
+                        // We ignore adding the permission
+                    } else {
+                        $items[ $item['PermissionID'] ] = $item;
+                    }
+
                     $items[ $item['PermissionID'] ] = $item;
                 }
             }
@@ -371,7 +388,15 @@ class UARPC_PermissionManager
             if( $res->num_rows ){
                 $items = [];
                 while( $row = $res->fetch_assoc() ){
-                    $items[ $row['PermissionID'] ] = $row;
+
+                    if ($__conf['onlyEnabled'] and $row['enabled']) {
+                        unset($row['enabled']);
+                        $items[ $row['PermissionID'] ] = $row;
+                    } else if($__conf['onlyEnabled'] and !$row['enabled']) {
+                        // We ignore adding the permission
+                    } else {
+                        $items[ $row['PermissionID'] ] = $row;
+                    }
                 }
                 return $items;
             } else {
