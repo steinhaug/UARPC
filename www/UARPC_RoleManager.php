@@ -170,15 +170,26 @@ class UARPC_RoleManager
 
 
 
+    /**
+     * List all available roles, + current users assignment
+     *
+     * @param int $UserID UserID for user to check for assignment
+     *
+     * @return array Array of roles 
+     */
     public function list($UserID=null)
     {
         global $mysqli;
+
+        if( $UserID === null ){
+            $UserID = $this->UserID;
+        }
 
         //$res = $mysqli->query("SELECT `RoleID`, `title`, `description` from UARPC__roles");
 
         $sql = "SELECT `r`.`RoleID`, `r`.`title`, `r`.`description`, `ur`.`UserID` as thisUserAssigned 
                 FROM `uarpc__roles` `r` 
-                LEFT JOIN `uarpc__userroles` ur ON (`r`.`RoleID` = `ur`.`RoleID` AND `ur`.`UserID` = " . (int) $this->UserID .  ")";
+                LEFT JOIN `uarpc__userroles` ur ON (`r`.`RoleID` = `ur`.`RoleID` AND `ur`.`UserID` = " . (int) $UserID .  ")";
         $res = $mysqli->query($sql);
 
         if( $res->num_rows ){
@@ -188,7 +199,6 @@ class UARPC_RoleManager
                     $row['assigned'] = false;
                     else
                     $row['assigned'] = true;
-                unset($row['thisUserAssigned']);
                 $roles[ $row['RoleID'] ] = $row;
             }
             return $roles;
