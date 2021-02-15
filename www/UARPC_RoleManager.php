@@ -8,13 +8,22 @@
 class UARPC_RoleManager 
 {
 
+    // default UserID
+    var $UserID = null;
+
     public $verbose_actions = false;
 
-    public function __construct($verbose_actions = false)
+    public function __construct($UserID = null, $verbose_actions = false)
     {
         $this->verbose_actions = $verbose_actions;
 
         if($this->verbose_actions) echo 'UARPC_RoleManager init: ' . time() . '<br>';
+
+        if( $UserID !== null ){
+            $this->UserID = $UserID;
+            if($this->verbose_actions) echo 'UserID set for ' . $this->UserID . '<br>';
+        }
+
     }
 
 
@@ -165,10 +174,21 @@ class UARPC_RoleManager
     {
         global $mysqli;
 
-        $res = $mysqli->query("SELECT `RoleID`, `title`, `description` from UARPC__roles");
+        //$res = $mysqli->query("SELECT `RoleID`, `title`, `description` from UARPC__roles");
+
+        $sql = "SELECT `r`.`RoleID`, `r`.`title`, `r`.`description`, `ur`.`UserID` as thisUserAssigned 
+                FROM `uarpc__roles` `r` 
+                LEFT JOIN `uarpc__userroles` ur ON (`r`.`RoleID` = `ur`.`RoleID` AND `ur`.`UserID` = " . (int) $this->UserID .  ")";
+        $res = $mysqli->query($sql);
+
         if( $res->num_rows ){
             $roles = [];
             while( $row = $res->fetch_assoc() ){
+                if( is_null($row['thisUserAssigned']) )
+                    $row['assigned'] = false;
+                    else
+                    $row['assigned'] = true;
+                unset($row['thisUserAssigned']);
                 $roles[ $row['RoleID'] ] = $row;
             }
             return $roles;

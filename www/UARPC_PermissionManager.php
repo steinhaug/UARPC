@@ -8,13 +8,22 @@
 class UARPC_PermissionManager 
 {
 
+    // default UserID
+    var $UserID = null;
+
     public $verbose_actions = false;
 
-    public function __construct($verbose_actions = false)
+    public function __construct($UserID = null, $verbose_actions = false)
     {
         $this->verbose_actions = $verbose_actions;
 
         if($this->verbose_actions) echo 'UARPC_PermissionManager init: ' . time() . '<br>';
+
+        if( $UserID !== null ){
+            $this->UserID = $UserID;
+            if($this->verbose_actions) echo 'UserID set for ' . $this->UserID . '<br>';
+        }
+
     }
 
     /**

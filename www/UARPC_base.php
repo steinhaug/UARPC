@@ -32,8 +32,8 @@ class UARPC_base {
             if($this->verbose_actions) echo 'UserID set for ' . $this->UserID . '<br>';
         }
 
-        $this->roles = new UARPC_RoleManager ($this->verbose_actions);
-        $this->permissions = new UARPC_PermissionManager ($this->verbose_actions);
+        $this->roles = new UARPC_RoleManager ($this->UserID, $this->verbose_actions);
+        $this->permissions = new UARPC_PermissionManager ($this->UserID, $this->verbose_actions);
         $this->users = new UARPC_UserManager ($this->UserID, $this->verbose_actions);
 
     }
