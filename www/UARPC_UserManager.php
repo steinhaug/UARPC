@@ -140,6 +140,42 @@ class UARPC_UserManager
     }
 
 
+    public function isAllowed($PermissionID, $UserID=null)
+    {
+        global $mysqli;
+
+        if( $UserID === null ){
+            $UserID = $this->UserID;
+        }
+
+        $res = $mysqli->prepared_query("SELECT * from uarpc__userallowpermissions WHERE UserID=? and PermissionID=?", 'ii', [$UserID,$PermissionID]);
+        if (count($res)) {
+            if($this->verbose_actions) echo 'isAllowed, user ' . $UserID . ' IS ALLOWED by override PermissionID ' . $PermissionID;
+            return true;
+        }
+
+        return false;
+    }
+
+    public function isDenied($PermissionID, $UserID=null)
+    {
+        global $mysqli;
+
+        if( $UserID === null ){
+            $UserID = $this->UserID;
+        }
+
+        $res = $mysqli->prepared_query("SELECT * from uarpc__userdenypermissions WHERE UserID=? and PermissionID=?", 'ii', [$UserID,$PermissionID]);
+        if (count($res)) {
+            if($this->verbose_actions) echo 'isDenied, user ' . $UserID . ' IS DENIED by override PermissionID ' . $PermissionID;
+            return true;
+        }
+
+        return false;
+    }
+
+
+
     public function list($UserID=null)
     {
         return $this->permissions($UserID);

@@ -7,6 +7,9 @@ The users object has several functions for administering the users.
     $uarpc->users->allow( int $PermissionID, ? int $UserID ) : boolean
     $uarpc->users->unallow( int $PermissionID, ? int $UserID ) : boolean
 
+    $uarpc->users->isDenied( int $PermissionID, ? int $UserID ) : boolean
+    $uarpc->users->isAllowed( int $PermissionID, ? int $UserID ) : boolean
+
     $uarpc->users->list() : [PermID=>PermTitle]
     $uarpc->users->permissions(? $UserID) : [PermID=>PermTitle]
     $uarpc->users->roles(? $UserID) : [RoleID=>[Role data]]
@@ -135,6 +138,76 @@ _Example #1 Unallowing a permission from a user_
     $uarpc = new UARPC_base(999);
     $PermissionID = $uarpc->permissions->id('/write_access');
     $uarpc->users->unallow($PermissionID);
+
+<hr>
+<hr>
+
+## <dd>**users->isDenied**</dd>
+
+Check if a user has been denied a permission by override, the function is available from the $uarpc object.
+
+### **Description**
+
+    $uarpc->users->isDenied( int $PermissionID, int $UserID=null ) : boolean
+
+### **Parameters**
+
+_PermissionID_  
+    The PermissionID for the permission you want to unallow  
+_UserID_  
+    UserID from your own application logic, outside UARPC. Optional, or will use the instatianated UserID from class.  
+
+### **Return Values**
+
+On success returns true else returns false.
+
+### **Examples**
+
+_Example #1 Check if UserID 80, and 999 has been denied PermissionID 232_
+
+```LESS
+$uarpc = new UARPC_base(999);
+// without UserID, defaults to instatiated UserID
+$signal = $uarpc->users->isDenied(232);
+
+// Adding UserID will lookup that particular user
+$signal = $uarpc->users->isDenied(232, 99);
+```
+
+<hr>
+<hr>
+
+## <dd>**users->isAllowed**</dd>
+
+Check if a user has been allowed a permission by override, the function is available from the $uarpc object.
+
+### **Description**
+
+    $uarpc->users->isAllowed( int $PermissionID, int $UserID=null ) : boolean
+
+### **Parameters**
+
+_PermissionID_  
+    The PermissionID for the permission you want to unallow  
+_UserID_  
+    UserID from your own application logic, outside UARPC. Optional, or will use the instatianated UserID from class.  
+
+### **Return Values**
+
+On success returns true else returns false.
+
+### **Examples**
+
+_Example #1 Check if UserID 80, and 999 has been allowed PermissionID 232_
+
+```LESS
+$uarpc = new UARPC_base(999);
+// without UserID, defaults to instatiated UserID
+$signal = $uarpc->users->isAllowed(232);
+
+// Adding UserID will lookup that particular user
+$signal = $uarpc->users->isAllowed(232, 99);
+```
 
 <hr>
 <hr>
