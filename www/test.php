@@ -12,10 +12,43 @@ define('ROLE2','Boss');
 define('PERM1','/invoice/read');        // 1
 define('PERM2','/invoice/write-delay'); // 4
 
-
 $uarpc = new UARPC_base(USER_KIM, 1);
 
-var_dump( $uarpc->permissions->delete(3) );
+
+$roles = $uarpc->roles->list(99);
+var_dump($roles);
+exit;
+
+var_dump( $uarpc->havePermission('/order') );
+var_dump( $uarpc->havePermission('/visordre') );
+
+var_dump( $uarpc->users->permissions(99) );
+
+/*
+var_dump( $uarpc->permissions->id('/--a') );
+var_dump( $uarpc->permissions->id('/--å') );
+var_dump( $uarpc->permissions->id('/--Å') );
+var_dump( $uarpc->permissions->id('/timeliste kø') );
+*/
+
+#$roles = $uarpc->users->format(',')->roles();
+#var_dump( $roles );
+#$roles = $uarpc->users->permissions();
+#var_dump( $roles );
+
+/*
+foreach($roles as $role){
+    $array[] = $role['title'];
+}
+
+
+var_dump( $array );
+*/
+
+#$format = function($arr)
+
+
+#$userroles($titles)
 
 #$list = $uarpc->roles->listUsers(1);
 #var_dump($list);
