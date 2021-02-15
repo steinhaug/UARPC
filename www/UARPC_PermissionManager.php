@@ -408,6 +408,45 @@ class UARPC_PermissionManager
 
 
     /**
+     * List permissions and include data for a particular user
+     *
+     * @param array $conf Configuration for the list
+     *
+     * @return array Returns all of the enabled $PermissionsIDs  
+     */
+    public function listUser($conf){
+        global $mysqli;
+
+        $conf['onlyEnabled'] = true;
+        $permissions = $this->list($conf);
+
+        if( $conf['UserID'] === null ){
+            $UserID = $this->UserID;
+        } else {
+            $UserID = $conf['UserID'];
+        }
+
+        // Check if permission has been allowed or denied on user level
+        $_processedPermissions = [];
+        foreach ($permissions as $permission) {
+            $PermissionID = $permission['PermissionID'];
+            $permission['override'] = 'auto';
+            $res = $mysqli->prepared_query("SELECT * from uarpc__userdenypermissions WHERE UserID=? and PermissionID=?", 'ii', [$UserID,$PermissionID]);
+            if (count($res)) {
+                $permission['override'] = 'block';
+            }
+            $res = $mysqli->prepared_query("SELECT * from uarpc__userallowpermissions WHERE UserID=? and PermissionID=?", 'ii', [$UserID,$PermissionID]);
+            if (count($res)) {
+                $permission['override'] = 'grant';
+            }
+            $_processedPermissions[$PermissionID] = $permission;
+        }
+
+        return $_processedPermissions;
+    }
+
+
+    /**
      * Return permission title
      *
      * @param int $PermissionID

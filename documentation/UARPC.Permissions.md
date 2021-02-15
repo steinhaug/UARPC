@@ -405,6 +405,55 @@ array (size=1)
 <hr>
 <hr>
 
+## <dd>**permissions->listUser**</dd>
+
+List permissions from a given user perspective, the function is available from the $uarpc object.
+
+#### **Description**
+
+    $uarpc->permissions->listUser( arr $conf ) : array
+
+#### **Parameters**
+
+_conf_  
+    Configuration array.  
+
+#### **Return Values**
+
+Returns an array of all permissions available for user, and state of permission for user.
+
+#### **Examples**
+
+_Example #1 return all permissions for user 99_
+
+```LESS
+$perms = $uarpc->permissions->listUser(['UserID'=>99]);
+
+var_dump($perms);
+// array (size=2)
+//   13 => 
+//     array (size=7)
+//       'PermissionID' => string '13' (length=2)
+//       'parentId' => null
+//       'description' => string '' (length=0)
+//       'title' => string '#stemplingsur' (length=13)
+//       'paTitle' => string '' (length=0)
+//       'elTitle' => string '#stemplingsur' (length=13)
+//       'override' => string 'auto' (length=4)
+//   18 => 
+//     array (size=7)
+//       'PermissionID' => string '18' (length=2)
+//       'parentId' => null
+//       'description' => string '' (length=0)
+//       'title' => string '/--Å' (length=5)
+//       'paTitle' => string '' (length=0)
+//       'elTitle' => string '/--Å' (length=5)
+//       'override' => string 'block' (length=5)
+```
+
+<hr>
+<hr>
+
 ## <dd>**permissions->getTitle**</dd>
 
 Return the name of a permission, the function is available from the $uarpc object.
