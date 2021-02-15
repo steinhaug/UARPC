@@ -72,7 +72,8 @@ class UARPC_PermissionManager
      *
      * @return boolean True on success, false on failure
      */
-    public function delete($PermissionID){
+    public function delete($PermissionID)
+    {
         global $mysqli;
 
         if ($mysqli->prepared_query1("SELECT count(*) as `count` FROM `uarpc__rolepermissions` WHERE `PermissionID`=?", 'i', [$PermissionID], 0)){
@@ -414,7 +415,8 @@ class UARPC_PermissionManager
      *
      * @return array Returns all of the enabled $PermissionsIDs  
      */
-    public function listUser($conf){
+    public function listUser($conf)
+    {
         global $mysqli;
 
         $conf['onlyEnabled'] = true;

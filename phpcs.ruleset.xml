@@ -16,6 +16,7 @@
         <exclude name="Generic.PHP.UpperCaseConstant.Found"/>
         <exclude name="Generic.PHP.LowerCaseConstant.Found"/>
         <exclude name="Generic.Files.LineLength.TooLong"/>
+        <exclude name="Generic.Files.LowercasedFilename.NotFound"/>
 
         <!-- whitespace indentation and line endings rules -->
 
@@ -35,6 +36,7 @@
         <exclude name="Generic.PHP.DisallowShortOpenTag.EchoFound"/>
         <exclude name="Generic.ControlStructures.InlineControlStructure.NotAllowed"/>
         <exclude name="PEAR.ControlStructures.ControlSignature.Found"/>
+        <exclude name="Generic.Strings.UnnecessaryStringConcat.Found"/>
 
         <!-- functions and classes -->
 
