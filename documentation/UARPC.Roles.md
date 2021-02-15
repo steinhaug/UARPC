@@ -192,15 +192,16 @@ List all allowed roles.
 
 #### **Description**
 
-    $uarpc->roles->list() : array
+    $uarpc->roles->list(? $userID) : array
 
 #### **Parameters**
 
-none.
+_UserID_  
+    UserID from your own application logic, outside UARPC  
 
 #### **Return Values**
 
-An associated array: RoleID => [ RoleID, title, description ].
+An associated array: RoleID => [ RoleID, title, description, thisUserAssigned, assigned ].
 
 #### **Examples**
 
@@ -215,11 +216,15 @@ _Example #1 Listing all roles_
     //     'RoleID' => string '1' (length=1)
     //     'title' => string 'Admin' (length=12)
     //     'description' => string '' (length=0)
+    //     'thisUserAssigned' => string '99' (length=1)
+    //     'assigned' => boolean true
     // 7 => 
     //     array (size=3)
     //     'RoleID' => string '7' (length=1)
     //     'title' => string 'Manager' (length=7)
     //     'description' => string '' (length=0)
+    //     'thisUserAssigned' => string '99' (length=1)
+    //     'assigned' => boolean false
 ```
 
 <hr>

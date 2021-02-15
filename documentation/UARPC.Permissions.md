@@ -324,7 +324,8 @@ _conf_
     $conf = [
         'RoleID' => 1, // int RoleID
         'sort' => 'asc', // desc
-        'list' => 'parent' // default
+        'list' => 'parent', // default
+        'onlyEnabled' => false // true, false
     ]
 
 #### **Return Values**
@@ -352,7 +353,7 @@ array (size=2)
     array (size=5)
       'PermissionID' => string '5' (length=1)
       'parentId' => string '4' (length=1)
-      'enabled' => string '1' (length=1)
+      'enabled' => string '0' (length=1)
       'title' => string '/visordre' (length=9)
       'description' => string '' (length=0)
 ```
@@ -377,11 +378,28 @@ array (size=2)
     array (size=7)
       'PermissionID' => string '5' (length=1)
       'parentId' => string '4' (length=1)
-      'enabled' => string '1' (length=1)
+      'enabled' => string '0' (length=1)
       'description' => string '' (length=0)
       'title' => string '/order/visordre' (length=15)
       'paTitle' => string '/order' (length=6)
       'elTitle' => string '/visordre' (length=9)
+```
+
+_Example #3 Using the onlyEnabled and list mode_
+
+```LESS
+$permissions = $uarpc->permissions->list(['list'=>'parent', 'onlyEnabled'=>true]);
+
+var_dump($permissions);
+array (size=1)
+  4 => 
+    array (size=7)
+      'PermissionID' => string '4' (length=1)
+      'parentId' => null
+      'description' => string '' (length=0)
+      'title' => string '/order' (length=6)
+      'paTitle' => string '' (length=0)
+      'elTitle' => string '/order' (length=6)
 ```
 
 <hr>
