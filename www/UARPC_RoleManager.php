@@ -13,6 +13,10 @@ class UARPC_RoleManager
 
     public $verbose_actions = false;
 
+    // method name to process the final returned data from list functions
+    public $returnMethod_formatter = null;
+    public $returnMethod_param1 = null; // possible parameter for formatter
+
     public function __construct($UserID = null, $verbose_actions = false)
     {
         $this->verbose_actions = $verbose_actions;
@@ -223,9 +227,15 @@ class UARPC_RoleManager
                     $row['assigned'] = true;
                 $roles[ $row['RoleID'] ] = $row;
             }
-            return $roles;
+            if( $this->returnMethod_formatter !== null )
+                return $this->{$this->returnMethod_formatter}($roles, __FUNCTION__);
+                else
+                return $roles;   
         } else {
-            return [];
+            if( $this->returnMethod_formatter !== null )
+                return $this->{$this->returnMethod_formatter}([], __FUNCTION__);
+                else
+                return [];   
         }
    
     }
@@ -254,7 +264,11 @@ class UARPC_RoleManager
                                          ];
             }
         }
-        return $users;
+
+        if( $this->returnMethod_formatter !== null )
+            return $this->{$this->returnMethod_formatter}($users, __FUNCTION__);
+            else
+            return $users;
     }
 
     /**
@@ -297,7 +311,66 @@ class UARPC_RoleManager
         }
     }
 
+    /**
+     * Chainable formatter setting
+     *
+     * @param string $format Name of format to be recieved
+     *
+     * @return void
+     */
+    public function format($format, $param1 = null)
+    {
+        $valid_formatters = ['option'];
+        if( !in_array($format, $valid_formatters) )
+            die('<h1>$UARPC Role error - Must be fixed!</h1><div>-&gt;format(formatter) error: &quot;' . $format . '&quot;.<br>Possible formatters are: &quot;' . implode('&quot;, &quot;', $valid_formatters) . '&quot;</div>');
 
+        if($format == 'option')
+            $this->returnMethod_formatter = 'format__option';
+
+        if($param1 !== null)
+            $this->returnMethod_param1 = $param1;
+
+        return $this;
+    }
+
+    /**
+     * Formatter function: return str, str, str, str
+     *
+     * @param mixed $data The data normally returned by $UARPC
+     * @param string $caller_method Method name data comes from
+     *
+     * @return mixed The processed data
+     */
+    public function format__option($data, $caller_method)
+    {
+
+        $p1 = $this->returnMethod_param1;
+
+        $this->returnMethod_formatter = null;
+        $this->returnMethod_param1 = null;
+        if( $caller_method == 'list' ){
+            $markup = '';
+            foreach($data as $key=>$val){
+                if( $p1 !== null and $p1 == $key )
+                    $markup .= '<option value="' . $key . '" selected="true">' . $val['title'] . '</option>' . "\n";
+                    else
+                    $markup .= '<option value="' . $key . '">' . $val['title'] . '</option>' . "\n";
+            }
+            return $markup;
+        } else if( $caller_method == 'listUsers' ){
+            $markup = '';
+            foreach($data as $key=>$val){
+                if( $p1 !== null and $p1 == $key )
+                    $markup .= '<option value="' . $key . '" selected="true">UserID ' . $val['UserID'] . '</option>' . "\n";
+                    else
+                    $markup .= '<option value="' . $key . '">UserID ' . $val['UserID'] . '</option>' . "\n";
+            }
+            return $markup;
+        }
+
+        return 'Formatter error, unknown caller: ' . $ref;
+
+    }
 
 
 }
