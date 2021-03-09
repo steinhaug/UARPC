@@ -15,6 +15,13 @@ define('PERM2','/invoice/write-delay'); // 4
 $uarpc = new UARPC_base(USER_KIM, 1);
 
 
+
+var_dump( $uarpc->roles->listUsers(1) );
+var_dump( $uarpc->roles->format('option', 999)->listUsers(1) );
+exit;
+var_dump( $uarpc->roles->list() );
+var_dump( $uarpc->roles->format('option', 2)->list() );
+
 var_dump( $uarpc->users->isDenied(18, 99) );
 var_dump( $uarpc->users->isAllowed(19, 99) );
 
