@@ -19,12 +19,24 @@ class UARPC_base {
     public $permissions;
     public $users;
 
+    // default UserID
     public $UserID = null;
+
+    // Database prefix
+    public $db_prefix = 'uarpc_';
+
+    // if true will output lots of debugging info
     public $verbose_actions = false;
 
-    public function __construct($UserID = null, $verbose_actions = false)
+    public function __construct($UserID = null, $verbose_actions = false, $db_prefix = null)
     {
         $this->verbose_actions = $verbose_actions;
+
+        if( isset($GLOBALS['steinhaugUarpcDbPrefix']) )
+            $this->db_prefix = $GLOBALS['steinhaugUarpcDbPrefix'];
+
+        if( $db_prefix !== null )
+            $this->db_prefix = $db_prefix;
 
         if($this->verbose_actions) echo 'UARPC init: ' . time() . '<br>';
         if( $UserID !== null ){
@@ -32,10 +44,15 @@ class UARPC_base {
             if($this->verbose_actions) echo 'UserID set for ' . $this->UserID . '<br>';
         }
 
-        $this->roles = new UARPC_RoleManager ($this->UserID, $this->verbose_actions);
-        $this->permissions = new UARPC_PermissionManager ($this->UserID, $this->verbose_actions);
-        $this->users = new UARPC_UserManager ($this->UserID, $this->verbose_actions);
+        $this->roles = new UARPC_RoleManager ($this->UserID, $this->verbose_actions, $this->db_prefix);
+        $this->permissions = new UARPC_PermissionManager ($this->UserID, $this->verbose_actions, $this->db_prefix);
+        $this->users = new UARPC_UserManager ($this->UserID, $this->verbose_actions, $this->db_prefix);
 
+    }
+
+    public function set_db_prefix($db_prefix)
+    {
+        $this->db_prefix = $db_prefix;
     }
 
     public function addRole($title, $description='')
@@ -80,8 +97,8 @@ class UARPC_base {
 
         // 2. check if permission is denied on user
         $sql = 'SELECT * 
-                FROM `uarpc__permissions` `up` 
-                JOIN `uarpc__userdenypermissions` `uudp` ON ( `uudp`.`PermissionID` = `up`.`PermissionID` ) 
+                FROM `' . $this->db_prefix . '_permissions` `up` 
+                JOIN `' . $this->db_prefix . '_userdenypermissions` `uudp` ON ( `uudp`.`PermissionID` = `up`.`PermissionID` ) 
                 WHERE `up`.`title`=? AND `uudp`.`UserID` = ?
                 ';
         $res = $mysqli->prepared_query($sql, 'si', [$PermissionTitle, $this->UserID]);
@@ -92,8 +109,8 @@ class UARPC_base {
 
         // 3. Check if permission is allowed for user
         $sql = 'SELECT * 
-                FROM `uarpc__permissions` `up` 
-                JOIN `uarpc__userallowpermissions` `uudp` ON ( `uudp`.`PermissionID` = `up`.`PermissionID` ) 
+                FROM `' . $this->db_prefix . '_permissions` `up` 
+                JOIN `' . $this->db_prefix . '_userallowpermissions` `uudp` ON ( `uudp`.`PermissionID` = `up`.`PermissionID` ) 
                 WHERE `up`.`title`=? AND `uudp`.`UserID` = ?
                 ';
         $res = $mysqli->prepared_query($sql, 'si', [$PermissionTitle, $this->UserID]);
@@ -104,10 +121,10 @@ class UARPC_base {
 
         // 4. Check if permission is allowed for role belonging to user
         $sql = 'SELECT * 
-                FROM `uarpc__permissions` `up` 
-                JOIN `uarpc__rolepermissions` `urp` ON ( `urp`.`PermissionID` = `up`.`PermissionID` ) 
-                JOIN `uarpc__userroles` `uur` ON ( `uur`.`RoleID` = `urp`.`RoleID` ) 
-                JOIN `uarpc__roles` `ur` ON ( `ur`.`RoleID` = `uur`.`RoleID` ) 
+                FROM `' . $this->db_prefix . '_permissions` `up` 
+                JOIN `' . $this->db_prefix . '_rolepermissions` `urp` ON ( `urp`.`PermissionID` = `up`.`PermissionID` ) 
+                JOIN `' . $this->db_prefix . '_userroles` `uur` ON ( `uur`.`RoleID` = `urp`.`RoleID` ) 
+                JOIN `' . $this->db_prefix . '_roles` `ur` ON ( `ur`.`RoleID` = `uur`.`RoleID` ) 
                 WHERE `up`.`title`=? AND `uur`.`UserID` = ?
                 ';
 
@@ -134,8 +151,8 @@ class UARPC_base {
         global $mysqli;
 
         $sql = 'SELECT * 
-                FROM uarpc__permissions up 
-                WHERE up.title=?
+                FROM `' . $this->db_prefix . '_permissions` `up` 
+                WHERE `up`.`title`=?
                 ';
         $res = $mysqli->prepared_query($sql, 's', [$PermissionTitle]);
 
@@ -150,6 +167,3 @@ class UARPC_base {
     }
 
 }
-
-
-

@@ -4,7 +4,7 @@ require 'class.mysqli.php';
 //require 'UARPC_base.php';
 
 require 'uarpc.php';
-new uarpc;
+new uarpc('userarpc_');
 
 define('USER_KIM', 999);
 define('ROLE1','Manager');              // 7

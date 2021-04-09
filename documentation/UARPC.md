@@ -4,6 +4,33 @@ Framework for role and permission management for a user. The aim for the framewo
 
 Aim for the framework is to be OOP.
 
+## <dd>**AUTOLOADING with Composer**</dd>
+
+For the autoloader to work correctly you will need to add a line in your configuration.
+
+    new uarpc;
+
+This will make sure all required libraries gets loaded, also it gives you some tools like creating needed tables in a fresh install, or letting you rename tables with a new prefix. The autoload initializer has the following options:
+
+    // reserved values for the __constructor are : "setup", null
+    new uarpc("setup");     // will install all the database tables.
+
+    // any other value will be used as db_prefix
+    new uarpc("myPrefix_"); // sets the $db_prefix for the UARPC instance.
+
+So to initiate the instance from autoload for user with userid 99 it should read:
+
+    new uarpc;
+    $uarpc = new UARPC_base(99);
+
+If you do not want to use the autoloader you could manually include the following files, remember to change the PATH part below with your setups path:
+
+    require PATH . UARPC_UserManager.php
+    require PATH . UARPC_RoleManager.php
+    require PATH . UARPC_PermissionManager.php
+    require PATH . UARPC_base.php
+    $uarpc = new UARPC_base(99);
+
 ## <dd>**UARPC_base;**</dd>
 
 Instantiates the class with required sub classes.

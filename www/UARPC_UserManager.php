@@ -11,15 +11,21 @@ class UARPC_UserManager
     // default UserID
     var $UserID = null;
 
+    // Database prefix
+    var $db_prefix = 'uarpc_';
+
     // if true will output lots of debugging info
     public $verbose_actions = false;
 
     // method name to process the final returned data from list functions
     public $returnMethod_formatter = null;
 
-    public function __construct($UserID = null, $verbose_actions = false)
+    public function __construct($UserID = null, $verbose_actions = false, $db_prefix = null)
     {
         $this->verbose_actions = $verbose_actions;
+
+        if( $db_prefix !== null )
+            $this->db_prefix = $db_prefix;
 
         if($this->verbose_actions) echo 'UARPC_UserManager init: ' . time() . '<br>';
 
@@ -48,10 +54,10 @@ class UARPC_UserManager
         if($UserID === null)
             throw new Exception('UserManager, cannot assign permission no UserID');
 
-        $res = $mysqli->prepared_query("SELECT `UserID`,`PermissionID` from uarpc__userallowpermissions WHERE UserID=? AND PermissionID=?", 'ii', [$UserID,$PermissionID]);
+        $res = $mysqli->prepared_query("SELECT `UserID`,`PermissionID` FROM `" . $this->db_prefix . "_userallowpermissions` WHERE `UserID`=? AND `PermissionID`=?", 'ii', [$UserID,$PermissionID]);
         if (!count($res)) {
             $sql = [
-                "INSERT INTO uarpc__userallowpermissions (`UserID`,`PermissionID`,`AssignmentDate`) VALUES (?,?,?)",
+                "INSERT INTO `" . $this->db_prefix . "_userallowpermissions` (`UserID`,`PermissionID`,`AssignmentDate`) VALUES (?,?,?)",
                 "iii",
                 [$UserID,$PermissionID,time()]
             ];
@@ -75,7 +81,7 @@ class UARPC_UserManager
         if($UserID === null)
             throw new Exception('UserManager, cannot allow permission no UserID');
 
-        $affected_rows = $mysqli->prepared_query("DELETE FROM uarpc__userallowpermissions WHERE UserID=? AND PermissionID=?", 'ii', [$UserID,$PermissionID]);
+        $affected_rows = $mysqli->prepared_query("DELETE FROM `" . $this->db_prefix . "_userallowpermissions` WHERE `UserID`=? AND `PermissionID`=?", 'ii', [$UserID,$PermissionID]);
         if (!$affected_rows) {
             if($this->verbose_actions) echo 'Error: permissions/unallow(' . $PermissionID . ', ' . $UserID . ') did not report any databasechange' . '<br>';
         } else {
@@ -103,10 +109,10 @@ class UARPC_UserManager
         if($UserID === null)
             throw new Exception('UserManager, cannot deny permission no UserID');
 
-        $res = $mysqli->prepared_query("SELECT `UserID`,`PermissionID` from uarpc__userdenypermissions WHERE UserID=? AND PermissionID=?", 'ii', [$UserID,$PermissionID]);
+        $res = $mysqli->prepared_query("SELECT `UserID`,`PermissionID` from `" . $this->db_prefix . "_userdenypermissions` WHERE `UserID`=? AND `PermissionID`=?", 'ii', [$UserID,$PermissionID]);
         if (!count($res)) {
             $sql = [
-                "INSERT INTO uarpc__userdenypermissions (`UserID`,`PermissionID`,`AssignmentDate`) VALUES (?,?,?)",
+                "INSERT INTO `" . $this->db_prefix . "_userdenypermissions` (`UserID`,`PermissionID`,`AssignmentDate`) VALUES (?,?,?)",
                 "iii",
                 [$UserID,$PermissionID,time()]
             ];
@@ -130,7 +136,7 @@ class UARPC_UserManager
         if($UserID === null)
             throw new Exception('UserManager, cannot deny permission no UserID');
 
-        $affected_rows = $mysqli->prepared_query("DELETE FROM uarpc__userdenypermissions WHERE UserID=? AND PermissionID=?", 'ii', [$UserID,$PermissionID]);
+        $affected_rows = $mysqli->prepared_query("DELETE FROM `" . $this->db_prefix . "_userdenypermissions` WHERE `UserID`=? AND `PermissionID`=?", 'ii', [$UserID,$PermissionID]);
         if (!$affected_rows) {
             if($this->verbose_actions) echo 'Error: permissions/undeny(' . $PermissionID . ', ' . $UserID . ') did not report any databasechange' . '<br>';
         } else {
@@ -148,7 +154,7 @@ class UARPC_UserManager
             $UserID = $this->UserID;
         }
 
-        $res = $mysqli->prepared_query("SELECT * from uarpc__userallowpermissions WHERE UserID=? and PermissionID=?", 'ii', [$UserID,$PermissionID]);
+        $res = $mysqli->prepared_query("SELECT * from `" . $this->db_prefix . "_userallowpermissions` WHERE `UserID`=? and `PermissionID`=?", 'ii', [$UserID,$PermissionID]);
         if (count($res)) {
             if($this->verbose_actions) echo 'isAllowed, user ' . $UserID . ' IS ALLOWED by override PermissionID ' . $PermissionID;
             return true;
@@ -165,7 +171,7 @@ class UARPC_UserManager
             $UserID = $this->UserID;
         }
 
-        $res = $mysqli->prepared_query("SELECT * from uarpc__userdenypermissions WHERE UserID=? and PermissionID=?", 'ii', [$UserID,$PermissionID]);
+        $res = $mysqli->prepared_query("SELECT * FROM `" . $this->db_prefix . "_userdenypermissions` WHERE `UserID`=? AND `PermissionID`=?", 'ii', [$UserID,$PermissionID]);
         if (count($res)) {
             if($this->verbose_actions) echo 'isDenied, user ' . $UserID . ' IS DENIED by override PermissionID ' . $PermissionID;
             return true;
@@ -201,8 +207,8 @@ class UARPC_UserManager
             throw new Exception('UserManager, cannot deny permission no UserID');
 
         $sql = "SELECT `up`.`PermissionID`  
-                FROM `uarpc__permissions` `up` 
-                JOIN `uarpc__userdenypermissions` `udp` ON ( `udp`.`PermissionID` = `up`.`PermissionID` ) 
+                FROM `" . $this->db_prefix . "_permissions` `up` 
+                JOIN `" . $this->db_prefix . "_userdenypermissions` `udp` ON ( `udp`.`PermissionID` = `up`.`PermissionID` ) 
                 WHERE `udp`.`UserID`=? 
                 ";
 
@@ -215,15 +221,15 @@ class UARPC_UserManager
         }
 
         $sql = "SELECT `up`.`enabled`, `up`.`PermissionID`, `up`.`title` 
-                FROM `uarpc__permissions` `up` 
-                JOIN `uarpc__rolepermissions` `urp` ON ( `urp`.`PermissionID` = `up`.`PermissionID` ) 
-                JOIN `uarpc__userroles` `uur` ON ( `uur`.`RoleID` = `urp`.`RoleID` ) 
+                FROM `" . $this->db_prefix . "_permissions` `up` 
+                JOIN `" . $this->db_prefix . "_rolepermissions` `urp` ON ( `urp`.`PermissionID` = `up`.`PermissionID` ) 
+                JOIN `" . $this->db_prefix . "_userroles` `uur` ON ( `uur`.`RoleID` = `urp`.`RoleID` ) 
                 WHERE `uur`.`UserID`=? 
                 GROUP BY `up`.`PermissionID` 
                 UNION
                 SELECT `up`.`enabled`, `up`.`PermissionID`, `up`.`title` 
-                FROM `uarpc__permissions` `up` 
-                JOIN `uarpc__userallowpermissions` `uap`  ON ( `uap`.`PermissionID` = `up`.`PermissionID` ) 
+                FROM `" . $this->db_prefix . "_permissions` `up` 
+                JOIN `" . $this->db_prefix . "_userallowpermissions` `uap`  ON ( `uap`.`PermissionID` = `up`.`PermissionID` ) 
                 WHERE `uap`.`UserID`=? 
                 ";
 
@@ -272,8 +278,8 @@ class UARPC_UserManager
         if( $UserID === null )
             $UserID = $this->UserID;
 
-        $sql = "SELECT * FROM `uarpc__userroles` `ur` 
-                JOIN `uarpc__roles` `r` ON `r`.`RoleID` = `ur`.`RoleID` 
+        $sql = "SELECT * FROM `" . $this->db_prefix . "_userroles` `ur` 
+                JOIN `" . $this->db_prefix . "_roles` `r` ON `r`.`RoleID` = `ur`.`RoleID` 
                 WHERE `ur`.`UserID` = ?";
         $res = $mysqli->prepared_query($sql, 'i', [$UserID]);
 
