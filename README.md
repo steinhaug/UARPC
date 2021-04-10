@@ -1,4 +1,4 @@
-# UARPC v1.5.x
+# UARPC v1.5.12
 
 User Access, Roles, Permissions and Configurations framework
 Tools for administering user access. 
@@ -18,7 +18,7 @@ To install the library use composer:
 
     composer require "steinhaug/uarpc:^1.*"
 
-Make sure that project is running **class.mysqli.php** as this is required for UARPC to work. To initialize, use like this:
+Make sure that project is running **class.mysqli.php** v1.4.2 or higher, this is required for UARPC to work. To initialize, use like this:
 
     new uarpc; // loading and $mysqli check
     $uarpc = new UARPC_base($UserId);
