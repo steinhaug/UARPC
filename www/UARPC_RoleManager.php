@@ -1,18 +1,17 @@
 <?php
 
 /**
- * UARPC - Role Manager v1.3.0
- * 
+ * UARPC - Role Manager v1.6.0
+ *
  * All role based functions and operations goes into this class
  */
-class UARPC_RoleManager 
+class UARPC_RoleManager
 {
-
     // default UserID
-    var $UserID = null;
+    public $UserID = null;
 
     // Database prefix
-    var $db_prefix = 'uarpc_';
+    public $db_prefix = 'uarpc_';
 
     // if true will output lots of debugging info
     public $verbose_actions = false;
@@ -25,16 +24,20 @@ class UARPC_RoleManager
     {
         $this->verbose_actions = $verbose_actions;
 
-        if( $db_prefix !== null )
+        if ($db_prefix !== null) {
             $this->db_prefix = $db_prefix;
-
-        if($this->verbose_actions) echo 'UARPC_RoleManager init: ' . time() . '<br>';
-
-        if( $UserID !== null ){
-            $this->UserID = $UserID;
-            if($this->verbose_actions) echo 'UserID set for ' . $this->UserID . '<br>';
         }
 
+        if ($this->verbose_actions) {
+            echo 'UARPC_RoleManager init: ' . time() . '<br>';
+        }
+
+        if ($UserID !== null) {
+            $this->UserID = $UserID;
+            if ($this->verbose_actions) {
+                echo 'UserID set for ' . $this->UserID . '<br>';
+            }
+        }
     }
 
 
@@ -46,24 +49,27 @@ class UARPC_RoleManager
      *
      * @return int On success returns RoleID
      */
-    public function add($title, $description='')
+    public function add($title, $description = '')
     {
         global $mysqli;
         $res = $mysqli->prepared_query("SELECT `RoleID` FROM `" . $this->db_prefix . "_roles` WHERE `title`=?", 's', [$title]);
-        if( !count($res) ){
+        if (!count($res)) {
             $sql = [
                 "INSERT INTO `" . $this->db_prefix . "_roles` (`title`,`description`) VALUES (?,?)",
                 "ss",
-                [$title,$description]
+                [$title, $description]
             ];
             $result = $mysqli->prepared_insert($sql);
-            if($this->verbose_actions) echo 'Role created successfully, RoleID: ' . $result . '<br>';
+            if ($this->verbose_actions) {
+                echo 'Role created successfully, RoleID: ' . $result . '<br>';
+            }
             return $result;
         } else {
-            if($this->verbose_actions) echo 'Role (' . $res[0]['RoleID'] . ') already exists.<br>';
+            if ($this->verbose_actions) {
+                echo 'Role (' . $res[0]['RoleID'] . ') already exists.<br>';
+            }
             return $res[0]['RoleID'];
         }
-
     }
 
     /**
@@ -73,11 +79,14 @@ class UARPC_RoleManager
      *
      * @return boolean True if success and false if failure
      */
-    public function delete($RoleID){
+    public function delete($RoleID)
+    {
         global $mysqli;
 
-        if ($mysqli->prepared_query1("SELECT count(*) as `count` FROM `" . $this->db_prefix . "_rolepermissions` WHERE `RoleID`=?", 'i', [$RoleID], 0)){
-            if($this->verbose_actions) echo 'Delete role (' . $RoleID . ') error, connected to permissions.<br>';
+        if ($mysqli->prepared_query1("SELECT count(*) as `count` FROM `" . $this->db_prefix . "_rolepermissions` WHERE `RoleID`=?", 'i', [$RoleID], 0)) {
+            if ($this->verbose_actions) {
+                echo 'Delete role (' . $RoleID . ') error, connected to permissions.<br>';
+            }
             return false;
         }
 
@@ -94,24 +103,27 @@ class UARPC_RoleManager
      *
      * @return void
      */
-    public function edit($RoleID, $title, $description='')
+    public function edit($RoleID, $title, $description = '')
     {
         global $mysqli;
 
         $sql = [
             "UPDATE `" . $this->db_prefix . "_roles` SET `title`=?, `description`=? WHERE `RoleID`=?",
             "ssi",
-            [$title,$description,$RoleID]
+            [$title, $description, $RoleID]
         ];
         $affected_rows = $mysqli->prepared_insert($sql);
-        if($affected_rows){
-            if($this->verbose_actions) echo 'Role (' . $RoleID . ') was successfully updated.<br>';
+        if ($affected_rows) {
+            if ($this->verbose_actions) {
+                echo 'Role (' . $RoleID . ') was successfully updated.<br>';
+            }
             return true;
         } else {
-            if($this->verbose_actions) echo 'Role (' . $RoleID . ') was NOT updated.<br>';
+            if ($this->verbose_actions) {
+                echo 'Role (' . $RoleID . ') was NOT updated.<br>';
+            }
             return false;
         }
-
     }
 
 
@@ -128,18 +140,22 @@ class UARPC_RoleManager
     {
         global $mysqli;
 
-        $res = $mysqli->prepared_query("SELECT `UserID`,`RoleID` FROM `" . $this->db_prefix . "_userroles` WHERE `UserID`=? AND `RoleID`=?", 'ii', [$UserID,$RoleID]);
+        $res = $mysqli->prepared_query("SELECT `UserID`,`RoleID` FROM `" . $this->db_prefix . "_userroles` WHERE `UserID`=? AND `RoleID`=?", 'ii', [$UserID, $RoleID]);
         if (!count($res)) {
             $sql = [
                 "INSERT INTO " . $this->db_prefix . "_userroles (`UserID`,`RoleID`,`AssignmentDate`) VALUES (?,?,?)",
                 "iii",
-                [$UserID,$RoleID,time()]
+                [$UserID, $RoleID, time()]
             ];
             $result = $mysqli->prepared_insert($sql);
-            if($this->verbose_actions) echo 'UserID (' . $UserID . ') assigned to RoleID (' . $RoleID . ') successfully.<br>';
+            if ($this->verbose_actions) {
+                echo 'UserID (' . $UserID . ') assigned to RoleID (' . $RoleID . ') successfully.<br>';
+            }
             return true;
         } else {
-            if($this->verbose_actions) echo 'UserID (' . $UserID . ') already assigned to RoleID (' . $RoleID . ').' . '<br>';
+            if ($this->verbose_actions) {
+                echo 'UserID (' . $UserID . ') already assigned to RoleID (' . $RoleID . ').' . '<br>';
+            }
             return true;
         }
     }
@@ -148,11 +164,15 @@ class UARPC_RoleManager
     {
         global $mysqli;
 
-        $affected_rows = $mysqli->prepared_query("DELETE FROM `" . $this->db_prefix . "_userroles` WHERE `UserID`=? AND `RoleID`=?", 'ii', [$UserID,$RoleID]);
+        $affected_rows = $mysqli->prepared_query("DELETE FROM `" . $this->db_prefix . "_userroles` WHERE `UserID`=? AND `RoleID`=?", 'ii', [$UserID, $RoleID]);
         if (!$affected_rows) {
-            if($this->verbose_actions) echo 'Error: role/unassign(' . $RoleID . ', ' . $UserID . ') did not report any databasechange' . '<br>';
+            if ($this->verbose_actions) {
+                echo 'Error: role/unassign(' . $RoleID . ', ' . $UserID . ') did not report any databasechange' . '<br>';
+            }
         } else {
-            if($this->verbose_actions) echo 'Unnasigned role(' . $RoleID . '), from user(' . $UserID . ')<br>';
+            if ($this->verbose_actions) {
+                echo 'Unnasigned role(' . $RoleID . '), from user(' . $UserID . ')<br>';
+            }
             return $affected_rows;
         }
     }
@@ -169,15 +189,18 @@ class UARPC_RoleManager
     {
         global $mysqli;
 
-        $res = $mysqli->prepared_query("SELECT * FROM `" . $this->db_prefix . "_userroles` WHERE `UserID`=? and `RoleID`=?", 'ii', [$UserID,$RoleID]);
+        $res = $mysqli->prepared_query("SELECT * FROM `" . $this->db_prefix . "_userroles` WHERE `UserID`=? and `RoleID`=?", 'ii', [$UserID, $RoleID]);
         if (count($res)) {
-            if($this->verbose_actions) echo 'isAssigned, user ' . $UserID . ' IS assigned for role ' . $RoleID;
+            if ($this->verbose_actions) {
+                echo 'isAssigned, user ' . $UserID . ' IS assigned for role ' . $RoleID;
+            }
             return true;
         } else {
-            if($this->verbose_actions) echo 'isAssigned, user ' . $UserID . ' IS NOT assigned for role ' . $RoleID;
+            if ($this->verbose_actions) {
+                echo 'isAssigned, user ' . $UserID . ' IS NOT assigned for role ' . $RoleID;
+            }
             return false;
         }
-
     }
 
     /**
@@ -193,10 +216,14 @@ class UARPC_RoleManager
 
         $res = $mysqli->prepared_query("SELECT `RoleID` FROM `" . $this->db_prefix . "_roles` WHERE `title`=?", 's', [$title]);
         if (!count($res)) {
-            if($this->verbose_actions) echo 'RoleID for ' . $title . ' does not exist' . '<br>';
+            if ($this->verbose_actions) {
+                echo 'RoleID for ' . $title . ' does not exist' . '<br>';
+            }
             return false;
         } else {
-            if($this->verbose_actions) echo 'RoleId returned is ' . $res[0]['RoleID'] . '<br>';
+            if ($this->verbose_actions) {
+                echo 'RoleId returned is ' . $res[0]['RoleID'] . '<br>';
+            }
             return $res[0]['RoleID'];
         }
     }
@@ -208,13 +235,13 @@ class UARPC_RoleManager
      *
      * @param int $UserID UserID for user to check for assignment
      *
-     * @return array Array of roles 
+     * @return array Array of roles
      */
-    public function list($UserID=null)
+    public function list($UserID = null)
     {
         global $mysqli;
 
-        if( $UserID === null ){
+        if ($UserID === null) {
             $UserID = $this->UserID;
         }
 
@@ -222,29 +249,31 @@ class UARPC_RoleManager
 
         $sql = "SELECT `r`.`RoleID`, `r`.`title`, `r`.`description`, `ur`.`UserID` AS `thisUserAssigned` 
                 FROM `" . $this->db_prefix . "_roles` `r` 
-                LEFT JOIN `" . $this->db_prefix . "_userroles` ur ON (`r`.`RoleID` = `ur`.`RoleID` AND `ur`.`UserID` = " . (int) $UserID .  ")";
+                LEFT JOIN `" . $this->db_prefix . "_userroles` ur ON (`r`.`RoleID` = `ur`.`RoleID` AND `ur`.`UserID` = " . (int) $UserID . ")";
         $res = $mysqli->query($sql);
 
-        if( $res->num_rows ){
+        if ($res->num_rows) {
             $roles = [];
-            while( $row = $res->fetch_assoc() ){
-                if( is_null($row['thisUserAssigned']) )
+            while ($row = $res->fetch_assoc()) {
+                if (is_null($row['thisUserAssigned'])) {
                     $row['assigned'] = false;
-                    else
+                } else {
                     $row['assigned'] = true;
+                }
                 $roles[ $row['RoleID'] ] = $row;
             }
-            if( $this->returnMethod_formatter !== null )
+            if ($this->returnMethod_formatter !== null) {
                 return $this->{$this->returnMethod_formatter}($roles, __FUNCTION__);
-                else
-                return $roles;   
+            } else {
+                return $roles;
+            }
         } else {
-            if( $this->returnMethod_formatter !== null )
+            if ($this->returnMethod_formatter !== null) {
                 return $this->{$this->returnMethod_formatter}([], __FUNCTION__);
-                else
-                return [];   
+            } else {
+                return [];
+            }
         }
-   
     }
 
     /**
@@ -265,17 +294,18 @@ class UARPC_RoleManager
 
         $users = [];
         if (count($res)) {
-            foreach($res as $row){
+            foreach ($res as $row) {
                 $users[$row['UserID']] = [
                                             'UserID' => $row['UserID']
                                          ];
             }
         }
 
-        if( $this->returnMethod_formatter !== null )
+        if ($this->returnMethod_formatter !== null) {
             return $this->{$this->returnMethod_formatter}($users, __FUNCTION__);
-            else
+        } else {
             return $users;
+        }
     }
 
     /**
@@ -290,10 +320,14 @@ class UARPC_RoleManager
         global $mysqli;
         $res = $mysqli->prepared_query("SELECT `title` from `" . $this->db_prefix . "_roles` WHERE `RoleID`=?", 'i', [$RoleID]);
         if (!count($res)) {
-            if($this->verbose_actions) echo 'Role(' . $RoleID . ') does not exist' . '<br>';
+            if ($this->verbose_actions) {
+                echo 'Role(' . $RoleID . ') does not exist' . '<br>';
+            }
             return false;
         } else {
-            if($this->verbose_actions) echo 'Role title returned is ' . $res[0]['title'] . '<br>';
+            if ($this->verbose_actions) {
+                echo 'Role title returned is ' . $res[0]['title'] . '<br>';
+            }
             return $res[0]['title'];
         }
     }
@@ -310,10 +344,14 @@ class UARPC_RoleManager
         global $mysqli;
         $res = $mysqli->prepared_query("SELECT `description` from `" . $this->db_prefix . "_roles` WHERE `RoleID`=?", 'i', [$RoleID]);
         if (!count($res)) {
-            if($this->verbose_actions) echo 'Role(' . $RoleID . ') does not exist' . '<br>';
+            if ($this->verbose_actions) {
+                echo 'Role(' . $RoleID . ') does not exist' . '<br>';
+            }
             return false;
         } else {
-            if($this->verbose_actions) echo 'Role description returned is ' . $res[0]['description'] . '<br>';
+            if ($this->verbose_actions) {
+                echo 'Role description returned is ' . $res[0]['description'] . '<br>';
+            }
             return $res[0]['description'];
         }
     }
@@ -328,14 +366,17 @@ class UARPC_RoleManager
     public function format($format, $param1 = null)
     {
         $valid_formatters = ['option'];
-        if( !in_array($format, $valid_formatters) )
+        if (!in_array($format, $valid_formatters)) {
             die('<h1>$UARPC Role error - Must be fixed!</h1><div>-&gt;format(formatter) error: &quot;' . $format . '&quot;.<br>Possible formatters are: &quot;' . implode('&quot;, &quot;', $valid_formatters) . '&quot;</div>');
+        }
 
-        if($format == 'option')
+        if ($format == 'option') {
             $this->returnMethod_formatter = 'format__option';
+        }
 
-        if($param1 !== null)
+        if ($param1 !== null) {
             $this->returnMethod_param1 = $param1;
+        }
 
         return $this;
     }
@@ -350,34 +391,32 @@ class UARPC_RoleManager
      */
     public function format__option($data, $caller_method)
     {
-
         $p1 = $this->returnMethod_param1;
 
         $this->returnMethod_formatter = null;
         $this->returnMethod_param1 = null;
-        if( $caller_method == 'list' ){
+        if ($caller_method == 'list') {
             $markup = '';
-            foreach($data as $key=>$val){
-                if( $p1 !== null and $p1 == $key )
+            foreach ($data as $key => $val) {
+                if ($p1 !== null and $p1 == $key) {
                     $markup .= '<option value="' . $key . '" selected="true">' . $val['title'] . '</option>' . "\n";
-                    else
+                } else {
                     $markup .= '<option value="' . $key . '">' . $val['title'] . '</option>' . "\n";
+                }
             }
             return $markup;
-        } else if( $caller_method == 'listUsers' ){
+        } elseif ($caller_method == 'listUsers') {
             $markup = '';
-            foreach($data as $key=>$val){
-                if( $p1 !== null and $p1 == $key )
+            foreach ($data as $key => $val) {
+                if ($p1 !== null and $p1 == $key) {
                     $markup .= '<option value="' . $key . '" selected="true">UserID ' . $val['UserID'] . '</option>' . "\n";
-                    else
+                } else {
                     $markup .= '<option value="' . $key . '">UserID ' . $val['UserID'] . '</option>' . "\n";
+                }
             }
             return $markup;
         }
 
         return 'Formatter error, unknown caller: ' . $ref;
-
     }
-
-
 }

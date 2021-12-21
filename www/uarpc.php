@@ -7,17 +7,16 @@ require 'UARPC_base.php';
 
 /**
  * UARPC utilities - Making sure above files are working and $mysqli is running
- * 
+ *
  * (c) Kim Steinhaug
  * http://steinhaug.no/
- * 
+ *
  * User Access, Roles, Permissions and Configurations framework Tools for administering user access.
  * Url: https://gitlab.com/steinhaug/uarpc
- * 
+ *
  */
 class uarpc
 {
-
     // Database prefix
     public $db_prefix = 'uarpc_';
 
@@ -48,7 +47,6 @@ class uarpc
                 die('Fatal error, steinhaug/uarpc cannot locate the required database tables. Run "new uarpc(\'setup\');" to automatically set up new tables.');
             }
         }
-
     }
 
     public function set_db_prefix($db_prefix)
@@ -63,18 +61,24 @@ class uarpc
         echo 'Renaming all database tables to new prefix... ' . "<br>\n";
         echo '... checking first that all tables exist ...' . "<br>\n";
 
-        if(!$mysqli->table_exist($db_prefix_existing . '_userroles'))
+        if (!$mysqli->table_exist($db_prefix_existing . '_userroles')) {
             die('ABORT! ' . $db_prefix_existing . '_userroles table does not exist, renaming cannot continue.');
-        if(!$mysqli->table_exist($db_prefix_existing . '_userdenypermissions'))
+        }
+        if (!$mysqli->table_exist($db_prefix_existing . '_userdenypermissions')) {
             die('ABORT! ' . $db_prefix_existing . '_userdenypermissions table does not exist, renaming cannot continue.');
-        if(!$mysqli->table_exist($db_prefix_existing . '_userallowpermissions'))
+        }
+        if (!$mysqli->table_exist($db_prefix_existing . '_userallowpermissions')) {
             die('ABORT! ' . $db_prefix_existing . '_userallowpermissions table does not exist, renaming cannot continue.');
-        if(!$mysqli->table_exist($db_prefix_existing . '_roles'))
+        }
+        if (!$mysqli->table_exist($db_prefix_existing . '_roles')) {
             die('ABORT! ' . $db_prefix_existing . '_roles table does not exist, renaming cannot continue.');
-        if(!$mysqli->table_exist($db_prefix_existing . '_rolepermissions'))
+        }
+        if (!$mysqli->table_exist($db_prefix_existing . '_rolepermissions')) {
             die('ABORT! ' . $db_prefix_existing . '_rolepermissions table does not exist, renaming cannot continue.');
-        if(!$mysqli->table_exist($db_prefix_existing . '_permissions'))
+        }
+        if (!$mysqli->table_exist($db_prefix_existing . '_permissions')) {
             die('ABORT! ' . $db_prefix_existing . '_permissions table does not exist, renaming cannot continue.');
+        }
 
         $mysqli->query("RENAME TABLE `" . $db_prefix_existing . "_userroles` TO `" . $db_prefix_new . "_userroles`");
         $mysqli->query("RENAME TABLE `" . $db_prefix_existing . "_userdenypermissions` TO `" . $db_prefix_new . "_userdenypermissions`");
@@ -83,13 +87,12 @@ class uarpc
         $mysqli->query("RENAME TABLE `" . $db_prefix_existing . "_rolepermissions` TO `" . $db_prefix_new . "_rolepermissions`");
         $mysqli->query("RENAME TABLE `" . $db_prefix_existing . "_permissions` TO `" . $db_prefix_new . "_permissions`");
 
-        if($db_prefix_new != $db_prefix){
+        if ($db_prefix_new != $db_prefix) {
             echo 'Renaming complete. Remember to update your configuration with the new prefix.' . "<br>\n";
             echo '';
         } else {
             echo 'Renaming complete.' . "<br>\n";
         }
-
     }
 
     /**
@@ -101,10 +104,10 @@ class uarpc
     {
         global $mysqli;
 
-        $collate = $mysqli->return_charset_and_collate(['utf8'=>'utf8_bin', 'utf8mb4'=>'utf8mb4_bin']);
+        $collate = $mysqli->return_charset_and_collate(['utf8' => 'utf8_bin', 'utf8mb4' => 'utf8mb4_bin']);
         $tables = [];
 
-        if(!$mysqli->table_exist($this->db_prefix . '_permissions')){
+        if (!$mysqli->table_exist($this->db_prefix . '_permissions')) {
             $mysqli->query("CREATE TABLE IF NOT EXISTS `" . $this->db_prefix . "_permissions` (
             `PermissionID` int NOT NULL AUTO_INCREMENT,
             `parentId` int DEFAULT NULL,
@@ -116,7 +119,7 @@ class uarpc
             ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=" . $collate['utf8']);
             $tables[] = $this->db_prefix . '_permissions';
         }
-        if(!$mysqli->table_exist($this->db_prefix . '_rolepermissions')){
+        if (!$mysqli->table_exist($this->db_prefix . '_rolepermissions')) {
             $mysqli->query("CREATE TABLE IF NOT EXISTS `" . $this->db_prefix . "_rolepermissions` (
             `RoleID` int NOT NULL,
             `PermissionID` int NOT NULL,
@@ -125,7 +128,7 @@ class uarpc
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=" . $collate['utf8']);
             $tables[] = $this->db_prefix . '_rolepermissions';
         }
-        if(!$mysqli->table_exist($this->db_prefix . '_roles')){
+        if (!$mysqli->table_exist($this->db_prefix . '_roles')) {
             $mysqli->query("CREATE TABLE IF NOT EXISTS `" . $this->db_prefix . "_roles` (
             `RoleID` int NOT NULL AUTO_INCREMENT,
             `title` varchar(128) COLLATE " . $collate['utf8'] . " NOT NULL,
@@ -135,7 +138,7 @@ class uarpc
             ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=" . $collate['utf8']);
             $tables[] = $this->db_prefix . '_roles';
         }
-        if(!$mysqli->table_exist($this->db_prefix . '_userallowpermissions')){
+        if (!$mysqli->table_exist($this->db_prefix . '_userallowpermissions')) {
             $mysqli->query("CREATE TABLE IF NOT EXISTS `" . $this->db_prefix . "_userallowpermissions` (
             `UserID` int NOT NULL,
             `PermissionID` int NOT NULL,
@@ -144,7 +147,7 @@ class uarpc
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=" . $collate['utf8']);
             $tables[] = $this->db_prefix . '_userallowpermissions';
         }
-        if(!$mysqli->table_exist($this->db_prefix . '_userdenypermissions')){
+        if (!$mysqli->table_exist($this->db_prefix . '_userdenypermissions')) {
             $mysqli->query("CREATE TABLE IF NOT EXISTS `" . $this->db_prefix . "_userdenypermissions` (
             `UserID` int NOT NULL,
             `PermissionID` int NOT NULL,
@@ -153,7 +156,7 @@ class uarpc
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=" . $collate['utf8']);
             $tables[] = $this->db_prefix . '_userdenypermissions';
         }
-        if(!$mysqli->table_exist($this->db_prefix . '_userroles')){
+        if (!$mysqli->table_exist($this->db_prefix . '_userroles')) {
             $mysqli->query("CREATE TABLE IF NOT EXISTS `" . $this->db_prefix . "_userroles` (
             `UserID` int NOT NULL,
             `RoleID` int NOT NULL,
@@ -163,10 +166,8 @@ class uarpc
             $tables[] = $this->db_prefix . '_userroles';
         }
 
-        if( count($tables) ){
+        if (count($tables)) {
             echo count($tables) . ' tables created, UARPC ready.';
         }
-
     }
-
 }

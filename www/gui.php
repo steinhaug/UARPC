@@ -3,24 +3,23 @@ require '../credentials.php';
 require 'class.mysqli.php';
 require 'uarpc.php';
 
-new uarpc;
+new uarpc();
 
 $UserID = 1;
 $uarpc = new UARPC_BASE($UserID);
 
-if( !empty($_POST['value']) and !empty($_POST['command']) ){
+if (!empty($_POST['value']) and !empty($_POST['command'])) {
     define('AJAX_APIv2_WITH_HTTP_STATUSES', 1);
-    $jsondata = ['status'=>0];
+    $jsondata = ['status' => 0];
 
-    $cmd                = $_POST['command'] ?? '';
-    $val                = $_POST['value'] ?? '';
-    $desc               = $_POST['desc'] ?? '';
-    $jsondata['ref']    = $_POST['reference'] ?? '';
+    $cmd = $_POST['command'] ?? '';
+    $val = $_POST['value'] ?? '';
+    $desc = $_POST['desc'] ?? '';
+    $jsondata['ref'] = $_POST['reference'] ?? '';
 
-    $allowed_commands = ['disablePerm','enablePerm','listUsers','assignUser2Role','unassignUser2Role','assign','unassign','listPermissions','getpermissionid', 'getroleid', 'addpermission', 'addrole', 'deleteRole', 'deletePerm'];
-    if( in_array($cmd, $allowed_commands) ){
-
-       switch ($cmd) {
+    $allowed_commands = ['disablePerm', 'enablePerm', 'listUsers', 'assignUser2Role', 'unassignUser2Role', 'assign', 'unassign', 'listPermissions', 'getpermissionid', 'getroleid', 'addpermission', 'addrole', 'deleteRole', 'deletePerm'];
+    if (in_array($cmd, $allowed_commands)) {
+        switch ($cmd) {
             case 'enablePerm':
                 $jsondata['return'] = $uarpc->permissions->enable((int) $val['PermID']);
                 $jsondata['command'] = '$uarpc->permissions->enable(' . (int) $val['PermID'] . ')';
@@ -38,16 +37,18 @@ if( !empty($_POST['value']) and !empty($_POST['command']) ){
             case 'unassignUser2Role':
                 $jsondata['return'] = $uarpc->roles->unassign((int) $val['roleID'], (int) $val['userID']);
                 $jsondata['command'] = '$uarpc->roles->unassign(' . (int) $val['roleID'] . ',' . (int) $val['userID'] . ')';
-                if(!$jsondata['return'])
+                if (!$jsondata['return']) {
                     $jsondata['error'] = 'User ' . (int) $val['userID'] . ' was not unassigned to role ' . (int) $val['roleID'] . '!';
-                    else
-                    $jsondata['deleteCSSID'] = $jsondata['ref'];
+                } else {
+                        $jsondata['deleteCSSID'] = $jsondata['ref'];
+                    }
                 break;
             case 'assignUser2Role':
                 $jsondata['return'] = $uarpc->roles->assign((int) $val['roleID'], (int) $val['userID']);
                 $jsondata['command'] = '$uarpc->roles->assign(' . (int) $val['roleID'] . ',' . (int) $val['userID'] . ')';
-                if(!$jsondata['return'])
+                if (!$jsondata['return']) {
                     $jsondata['error'] = 'User ' . (int) $val['userID'] . ' was not assigned to role ' . (int) $val['roleID'] . '!';
+                }
                 break;
             case 'assign':
                 $vals = explode(',', $val);
@@ -69,7 +70,7 @@ if( !empty($_POST['value']) and !empty($_POST['command']) ){
                 $jsondata['command'] = '$uarpc->roles->listUsers(' . $val . ')';
                 $jsondata['html5id'] = 'userList';
                 $jsondata['html'] = '';
-                foreach($list as $item){
+                foreach ($list as $item) {
                     $jsondata['html'] .= '
                                             <div class="d-flex align-items-center item" data-userid="' . $item['UserID'] . '">
                                                 <div class="flex-grow-1">' . $item['UserID'] . '</div>
@@ -109,7 +110,7 @@ if( !empty($_POST['value']) and !empty($_POST['command']) ){
                 $jsondata['command'] = '$uarpc->roles->id(' . $val . ')';
                 break;
             case 'addpermission':
-                if( !empty($val['parentId']) ){
+                if (!empty($val['parentId'])) {
                     $jsondata['id'] = $uarpc->permissions->add($val['title'], '', (int) $val['parentId']);
                     $jsondata['command'] = '$uarpc->permissions->add(' . $val['title'] . ',\'\',' . (int) $val['parentId'] . ')';
                 } else {
@@ -126,7 +127,7 @@ if( !empty($_POST['value']) and !empty($_POST['command']) ){
                 </div>';
                 break;
             case 'addrole':
-                $jsondata['id'] = $uarpc->roles->add($val,'');
+                $jsondata['id'] = $uarpc->roles->add($val, '');
                 $jsondata['command'] = '$uarpc->roles->add(' . $val . ',\'\')';
                 $jsondata['html5id'] = 'roleList';
                 $jsondata['html'] = '<div class="d-flex align-items-center item">
@@ -141,18 +142,18 @@ if( !empty($_POST['value']) and !empty($_POST['command']) ){
                 $jsondata = ['status' => -1, 'error' => 'Default error'];
                 break;
         }
-
     } else {
         $jsondata = ['status' => -1, 'error' => 'Command error'];
     }
     thats_it_for_now_incomming_payload($jsondata);
 }
 
-function thats_it_for_now_incomming_payload($jsondata){
-    if( defined('AJAX_APIv2_WITH_HTTP_STATUSES') and AJAX_APIv2_WITH_HTTP_STATUSES ){
-        if( !empty($jsondata['errorcode']) ){
+function thats_it_for_now_incomming_payload($jsondata)
+{
+    if (defined('AJAX_APIv2_WITH_HTTP_STATUSES') and AJAX_APIv2_WITH_HTTP_STATUSES) {
+        if (!empty($jsondata['errorcode'])) {
             header('HTTP/1.0 400 Error');
-        } else if(($jsondata['status']!==0) and empty($jsondata['status'])){
+        } elseif (($jsondata['status'] !== 0) and empty($jsondata['status'])) {
             header('HTTP/1.0 400 Error');
         } else {
             header('HTTP/1.0 200 OK');
@@ -499,15 +500,15 @@ function thats_it_for_now_incomming_payload($jsondata){
                     <div class="card-body" id="permList">
                         <div id="permLoader" class="loaderWrap"><div class="loaderBack"></div><div class="loader">Loading...</div></div>
                         <?php
-                            $items = $uarpc->permissions->list(['sort'=>'asc', 'list'=>'parent']);
+                            $items = $uarpc->permissions->list(['sort' => 'asc', 'list' => 'parent']);
                             foreach ($items as $perm) {
-#var_dump( $perm );
-#exit;
+                                #var_dump( $perm );
+                                #exit;
                                 $actions = [];
                                 $actions[] = '<a href="#" class="action" data-command="delete"><span class="iconify" data-icon="fluent:delete-dismiss-24-regular" data-inline="false"></span></a>';
 
                                 // PermissionID, title, description
-                                if( !$perm['enabled'] ) {
+                                if (!$perm['enabled']) {
                                     $enabledState = ' perm_disabled';
                                     $dataValue = 'false';
                                     $actions[] = '<a href="#" class="action d-red" data-command="perm-enable" title="Enable permission"><span class="iconify" data-icon="fluent:toggle-left-16-regular" data-inline="false"></span></a>';

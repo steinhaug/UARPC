@@ -1,4 +1,4 @@
-# UARPC v1.5.12
+# UARPC v1.6.0
 
 User Access, Roles, Permissions and Configurations framework
 Tools for administering user access. 

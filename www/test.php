@@ -1,4 +1,5 @@
 <?php
+
 require '../credentials.php';
 require 'class.mysqli.php';
 //require 'UARPC_base.php';
@@ -7,44 +8,44 @@ require 'uarpc.php';
 new uarpc('userarpc_');
 
 define('USER_KIM', 999);
-define('ROLE1','Manager');              // 7
-define('ROLE2','Boss');
-define('PERM1','/invoice/read');        // 1
-define('PERM2','/invoice/write-delay'); // 4
+define('ROLE1', 'Manager');              // 7
+define('ROLE2', 'Boss');
+define('PERM1', '/invoice/read');        // 1
+define('PERM2', '/invoice/write-delay'); // 4
 
 $uarpc = new UARPC_base(USER_KIM, 1);
 
 
 
-var_dump( $uarpc->roles->listUsers(1) );
-var_dump( $uarpc->roles->format('option', 999)->listUsers(1) );
+var_dump($uarpc->roles->listUsers(1));
+var_dump($uarpc->roles->format('option', 999)->listUsers(1));
 exit;
-var_dump( $uarpc->roles->list() );
-var_dump( $uarpc->roles->format('option', 2)->list() );
+var_dump($uarpc->roles->list());
+var_dump($uarpc->roles->format('option', 2)->list());
 
-var_dump( $uarpc->users->isDenied(18, 99) );
-var_dump( $uarpc->users->isAllowed(19, 99) );
+var_dump($uarpc->users->isDenied(18, 99));
+var_dump($uarpc->users->isAllowed(19, 99));
 
-$items = $uarpc->permissions->listUser(['UserID'=>99, 'sort'=>'asc', 'list'=>'parent']);
-var_dump( $items );
+$items = $uarpc->permissions->listUser(['UserID' => 99, 'sort' => 'asc', 'list' => 'parent']);
+var_dump($items);
 exit;
 
 $roles = $uarpc->roles->list(99);
 
-var_dump( $uarpc->roles->isAssigned(1, 99) );
-var_dump( $uarpc->roles->isAssigned(2, 99) );
-var_dump( $uarpc->roles->isAssigned(3, 99) );
-var_dump( $uarpc->roles->isAssigned(2, 199) );
+var_dump($uarpc->roles->isAssigned(1, 99));
+var_dump($uarpc->roles->isAssigned(2, 99));
+var_dump($uarpc->roles->isAssigned(3, 99));
+var_dump($uarpc->roles->isAssigned(2, 199));
 exit;
 
-$permissions = $uarpc->permissions->list(['onlyEnabled'=>true]);
+$permissions = $uarpc->permissions->list(['onlyEnabled' => true]);
 var_dump($permissions);
 exit;
 
-var_dump( $uarpc->havePermission('/order') );
-var_dump( $uarpc->havePermission('/visordre') );
+var_dump($uarpc->havePermission('/order'));
+var_dump($uarpc->havePermission('/visordre'));
 
-var_dump( $uarpc->users->permissions(99) );
+var_dump($uarpc->users->permissions(99));
 
 /*
 var_dump( $uarpc->permissions->id('/--a') );
@@ -173,17 +174,17 @@ $uarpc->permissions->assign($permissionid, $roleid);
 echo '<hr>';
 
 $roleId = $uarpc->roles->id(ROLE1);
-echo 'RoleId for ' . ROLE1 . ' is ' . $roleId . '<br>'; 
+echo 'RoleId for ' . ROLE1 . ' is ' . $roleId . '<br>';
 
 $roleId = $uarpc->roles->id(ROLE2);
-echo 'RoleId for ' . ROLE2 . ' is ' . $roleId . '<br>'; 
+echo 'RoleId for ' . ROLE2 . ' is ' . $roleId . '<br>';
 
 $permissionId = $uarpc->permissions->id(PERM1);
-echo 'PermissionId for ' . PERM1 . ' is ' . $permissionId . '<br>'; 
+echo 'PermissionId for ' . PERM1 . ' is ' . $permissionId . '<br>';
 
 $permissionId = $uarpc->permissions->id(PERM2);
-echo 'PermissionId for ' . PERM2 . ' is ' . $permissionId . '<br>'; 
+echo 'PermissionId for ' . PERM2 . ' is ' . $permissionId . '<br>';
 */
 
 #$permissionId = $uarpc->permissions->id('/invoice/read');
-#echo 'PermissionId for /invoice/read is ' . $permissionId . '<br>'; 
+#echo 'PermissionId for /invoice/read is ' . $permissionId . '<br>';

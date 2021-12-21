@@ -1,20 +1,20 @@
 <?php
 
 /**
- * UARPC - User Access Roles Permissions Configuration v1.3.0
- * 
+ * UARPC - User Access Roles Permissions Configuration v1.6.0
+ *
  * Framework for managing and checking all rights for a particular user.
- * 
+ *
  * Maintained by: @steinhaug
- * 
+ *
  * Roadmap:
  * - user override of the roles, this way we can tailer all needs
  * - configuration object extends a permission
  * - optimazation of DB and queries making sure it's fast
  *
  */
-class UARPC_base {
-
+class UARPC_base
+{
     public $roles;
     public $permissions;
     public $users;
@@ -32,22 +32,27 @@ class UARPC_base {
     {
         $this->verbose_actions = $verbose_actions;
 
-        if( isset($GLOBALS['steinhaugUarpcDbPrefix']) )
+        if (isset($GLOBALS['steinhaugUarpcDbPrefix'])) {
             $this->db_prefix = $GLOBALS['steinhaugUarpcDbPrefix'];
-
-        if( $db_prefix !== null )
-            $this->db_prefix = $db_prefix;
-
-        if($this->verbose_actions) echo 'UARPC init: ' . time() . '<br>';
-        if( $UserID !== null ){
-            $this->UserID = $UserID;
-            if($this->verbose_actions) echo 'UserID set for ' . $this->UserID . '<br>';
         }
 
-        $this->roles = new UARPC_RoleManager ($this->UserID, $this->verbose_actions, $this->db_prefix);
-        $this->permissions = new UARPC_PermissionManager ($this->UserID, $this->verbose_actions, $this->db_prefix);
-        $this->users = new UARPC_UserManager ($this->UserID, $this->verbose_actions, $this->db_prefix);
+        if ($db_prefix !== null) {
+            $this->db_prefix = $db_prefix;
+        }
 
+        if ($this->verbose_actions) {
+            echo 'UARPC init: ' . time() . '<br>';
+        }
+        if ($UserID !== null) {
+            $this->UserID = $UserID;
+            if ($this->verbose_actions) {
+                echo 'UserID set for ' . $this->UserID . '<br>';
+            }
+        }
+
+        $this->roles = new UARPC_RoleManager($this->UserID, $this->verbose_actions, $this->db_prefix);
+        $this->permissions = new UARPC_PermissionManager($this->UserID, $this->verbose_actions, $this->db_prefix);
+        $this->users = new UARPC_UserManager($this->UserID, $this->verbose_actions, $this->db_prefix);
     }
 
     public function set_db_prefix($db_prefix)
@@ -55,12 +60,12 @@ class UARPC_base {
         $this->db_prefix = $db_prefix;
     }
 
-    public function addRole($title, $description='')
+    public function addRole($title, $description = '')
     {
         return $this->roles->add($title, $description);
     }
 
-    public function addPermission($title, $description='')
+    public function addPermission($title, $description = '')
     {
         return $this->permissions->add($title, $description);
     }
@@ -88,12 +93,14 @@ class UARPC_base {
     public function havePermission($PermissionTitle)
     {
         global $mysqli;
-        if($this->UserID === null)
+        if ($this->UserID === null) {
             throw new Exception('No UserID');
+        }
 
         // 1. check if permissions is enabled
-        if( !$this->permEnabled($PermissionTitle) )
+        if (!$this->permEnabled($PermissionTitle)) {
             return false;
+        }
 
         // 2. check if permission is denied on user
         $sql = 'SELECT * 
@@ -103,7 +110,9 @@ class UARPC_base {
                 ';
         $res = $mysqli->prepared_query($sql, 'si', [$PermissionTitle, $this->UserID]);
         if (count($res)) {
-            if($this->verbose_actions) echo 'User(' . $this->UserID . ') is denied permission \'' . $PermissionTitle . '\' as override<br>';
+            if ($this->verbose_actions) {
+                echo 'User(' . $this->UserID . ') is denied permission \'' . $PermissionTitle . '\' as override<br>';
+            }
             return false;
         }
 
@@ -115,7 +124,9 @@ class UARPC_base {
                 ';
         $res = $mysqli->prepared_query($sql, 'si', [$PermissionTitle, $this->UserID]);
         if (count($res)) {
-            if($this->verbose_actions) echo 'User(' . $this->UserID . ') is allowed permission \'' . $PermissionTitle . '\' as override<br>';
+            if ($this->verbose_actions) {
+                echo 'User(' . $this->UserID . ') is allowed permission \'' . $PermissionTitle . '\' as override<br>';
+            }
             return true;
         }
 
@@ -130,7 +141,9 @@ class UARPC_base {
 
         $res = $mysqli->prepared_query($sql, 'si', [$PermissionTitle, $this->UserID]);
         if (count($res)) {
-            if($this->verbose_actions) echo 'User(' . $this->UserID . ') is allowed permission \'' . $PermissionTitle . '\' from roles<br>';
+            if ($this->verbose_actions) {
+                echo 'User(' . $this->UserID . ') is allowed permission \'' . $PermissionTitle . '\' from roles<br>';
+            }
             return true;
         }
 
@@ -144,7 +157,7 @@ class UARPC_base {
      *
      * @param string $PermissionTitle
      *
-     * @return bool Returns true for enabled and active modules, false for disabled or not enabled ones 
+     * @return bool Returns true for enabled and active modules, false for disabled or not enabled ones
      */
     public function permEnabled($PermissionTitle)
     {
@@ -157,13 +170,15 @@ class UARPC_base {
         $res = $mysqli->prepared_query($sql, 's', [$PermissionTitle]);
 
         if (count($res)) {
-            if($this->verbose_actions) echo 'permEnabled(' . $res[0]['enabled'] . ') returned for \'' . $PermissionTitle . '\'<br>';
+            if ($this->verbose_actions) {
+                echo 'permEnabled(' . $res[0]['enabled'] . ') returned for \'' . $PermissionTitle . '\'<br>';
+            }
             return boolval($res[0]['enabled']);
         } else {
-            if($this->verbose_actions) echo 'permEnabled() error, permission does not exist:  \'' . $PermissionTitle . '\'<br>';
+            if ($this->verbose_actions) {
+                echo 'permEnabled() error, permission does not exist:  \'' . $PermissionTitle . '\'<br>';
+            }
             return false;
         }
-
     }
-
 }

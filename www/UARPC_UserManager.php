@@ -1,18 +1,17 @@
 <?php
 
 /**
- * UARPC - User Manager v1.3.0
- * 
+ * UARPC - User Manager v1.6.0
+ *
  * All role based functions and operations goes into this class
  */
 class UARPC_UserManager
 {
-
     // default UserID
-    var $UserID = null;
+    public $UserID = null;
 
     // Database prefix
-    var $db_prefix = 'uarpc_';
+    public $db_prefix = 'uarpc_';
 
     // if true will output lots of debugging info
     public $verbose_actions = false;
@@ -24,14 +23,19 @@ class UARPC_UserManager
     {
         $this->verbose_actions = $verbose_actions;
 
-        if( $db_prefix !== null )
+        if ($db_prefix !== null) {
             $this->db_prefix = $db_prefix;
+        }
 
-        if($this->verbose_actions) echo 'UARPC_UserManager init: ' . time() . '<br>';
+        if ($this->verbose_actions) {
+            echo 'UARPC_UserManager init: ' . time() . '<br>';
+        }
 
-        if( $UserID !== null ){
+        if ($UserID !== null) {
             $this->UserID = $UserID;
-            if($this->verbose_actions) echo 'UserID set for ' . $this->UserID . '<br>';
+            if ($this->verbose_actions) {
+                echo 'UserID set for ' . $this->UserID . '<br>';
+            }
         }
     }
 
@@ -43,49 +47,59 @@ class UARPC_UserManager
      *
      * @return boolean Returns true on success
      */
-    public function allow($PermissionID, $UserID=null)
+    public function allow($PermissionID, $UserID = null)
     {
         global $mysqli;
 
-        if( $UserID === null ){
+        if ($UserID === null) {
             $UserID = $this->UserID;
         }
 
-        if($UserID === null)
+        if ($UserID === null) {
             throw new Exception('UserManager, cannot assign permission no UserID');
+        }
 
-        $res = $mysqli->prepared_query("SELECT `UserID`,`PermissionID` FROM `" . $this->db_prefix . "_userallowpermissions` WHERE `UserID`=? AND `PermissionID`=?", 'ii', [$UserID,$PermissionID]);
+        $res = $mysqli->prepared_query("SELECT `UserID`,`PermissionID` FROM `" . $this->db_prefix . "_userallowpermissions` WHERE `UserID`=? AND `PermissionID`=?", 'ii', [$UserID, $PermissionID]);
         if (!count($res)) {
             $sql = [
                 "INSERT INTO `" . $this->db_prefix . "_userallowpermissions` (`UserID`,`PermissionID`,`AssignmentDate`) VALUES (?,?,?)",
                 "iii",
-                [$UserID,$PermissionID,time()]
+                [$UserID, $PermissionID, time()]
             ];
             $result = $mysqli->prepared_insert($sql);
-            if($this->verbose_actions) echo 'UserID (' . $UserID . ') allowed PermissionID (' . $PermissionID . ') successfully.<br>';
+            if ($this->verbose_actions) {
+                echo 'UserID (' . $UserID . ') allowed PermissionID (' . $PermissionID . ') successfully.<br>';
+            }
             return true;
         } else {
-            if($this->verbose_actions) echo 'UserID (' . $UserID . ') already allowed PermissionID (' . $PermissionID . ').' . '<br>';
+            if ($this->verbose_actions) {
+                echo 'UserID (' . $UserID . ') already allowed PermissionID (' . $PermissionID . ').' . '<br>';
+            }
             return true;
         }
     }
 
-    public function unallow($PermissionID, $UserID=null)
+    public function unallow($PermissionID, $UserID = null)
     {
         global $mysqli;
 
-        if( $UserID === null ){
+        if ($UserID === null) {
             $UserID = $this->UserID;
         }
 
-        if($UserID === null)
+        if ($UserID === null) {
             throw new Exception('UserManager, cannot allow permission no UserID');
+        }
 
-        $affected_rows = $mysqli->prepared_query("DELETE FROM `" . $this->db_prefix . "_userallowpermissions` WHERE `UserID`=? AND `PermissionID`=?", 'ii', [$UserID,$PermissionID]);
+        $affected_rows = $mysqli->prepared_query("DELETE FROM `" . $this->db_prefix . "_userallowpermissions` WHERE `UserID`=? AND `PermissionID`=?", 'ii', [$UserID, $PermissionID]);
         if (!$affected_rows) {
-            if($this->verbose_actions) echo 'Error: permissions/unallow(' . $PermissionID . ', ' . $UserID . ') did not report any databasechange' . '<br>';
+            if ($this->verbose_actions) {
+                echo 'Error: permissions/unallow(' . $PermissionID . ', ' . $UserID . ') did not report any databasechange' . '<br>';
+            }
         } else {
-            if($this->verbose_actions) echo 'Unallow permission(' . $PermissionID . ') for user(' . $UserID . ')<br>';
+            if ($this->verbose_actions) {
+                echo 'Unallow permission(' . $PermissionID . ') for user(' . $UserID . ')<br>';
+            }
             return $affected_rows;
         }
     }
@@ -98,82 +112,96 @@ class UARPC_UserManager
      *
      * @return boolean Returns true on success
      */
-    public function deny($PermissionID, $UserID=null)
+    public function deny($PermissionID, $UserID = null)
     {
         global $mysqli;
 
-        if( $UserID === null ){
+        if ($UserID === null) {
             $UserID = $this->UserID;
         }
 
-        if($UserID === null)
+        if ($UserID === null) {
             throw new Exception('UserManager, cannot deny permission no UserID');
+        }
 
-        $res = $mysqli->prepared_query("SELECT `UserID`,`PermissionID` from `" . $this->db_prefix . "_userdenypermissions` WHERE `UserID`=? AND `PermissionID`=?", 'ii', [$UserID,$PermissionID]);
+        $res = $mysqli->prepared_query("SELECT `UserID`,`PermissionID` from `" . $this->db_prefix . "_userdenypermissions` WHERE `UserID`=? AND `PermissionID`=?", 'ii', [$UserID, $PermissionID]);
         if (!count($res)) {
             $sql = [
                 "INSERT INTO `" . $this->db_prefix . "_userdenypermissions` (`UserID`,`PermissionID`,`AssignmentDate`) VALUES (?,?,?)",
                 "iii",
-                [$UserID,$PermissionID,time()]
+                [$UserID, $PermissionID, time()]
             ];
             $result = $mysqli->prepared_insert($sql);
-            if($this->verbose_actions) echo 'UserID (' . $UserID . ') denied PermissionID (' . $PermissionID . ') successfully.<br>';
+            if ($this->verbose_actions) {
+                echo 'UserID (' . $UserID . ') denied PermissionID (' . $PermissionID . ') successfully.<br>';
+            }
             return true;
         } else {
-            if($this->verbose_actions) echo 'UserID (' . $UserID . ') already denied PermissionID (' . $PermissionID . ').' . '<br>';
+            if ($this->verbose_actions) {
+                echo 'UserID (' . $UserID . ') already denied PermissionID (' . $PermissionID . ').' . '<br>';
+            }
             return true;
         }
     }
 
-    public function undeny($PermissionID, $UserID=null)
+    public function undeny($PermissionID, $UserID = null)
     {
         global $mysqli;
 
-        if( $UserID === null ){
+        if ($UserID === null) {
             $UserID = $this->UserID;
         }
 
-        if($UserID === null)
+        if ($UserID === null) {
             throw new Exception('UserManager, cannot deny permission no UserID');
+        }
 
-        $affected_rows = $mysqli->prepared_query("DELETE FROM `" . $this->db_prefix . "_userdenypermissions` WHERE `UserID`=? AND `PermissionID`=?", 'ii', [$UserID,$PermissionID]);
+        $affected_rows = $mysqli->prepared_query("DELETE FROM `" . $this->db_prefix . "_userdenypermissions` WHERE `UserID`=? AND `PermissionID`=?", 'ii', [$UserID, $PermissionID]);
         if (!$affected_rows) {
-            if($this->verbose_actions) echo 'Error: permissions/undeny(' . $PermissionID . ', ' . $UserID . ') did not report any databasechange' . '<br>';
+            if ($this->verbose_actions) {
+                echo 'Error: permissions/undeny(' . $PermissionID . ', ' . $UserID . ') did not report any databasechange' . '<br>';
+            }
         } else {
-            if($this->verbose_actions) echo 'Undenied permission(' . $PermissionID . ') for user(' . $UserID . ')<br>';
+            if ($this->verbose_actions) {
+                echo 'Undenied permission(' . $PermissionID . ') for user(' . $UserID . ')<br>';
+            }
             return $affected_rows;
         }
     }
 
 
-    public function isAllowed($PermissionID, $UserID=null)
+    public function isAllowed($PermissionID, $UserID = null)
     {
         global $mysqli;
 
-        if( $UserID === null ){
+        if ($UserID === null) {
             $UserID = $this->UserID;
         }
 
-        $res = $mysqli->prepared_query("SELECT * from `" . $this->db_prefix . "_userallowpermissions` WHERE `UserID`=? and `PermissionID`=?", 'ii', [$UserID,$PermissionID]);
+        $res = $mysqli->prepared_query("SELECT * from `" . $this->db_prefix . "_userallowpermissions` WHERE `UserID`=? and `PermissionID`=?", 'ii', [$UserID, $PermissionID]);
         if (count($res)) {
-            if($this->verbose_actions) echo 'isAllowed, user ' . $UserID . ' IS ALLOWED by override PermissionID ' . $PermissionID;
+            if ($this->verbose_actions) {
+                echo 'isAllowed, user ' . $UserID . ' IS ALLOWED by override PermissionID ' . $PermissionID;
+            }
             return true;
         }
 
         return false;
     }
 
-    public function isDenied($PermissionID, $UserID=null)
+    public function isDenied($PermissionID, $UserID = null)
     {
         global $mysqli;
 
-        if( $UserID === null ){
+        if ($UserID === null) {
             $UserID = $this->UserID;
         }
 
-        $res = $mysqli->prepared_query("SELECT * FROM `" . $this->db_prefix . "_userdenypermissions` WHERE `UserID`=? AND `PermissionID`=?", 'ii', [$UserID,$PermissionID]);
+        $res = $mysqli->prepared_query("SELECT * FROM `" . $this->db_prefix . "_userdenypermissions` WHERE `UserID`=? AND `PermissionID`=?", 'ii', [$UserID, $PermissionID]);
         if (count($res)) {
-            if($this->verbose_actions) echo 'isDenied, user ' . $UserID . ' IS DENIED by override PermissionID ' . $PermissionID;
+            if ($this->verbose_actions) {
+                echo 'isDenied, user ' . $UserID . ' IS DENIED by override PermissionID ' . $PermissionID;
+            }
             return true;
         }
 
@@ -182,10 +210,9 @@ class UARPC_UserManager
 
 
 
-    public function list($UserID=null)
+    public function list($UserID = null)
     {
         return $this->permissions($UserID);
-
     }
 
     /**
@@ -195,16 +222,17 @@ class UARPC_UserManager
      *
      * @return array Associated array of permissions, PermissionID as key and permission name as value.
      */
-    public function permissions($UserID=null)
+    public function permissions($UserID = null)
     {
         global $mysqli;
 
-        if( $UserID === null ){
+        if ($UserID === null) {
             $UserID = $this->UserID;
         }
 
-        if($UserID === null)
+        if ($UserID === null) {
             throw new Exception('UserManager, cannot deny permission no UserID');
+        }
 
         $sql = "SELECT `up`.`PermissionID`  
                 FROM `" . $this->db_prefix . "_permissions` `up` 
@@ -215,7 +243,7 @@ class UARPC_UserManager
         $res = $mysqli->prepared_query($sql, 'i', [$UserID]);
         $remove_ids = [];
         if ($res) {
-            foreach($res as $item){
+            foreach ($res as $item) {
                 $remove_ids[] = $item['PermissionID'];
             }
         }
@@ -233,35 +261,35 @@ class UARPC_UserManager
                 WHERE `uap`.`UserID`=? 
                 ";
 
-        $res = $mysqli->prepared_query($sql, 'ii', [$UserID,$UserID]);
+        $res = $mysqli->prepared_query($sql, 'ii', [$UserID, $UserID]);
 
         $permissions = [];
 
         if ($res) {
-            foreach($res as $item){
-
-                if( !$item['enabled'] )
+            foreach ($res as $item) {
+                if (!$item['enabled']) {
                     continue;
+                }
 
-                if( count($remove_ids) ){
-                    if( !in_array($item['PermissionID'], $remove_ids) ){
+                if (count($remove_ids)) {
+                    if (!in_array($item['PermissionID'], $remove_ids)) {
                         $permissions[$item['PermissionID']] = $item['title'];
                     }
                 } else {
                     $permissions[$item['PermissionID']] = $item['title'];
                 }
-
             }
-
         }
 
-        if($this->verbose_actions) echo 'User(' . $UserID . ') returned a total of ' . count($permissions) . ' permissions.<br>';
+        if ($this->verbose_actions) {
+            echo 'User(' . $UserID . ') returned a total of ' . count($permissions) . ' permissions.<br>';
+        }
 
-        if( $this->returnMethod_formatter !== null )
+        if ($this->returnMethod_formatter !== null) {
             return $this->{$this->returnMethod_formatter}($permissions, __FUNCTION__);
-            else
+        } else {
             return $permissions;
-
+        }
     }
 
     /**
@@ -271,12 +299,13 @@ class UARPC_UserManager
      *
      * @return array List of roles connected to the user
      */
-    public function roles($UserID=null)
+    public function roles($UserID = null)
     {
         global $mysqli;
 
-        if( $UserID === null )
+        if ($UserID === null) {
             $UserID = $this->UserID;
+        }
 
         $sql = "SELECT * FROM `" . $this->db_prefix . "_userroles` `ur` 
                 JOIN `" . $this->db_prefix . "_roles` `r` ON `r`.`RoleID` = `ur`.`RoleID` 
@@ -285,7 +314,7 @@ class UARPC_UserManager
 
         $roles = [];
         if (count($res)) {
-            foreach($res as $row){
+            foreach ($res as $row) {
                 $roles[$row['RoleID']] = [
                                             'RoleID' => $row['RoleID'],
                                             'title' => $row['title'],
@@ -294,10 +323,11 @@ class UARPC_UserManager
             }
         }
 
-        if( $this->returnMethod_formatter !== null )
+        if ($this->returnMethod_formatter !== null) {
             return $this->{$this->returnMethod_formatter}($roles, __FUNCTION__);
-            else
+        } else {
             return $roles;
+        }
     }
 
     /**
@@ -310,11 +340,13 @@ class UARPC_UserManager
     public function format($format)
     {
         $valid_formatters = [','];
-        if( !in_array($format, $valid_formatters) )
+        if (!in_array($format, $valid_formatters)) {
             die('<h1>$UARPC error - Must be fixed!</h1><div>-&gt;format(formatter) error: &quot;' . $format . '&quot;.<br>Possible formatters are: &quot;' . implode('&quot;, &quot;', $valid_formatters) . '&quot;</div>');
+        }
 
-        if($format == ',')
+        if ($format == ',') {
             $this->returnMethod_formatter = 'format__comma_seperated';
+        }
 
         return $this;
     }
@@ -329,22 +361,20 @@ class UARPC_UserManager
      */
     public function format__comma_seperated($data, $caller_method)
     {
-
         $this->returnMethod_formatter = null;
-        if( $caller_method == 'roles' ){
+        if ($caller_method == 'roles') {
             $txt = '';
-            foreach($data as $key=>$val){
-                if(mb_strlen($txt))
+            foreach ($data as $key => $val) {
+                if (mb_strlen($txt)) {
                     $txt .= ', ';
+                }
                 $txt .= $val['title'];
             }
             return $txt;
-        } else if( $caller_method == 'permissions' ){
+        } elseif ($caller_method == 'permissions') {
             return implode(', ', $data);
         }
 
         return 'Formatter error, unknown caller: ' . $ref;
-
     }
-
 }
