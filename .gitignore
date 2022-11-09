@@ -1,5 +1,6 @@
 credentials.php
 /logs/**/*
 /files/**/*
-/PhpRbac/
 /www/dist/
+/vendor
+composer.lock

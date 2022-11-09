@@ -24,9 +24,10 @@ class uarpc
     {
         global $mysqli;
 
-        if ($cmd === null) {
-            if (!method_exists($mysqli, 'prepared_insert')) {
-                die('Fatal error, steinhaug/uarpc requires class.mysqli.php. Make sure $mysqli is setup and try again.');
+        $funcs_to_check = ['return_charset_and_collate','prepared_insert'];
+        foreach($funcs_to_check as $func){
+            if (!method_exists($mysqli, $func)) {
+                die('Fatal error, steinhaug/uarpc requires latest version of class.mysqli.php. Make sure $mysqli is setup and try again.');
             }
         }
 
@@ -36,16 +37,20 @@ class uarpc
             $GLOBALS['steinhaugUarpcDbPrefix'] = $cmd;
         }
 
-        if ($cmd === 'setup') {
+        if ($cmd === 'setup' or $cmd2 === 'setup') {
             echo 'setup notice: Creating the UARPC tables needed...' . "\n";
             $this->setup();
-            echo 'setup notice: Setting up tables compleded... continuing as normal.' . "\n";
+            echo 'setup notice: Setting up tables completed... continuing as normal...' . "\n";
         }
 
-        if ($cmd === null) {
-            if (!$mysqli->table_exist($this->db_prefix . '_permissions')) {
-                die('Fatal error, steinhaug/uarpc cannot locate the required database tables. Run "new uarpc(\'setup\');" to automatically set up new tables.');
+        if (!$mysqli->table_exist($this->db_prefix . '_permissions')) {
+            if ($cmd !== 'setup' and $cmd !== null) {
+                die('Fatal error, steinhaug/uarpc cannot locate the required database tables. Reload with added setup parameter, "new uarpc(\'' . $cmd . '\',\'setup\');" to automatically set up new tables with your custom prefix.');
+            } else {
+                die('Fatal error, steinhaug/uarpc cannot locate the required database tables. Reload with added setup parameter, "new uarpc(\'setup\');" to automatically set up new tables.');
             }
+        } else if ($cmd === 'setup' or $cmd2 === 'setup') {
+            die('Fatal error, steinhaug/uarpc was loaded with setup enabled. Steinhaug/uarpc is already set up, so make sure you remove the \'setup\' parameter from the new uarpc() call and reload.');
         }
     }
 

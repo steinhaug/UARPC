@@ -1,11 +1,9 @@
 <?php
 
-require '../credentials.php';
-require 'class.mysqli.php';
-//require 'UARPC_base.php';
+require '../environment.php';
 
 require 'uarpc.php';
-new uarpc('userarpc_');
+new uarpc('userarpc_','setup');
 
 define('USER_KIM', 999);
 define('ROLE1', 'Manager');              // 7
