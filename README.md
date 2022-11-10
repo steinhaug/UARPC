@@ -1,4 +1,4 @@
-# UARPC v1.6.2
+# UARPC v1.6.3
 
 User Access, Roles, Permissions and Configurations framework
 Tools for administering user access. 
@@ -35,6 +35,9 @@ Manually add /dist folder for local development.
 
 
 ## -- brief history log --
+### UARPC v1.6.3
+
+Fixed composer requirements.
 ### UARPC v1.6.2
 
 Added UserID parameter so it's possible to check against any user.  
