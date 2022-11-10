@@ -87,15 +87,21 @@ class UARPC_base
      * Permission needs to be enabled, not denied or assigned to user as overrid, or finally belonging to the role
      *
      * @param string $PermissionTitle Permission name
+     * @param string $UserID UserID to check for permission
      *
      * @return int Returns 0 if no persmission or >0 if permitted
      */
-    public function havePermission($PermissionTitle)
+    public function havePermission($PermissionTitle, $UserID = null)
     {
         global $mysqli;
-        if ($this->UserID === null) {
+
+        if ($UserID === null and $this->UserID === null) {
             throw new Exception('No UserID');
         }
+
+        if ($UserID === null)
+            $UserID = $this->UserID;
+
 
         // 1. check if permissions is enabled
         if (!$this->permEnabled($PermissionTitle)) {
@@ -108,10 +114,10 @@ class UARPC_base
                 JOIN `' . $this->db_prefix . '_userdenypermissions` `uudp` ON ( `uudp`.`PermissionID` = `up`.`PermissionID` ) 
                 WHERE `up`.`title`=? AND `uudp`.`UserID` = ?
                 ';
-        $res = $mysqli->prepared_query($sql, 'si', [$PermissionTitle, $this->UserID]);
+        $res = $mysqli->prepared_query($sql, 'si', [$PermissionTitle, $UserID]);
         if (count($res)) {
             if ($this->verbose_actions) {
-                echo 'User(' . $this->UserID . ') is denied permission \'' . $PermissionTitle . '\' as override<br>';
+                echo '[-] User(' . $UserID . ') is denied permission \'' . $PermissionTitle . '\' as override<br>';
             }
             return false;
         }
@@ -122,10 +128,10 @@ class UARPC_base
                 JOIN `' . $this->db_prefix . '_userallowpermissions` `uudp` ON ( `uudp`.`PermissionID` = `up`.`PermissionID` ) 
                 WHERE `up`.`title`=? AND `uudp`.`UserID` = ?
                 ';
-        $res = $mysqli->prepared_query($sql, 'si', [$PermissionTitle, $this->UserID]);
+        $res = $mysqli->prepared_query($sql, 'si', [$PermissionTitle, $UserID]);
         if (count($res)) {
             if ($this->verbose_actions) {
-                echo 'User(' . $this->UserID . ') is allowed permission \'' . $PermissionTitle . '\' as override<br>';
+                echo '[OK] User(' . $UserID . ') is allowed permission \'' . $PermissionTitle . '\' as override<br>';
             }
             return true;
         }
@@ -139,14 +145,18 @@ class UARPC_base
                 WHERE `up`.`title`=? AND `uur`.`UserID` = ?
                 ';
 
-        $res = $mysqli->prepared_query($sql, 'si', [$PermissionTitle, $this->UserID]);
+        $res = $mysqli->prepared_query($sql, 'si', [$PermissionTitle, $UserID]);
         if (count($res)) {
             if ($this->verbose_actions) {
-                echo 'User(' . $this->UserID . ') is allowed permission \'' . $PermissionTitle . '\' from roles<br>';
+                echo '[OK] User(' . $UserID . ') is allowed permission \'' . $PermissionTitle . '\' from roles<br>';
             }
             return true;
         }
 
+
+        if ($this->verbose_actions) {
+            echo '[-] User(' . $UserID . ') do not have permission \'' . $PermissionTitle . '\' from roles<br>';
+        }
         // User is not permitted
         return false;
     }

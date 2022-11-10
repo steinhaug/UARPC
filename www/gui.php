@@ -1,9 +1,10 @@
 <?php
-require '../credentials.php';
-require 'class.mysqli.php';
-require 'uarpc.php';
 
-new uarpc();
+require '../environment.php';
+
+
+
+new uarpc('userarpc_');
 
 $UserID = 1;
 $uarpc = new UARPC_BASE($UserID);

@@ -1,4 +1,4 @@
-# UARPC v1.6.1
+# UARPC v1.6.2
 
 User Access, Roles, Permissions and Configurations framework
 Tools for administering user access. 
@@ -31,3 +31,15 @@ Use the [WIKI pages documentation](https://gitlab.com/steinhaug/uarpc/-/wikis/ho
 ## Requirements
 
 Manually add /dist folder for local development.
+
+
+
+## -- brief history log --
+### UARPC v1.6.2
+
+Added UserID parameter so it's possible to check against any user.  
+->havePermission(PermTitle, UserID),
+
+### UARPC v1.6.1
+
+Moved Mysqli2 into seperate project

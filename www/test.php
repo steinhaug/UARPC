@@ -3,7 +3,7 @@
 require '../environment.php';
 
 require 'uarpc.php';
-new uarpc('userarpc_','setup');
+new uarpc('userarpc_');
 
 define('USER_KIM', 999);
 define('ROLE1', 'Manager');              // 7
@@ -12,7 +12,14 @@ define('PERM1', '/invoice/read');        // 1
 define('PERM2', '/invoice/write-delay'); // 4
 
 $uarpc = new UARPC_base(USER_KIM, 1);
+echo '<hr>';
 
+//var_dump($uarpc->roles->list());
+
+var_dump( $uarpc->havePermission('::moderator::') );
+var_dump( $uarpc->havePermission('::moderator::', 1) );
+
+exit;
 
 
 var_dump($uarpc->roles->listUsers(1));
