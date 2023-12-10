@@ -1,4 +1,4 @@
-# UARPC v1.6.3
+# UARPC v1.6.4
 
 User Access, Roles, Permissions and Configurations framework
 Tools for administering user access. 
@@ -20,7 +20,7 @@ To install the library use composer:
 
 # init
 
-    new uarpc; // needed for loading uarpc classes
+    new uarpc(opt 'table_prefix'); // needed for loading uarpc classes
     $uarpc = new UARPC_base($UserId);
     ... see docs for rest
 
@@ -33,11 +33,16 @@ Use the [WIKI pages documentation](https://gitlab.com/steinhaug/uarpc/-/wikis/ho
 Manually add /dist folder for local development.
 
 
-
 ## -- brief history log --
+
+### UARPC v1.6.4
+
+Added \$GLOBALS['steinhaugUarpcDbPrefix'] for all classes.
+
 ### UARPC v1.6.3
 
 Fixed composer requirements.
+
 ### UARPC v1.6.2
 
 Added UserID parameter so it's possible to check against any user.  

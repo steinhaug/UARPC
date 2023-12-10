@@ -24,6 +24,10 @@ class uarpc
     {
         global $mysqli;
 
+        #if (isset($GLOBALS['steinhaugUarpcDbPrefix'])) {
+        #    $this->db_prefix = $GLOBALS['steinhaugUarpcDbPrefix'];
+        #}
+
         $funcs_to_check = ['return_charset_and_collate','prepared_insert'];
         foreach($funcs_to_check as $func){
             if (!method_exists($mysqli, $func)) {

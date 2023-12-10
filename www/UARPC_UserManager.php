@@ -23,6 +23,10 @@ class UARPC_UserManager
     {
         $this->verbose_actions = $verbose_actions;
 
+        if (isset($GLOBALS['steinhaugUarpcDbPrefix'])) {
+            $this->db_prefix = $GLOBALS['steinhaugUarpcDbPrefix'];
+        }
+
         if ($db_prefix !== null) {
             $this->db_prefix = $db_prefix;
         }
