@@ -3,5 +3,3 @@ plugins:
 - jekyll-remote-theme
 google_analytics: G-8ZC36LC0HH
 show_downloads: true
-github:
-  zip_url: https://github.com/steinhaug/UARPC/archive/refs/tags/v1.6.4.zip
