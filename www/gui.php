@@ -22,21 +22,21 @@ if (!empty($_POST['value']) and !empty($_POST['command'])) {
     if (in_array($cmd, $allowed_commands)) {
         switch ($cmd) {
             case 'enablePerm':
-                $jsondata['return'] = $uarpc->permissions->enable((int) $val['PermID']);
+                $jsondata['return'] = $uarpc->permissions->enable( (int) $val['PermID']);
                 $jsondata['command'] = '$uarpc->permissions->enable(' . (int) $val['PermID'] . ')';
-                $jsondata['state'] = $uarpc->permissions->state((int) $val['PermID']);
+                $jsondata['state'] = $uarpc->permissions->state( (int) $val['PermID']);
                 $jsondata['CSSID'] = $val['CSSID'];
                 $jsondata['cmd'] = $cmd;
                 break;
             case 'disablePerm':
-                $jsondata['return'] = $uarpc->permissions->disable((int) $val['PermID']);
+                $jsondata['return'] = $uarpc->permissions->disable( (int) $val['PermID']);
                 $jsondata['command'] = '$uarpc->permissions->disable(' . (int) $val['PermID'] . ')';
-                $jsondata['state'] = $uarpc->permissions->state((int) $val['PermID']);
+                $jsondata['state'] = $uarpc->permissions->state( (int) $val['PermID']);
                 $jsondata['CSSID'] = $val['CSSID'];
                 $jsondata['cmd'] = $cmd;
                 break;
             case 'unassignUser2Role':
-                $jsondata['return'] = $uarpc->roles->unassign((int) $val['roleID'], (int) $val['userID']);
+                $jsondata['return'] = $uarpc->roles->unassign( (int) $val['roleID'], (int) $val['userID']);
                 $jsondata['command'] = '$uarpc->roles->unassign(' . (int) $val['roleID'] . ',' . (int) $val['userID'] . ')';
                 if (!$jsondata['return']) {
                     $jsondata['error'] = 'User ' . (int) $val['userID'] . ' was not unassigned to role ' . (int) $val['roleID'] . '!';
@@ -45,7 +45,7 @@ if (!empty($_POST['value']) and !empty($_POST['command'])) {
                     }
                 break;
             case 'assignUser2Role':
-                $jsondata['return'] = $uarpc->roles->assign((int) $val['roleID'], (int) $val['userID']);
+                $jsondata['return'] = $uarpc->roles->assign( (int) $val['roleID'], (int) $val['userID']);
                 $jsondata['command'] = '$uarpc->roles->assign(' . (int) $val['roleID'] . ',' . (int) $val['userID'] . ')';
                 if (!$jsondata['return']) {
                     $jsondata['error'] = 'User ' . (int) $val['userID'] . ' was not assigned to role ' . (int) $val['roleID'] . '!';
