@@ -63,14 +63,9 @@ class UARPC_UserManager
             throw new Exception('UserManager, cannot assign permission no UserID');
         }
 
-        $res = $mysqli->prepared_query("SELECT `UserID`,`PermissionID` FROM `" . $this->db_prefix . "_userallowpermissions` WHERE `UserID`=? AND `PermissionID`=?", 'ii', [$UserID, $PermissionID]);
-        if (!count($res)) {
-            $sql = [
-                "INSERT INTO `" . $this->db_prefix . "_userallowpermissions` (`UserID`,`PermissionID`,`AssignmentDate`) VALUES (?,?,?)",
-                "iii",
-                [$UserID, $PermissionID, time()]
-            ];
-            $result = $mysqli->prepared_insert($sql);
+        $res = $mysqli->execute1("SELECT `UserID`,`PermissionID` FROM `" . $this->db_prefix . "_userallowpermissions` WHERE `UserID`=? AND `PermissionID`=?", 'ii', [$UserID, $PermissionID], true);
+        if ($res === null) {
+            $result = $mysqli->execute("INSERT INTO `" . $this->db_prefix . "_userallowpermissions` (`UserID`,`PermissionID`,`AssignmentDate`) VALUES (?,?,?)", "iii", [$UserID, $PermissionID, time()]);
             if ($this->verbose_actions) {
                 echo 'UserID (' . $UserID . ') allowed PermissionID (' . $PermissionID . ') successfully.<br>';
             }
@@ -95,7 +90,7 @@ class UARPC_UserManager
             throw new Exception('UserManager, cannot allow permission no UserID');
         }
 
-        $affected_rows = $mysqli->prepared_query("DELETE FROM `" . $this->db_prefix . "_userallowpermissions` WHERE `UserID`=? AND `PermissionID`=?", 'ii', [$UserID, $PermissionID]);
+        $affected_rows = $mysqli->execute("DELETE FROM `" . $this->db_prefix . "_userallowpermissions` WHERE `UserID`=? AND `PermissionID`=?", 'ii', [$UserID, $PermissionID]);
         if (!$affected_rows) {
             if ($this->verbose_actions) {
                 echo 'Error: permissions/unallow(' . $PermissionID . ', ' . $UserID . ') did not report any databasechange' . '<br>';
@@ -128,14 +123,9 @@ class UARPC_UserManager
             throw new Exception('UserManager, cannot deny permission no UserID');
         }
 
-        $res = $mysqli->prepared_query("SELECT `UserID`,`PermissionID` from `" . $this->db_prefix . "_userdenypermissions` WHERE `UserID`=? AND `PermissionID`=?", 'ii', [$UserID, $PermissionID]);
-        if (!count($res)) {
-            $sql = [
-                "INSERT INTO `" . $this->db_prefix . "_userdenypermissions` (`UserID`,`PermissionID`,`AssignmentDate`) VALUES (?,?,?)",
-                "iii",
-                [$UserID, $PermissionID, time()]
-            ];
-            $result = $mysqli->prepared_insert($sql);
+        $res = $mysqli->execute1("SELECT `UserID`,`PermissionID` from `" . $this->db_prefix . "_userdenypermissions` WHERE `UserID`=? AND `PermissionID`=?", 'ii', [$UserID, $PermissionID], true);
+        if ($res === null) {
+            $result = $mysqli->execute("INSERT INTO `" . $this->db_prefix . "_userdenypermissions` (`UserID`,`PermissionID`,`AssignmentDate`) VALUES (?,?,?)", "iii", [$UserID, $PermissionID, time()]);
             if ($this->verbose_actions) {
                 echo 'UserID (' . $UserID . ') denied PermissionID (' . $PermissionID . ') successfully.<br>';
             }
@@ -160,7 +150,7 @@ class UARPC_UserManager
             throw new Exception('UserManager, cannot deny permission no UserID');
         }
 
-        $affected_rows = $mysqli->prepared_query("DELETE FROM `" . $this->db_prefix . "_userdenypermissions` WHERE `UserID`=? AND `PermissionID`=?", 'ii', [$UserID, $PermissionID]);
+        $affected_rows = $mysqli->execute("DELETE FROM `" . $this->db_prefix . "_userdenypermissions` WHERE `UserID`=? AND `PermissionID`=?", 'ii', [$UserID, $PermissionID]);
         if (!$affected_rows) {
             if ($this->verbose_actions) {
                 echo 'Error: permissions/undeny(' . $PermissionID . ', ' . $UserID . ') did not report any databasechange' . '<br>';
@@ -182,8 +172,8 @@ class UARPC_UserManager
             $UserID = $this->UserID;
         }
 
-        $res = $mysqli->prepared_query("SELECT * from `" . $this->db_prefix . "_userallowpermissions` WHERE `UserID`=? and `PermissionID`=?", 'ii', [$UserID, $PermissionID]);
-        if (count($res)) {
+        $res = $mysqli->execute1("SELECT * from `" . $this->db_prefix . "_userallowpermissions` WHERE `UserID`=? and `PermissionID`=?", 'ii', [$UserID, $PermissionID], true);
+        if ($res !== null) {
             if ($this->verbose_actions) {
                 echo 'isAllowed, user ' . $UserID . ' IS ALLOWED by override PermissionID ' . $PermissionID;
             }
@@ -201,8 +191,8 @@ class UARPC_UserManager
             $UserID = $this->UserID;
         }
 
-        $res = $mysqli->prepared_query("SELECT * FROM `" . $this->db_prefix . "_userdenypermissions` WHERE `UserID`=? AND `PermissionID`=?", 'ii', [$UserID, $PermissionID]);
-        if (count($res)) {
+        $res = $mysqli->execute1("SELECT * FROM `" . $this->db_prefix . "_userdenypermissions` WHERE `UserID`=? AND `PermissionID`=?", 'ii', [$UserID, $PermissionID], true);
+        if ($res !== null) {
             if ($this->verbose_actions) {
                 echo 'isDenied, user ' . $UserID . ' IS DENIED by override PermissionID ' . $PermissionID;
             }
@@ -244,7 +234,7 @@ class UARPC_UserManager
                 WHERE `udp`.`UserID`=? 
                 ";
 
-        $res = $mysqli->prepared_query($sql, 'i', [$UserID]);
+        $res = $mysqli->execute($sql, 'i', [$UserID]);
         $remove_ids = [];
         if ($res) {
             foreach ($res as $item) {
@@ -265,7 +255,7 @@ class UARPC_UserManager
                 WHERE `uap`.`UserID`=? 
                 ";
 
-        $res = $mysqli->prepared_query($sql, 'ii', [$UserID, $UserID]);
+        $res = $mysqli->execute($sql, 'ii', [$UserID, $UserID]);
 
         $permissions = [];
 
@@ -314,7 +304,7 @@ class UARPC_UserManager
         $sql = "SELECT * FROM `" . $this->db_prefix . "_userroles` `ur` 
                 JOIN `" . $this->db_prefix . "_roles` `r` ON `r`.`RoleID` = `ur`.`RoleID` 
                 WHERE `ur`.`UserID` = ?";
-        $res = $mysqli->prepared_query($sql, 'i', [$UserID]);
+        $res = $mysqli->execute($sql, 'i', [$UserID]);
 
         $roles = [];
         if (count($res)) {

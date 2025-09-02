@@ -114,8 +114,8 @@ class UARPC_base
                 JOIN `' . $this->db_prefix . '_userdenypermissions` `uudp` ON ( `uudp`.`PermissionID` = `up`.`PermissionID` ) 
                 WHERE `up`.`title`=? AND `uudp`.`UserID` = ?
                 ';
-        $res = $mysqli->prepared_query($sql, 'si', [$PermissionTitle, $UserID]);
-        if (count($res)) {
+        $res = $mysqli->execute1($sql, 'si', [$PermissionTitle, $UserID], true);
+        if ($res !== null) {
             if ($this->verbose_actions) {
                 echo '[-] User(' . $UserID . ') is denied permission \'' . $PermissionTitle . '\' as override<br>';
             }
@@ -128,8 +128,8 @@ class UARPC_base
                 JOIN `' . $this->db_prefix . '_userallowpermissions` `uudp` ON ( `uudp`.`PermissionID` = `up`.`PermissionID` ) 
                 WHERE `up`.`title`=? AND `uudp`.`UserID` = ?
                 ';
-        $res = $mysqli->prepared_query($sql, 'si', [$PermissionTitle, $UserID]);
-        if (count($res)) {
+        $res = $mysqli->execute1($sql, 'si', [$PermissionTitle, $UserID], true);
+        if ($res !== null) {
             if ($this->verbose_actions) {
                 echo '[OK] User(' . $UserID . ') is allowed permission \'' . $PermissionTitle . '\' as override<br>';
             }
@@ -145,8 +145,8 @@ class UARPC_base
                 WHERE `up`.`title`=? AND `uur`.`UserID` = ?
                 ';
 
-        $res = $mysqli->prepared_query($sql, 'si', [$PermissionTitle, $UserID]);
-        if (count($res)) {
+        $res = $mysqli->execute1($sql, 'si', [$PermissionTitle, $UserID], true);
+        if ($res !== null) {
             if ($this->verbose_actions) {
                 echo '[OK] User(' . $UserID . ') is allowed permission \'' . $PermissionTitle . '\' from roles<br>';
             }
@@ -173,20 +173,16 @@ class UARPC_base
     {
         global $mysqli;
 
-        $sql = 'SELECT * 
-                FROM `' . $this->db_prefix . '_permissions` `up` 
-                WHERE `up`.`title`=?
-                ';
-        $res = $mysqli->prepared_query($sql, 's', [$PermissionTitle]);
+        $res = $mysqli->execute1("SELECT * FROM `" . $this->db_prefix . "_permissions` WHERE `title`=?", 's', [$PermissionTitle], true);
 
-        if (count($res)) {
+        if ($res !== null) {
             if ($this->verbose_actions) {
-                echo 'permEnabled(' . $res[0]['enabled'] . ') returned for \'' . $PermissionTitle . '\'<br>';
+                echo 'permEnabled(' . $res['enabled'] . ') returned for ". $PermissionTitle . "<br>';
             }
-            return boolval($res[0]['enabled']);
+            return boolval($res['enabled']);
         } else {
             if ($this->verbose_actions) {
-                echo 'permEnabled() error, permission does not exist:  \'' . $PermissionTitle . '\'<br>';
+                echo 'permEnabled() error, permission does not exist:  ". $PermissionTitle . "<br>';
             }
             return false;
         }

@@ -54,31 +54,30 @@ class UARPC_PermissionManager
     {
         global $mysqli;
 
-        $res = $mysqli->prepared_query("SELECT `PermissionID` from `" . $this->db_prefix . "_permissions` WHERE `title`=?", 's', [$title]);
-        if (!count($res)) {
+        $res = $mysqli->execute1("SELECT `PermissionID` from `" . $this->db_prefix . "_permissions` WHERE `title`=?", 's', [$title], true);
+        if ($res === null) {
             if ($parentId === null) {
-                $sql = [
+                $result = $mysqli->execute(
                     "INSERT INTO `" . $this->db_prefix . "_permissions` (`parentid`,`enabled`,`title`,`description`) VALUES (null,?,?,?)",
                     "iss",
                     [boolval($enabled) ? 1 : 0, $title, $description]
-                ];
+                );
             } else {
-                $sql = [
+                $result = $mysqli->execute(
                     "INSERT INTO `" . $this->db_prefix . "_permissions` (`parentid`,`enabled`,`title`,`description`) VALUES (?,?,?,?)",
                     "iiss",
                     [$parentId, boolval($enabled) ? 1 : 0, $title, $description]
-                ];
+                );
             }
-            $result = $mysqli->prepared_insert($sql);
             if ($this->verbose_actions) {
                 echo 'Permission created successfully, PermissionID: ' . $result . '<br>';
             }
             return $result;
         } else {
             if ($this->verbose_actions) {
-                echo 'Permission (' . $res[0]['PermissionID'] . ') already exists.<br>';
+                echo 'Permission (' . $res['PermissionID'] . ') already exists.<br>';
             }
-            return $res[0]['PermissionID'];
+            return $res['PermissionID'];
         }
     }
 
@@ -93,26 +92,26 @@ class UARPC_PermissionManager
     {
         global $mysqli;
 
-        if ($mysqli->prepared_query1("SELECT count(*) as `count` FROM `" . $this->db_prefix . "_rolepermissions` WHERE `PermissionID`=?", 'i', [$PermissionID], 0)) {
+        if ($mysqli->execute1("SELECT count(*) as `count` FROM `" . $this->db_prefix . "_rolepermissions` WHERE `PermissionID`=?", 'i', [$PermissionID], 0)) {
             if ($this->verbose_actions) {
                 echo 'Delete permission (' . $PermissionID . ') error, connected to roles.<br>';
             }
             return false;
         }
-        if ($mysqli->prepared_query1("SELECT count(*) FROM `" . $this->db_prefix . "_userallowpermissions` WHERE `PermissionID`=?", 'i', [$PermissionID], 0)) {
+        if ($mysqli->execute1("SELECT count(*) FROM `" . $this->db_prefix . "_userallowpermissions` WHERE `PermissionID`=?", 'i', [$PermissionID], 0)) {
             if ($this->verbose_actions) {
                 echo 'Delete permission (' . $PermissionID . ') error, connected to user override.<br>';
             }
             return false;
         }
-        if ($mysqli->prepared_query1("SELECT count(*) FROM `" . $this->db_prefix . "_userdenypermissions` WHERE `PermissionID`=?", 'i', [$PermissionID], 0)) {
+        if ($mysqli->execute1("SELECT count(*) FROM `" . $this->db_prefix . "_userdenypermissions` WHERE `PermissionID`=?", 'i', [$PermissionID], 0)) {
             if ($this->verbose_actions) {
                 echo 'Delete permission (' . $PermissionID . ') error, connected to user deny.<br>';
             }
             return false;
         }
 
-        $res = $mysqli->prepared_query("DELETE FROM `" . $this->db_prefix . "_permissions` WHERE `PermissionID`=?", 'i', [$PermissionID]);
+        $res = $mysqli->execute("DELETE FROM `" . $this->db_prefix . "_permissions` WHERE `PermissionID`=?", 'i', [$PermissionID]);
         return $res;
     }
 
@@ -133,35 +132,33 @@ class UARPC_PermissionManager
 
         if ($enabled !== null) {
             if ($parentId === null) {
-                $sql = [
+                $affected_rows = $mysqli->execute(
                     "UPDATE `" . $this->db_prefix . "_permissions` SET `parentId`=null, `enabled`=?, `title`=?, `description`=? WHERE `PermissionID`=?",
                     "issi",
                     [boolval($enabled) ? 1 : 0, $title, $description, $PermissionID]
-                ];
+                );
             } else {
-                $sql = [
+                $affected_rows = $mysqli->execute(
                     "UPDATE `" . $this->db_prefix . "_permissions` SET `parentId`=?, `enabled`=?, `title`=?, `description`=? WHERE `PermissionID`=?",
                     "iissi",
                     [$parentId, boolval($enabled) ? 1 : 0, $title, $description, $PermissionID]
-                ];
+                );
             }
         } else {
             if ($parentId === null) {
-                $sql = [
+                $affected_rows = $mysqli->execute(
                     "UPDATE `" . $this->db_prefix . "_permissions` SET `parentId`=null, `title`=?, `description`=? WHERE `PermissionID`=?",
                     "ssi",
                     [$title, $description, $PermissionID]
-                ];
+                );
             } else {
-                $sql = [
+                $affected_rows = $mysqli->execute(
                     "UPDATE `" . $this->db_prefix . "_permissions` SET `parentId`=?, `title`=?, `description`=? WHERE `PermissionID`=?",
                     "issi",
                     [$parentId, $title, $description, $PermissionID]
-                ];
+                );
             }
         }
-
-        $affected_rows = $mysqli->prepared_insert($sql);
 
         if ($affected_rows) {
             if ($this->verbose_actions) {
@@ -187,16 +184,12 @@ class UARPC_PermissionManager
     {
         global $mysqli;
 
-        $sql = 'SELECT * 
-                FROM `' . $this->db_prefix . '_permissions` `up` 
-                WHERE `up`.`PermissionID`=?
-                ';
-        $res = $mysqli->prepared_query($sql, 'i', [$PermissionID]);
-        if (count($res)) {
+        $res = $mysqli->execute1("SELECT * FROM `" . $this->db_prefix . "_permissions` WHERE `PermissionID`=?", 'i', [$PermissionID], true);
+        if ($res !== null) {
             if ($this->verbose_actions) {
-                echo 'Permission (' . $PermissionID . ') state is: ' . $res[0]['enabled'] . '<br>';
+                echo 'Permission (' . $PermissionID . ') state is: ' . $res['enabled'] . '<br>';
             }
-            return boolval($res[0]['enabled']);
+            return boolval($res['enabled']);
         } else {
             if ($this->verbose_actions) {
                 echo 'Permission (' . $PermissionID . ') state is: error, does not exist<br>';
@@ -215,12 +208,7 @@ class UARPC_PermissionManager
     public function enable($PermissionID)
     {
         global $mysqli;
-        $sql = [
-            "UPDATE `" . $this->db_prefix . "_permissions` SET `enabled`=? WHERE `PermissionID`=?",
-            "ii",
-            [1, $PermissionID]
-        ];
-        $affected_rows = $mysqli->prepared_insert($sql);
+        $affected_rows = $mysqli->execute("UPDATE `" . $this->db_prefix . "_permissions` SET `enabled`=? WHERE `PermissionID`=?", "ii", [1, $PermissionID]);
         if ($affected_rows) {
             if ($this->verbose_actions) {
                 echo 'Permission (' . $PermissionID . ') is enabled.<br>';
@@ -244,12 +232,7 @@ class UARPC_PermissionManager
     public function disable($PermissionID)
     {
         global $mysqli;
-        $sql = [
-            "UPDATE `" . $this->db_prefix . "_permissions` SET `enabled`=? WHERE `PermissionID`=?",
-            "ii",
-            [0, $PermissionID]
-        ];
-        $affected_rows = $mysqli->prepared_insert($sql);
+        $affected_rows = $mysqli->execute("UPDATE `" . $this->db_prefix . "_permissions` SET `enabled`=? WHERE `PermissionID`=?", "ii", [0, $PermissionID]);
         if ($affected_rows) {
             if ($this->verbose_actions) {
                 echo 'Permission (' . $PermissionID . ') is now disabled.<br>';
@@ -275,14 +258,13 @@ class UARPC_PermissionManager
     {
         global $mysqli;
 
-        $res = $mysqli->prepared_query("SELECT `RoleID`,`PermissionID` FROM `" . $this->db_prefix . "_rolepermissions` WHERE `RoleID`=? AND `PermissionID`=?", 'ii', [$RoleID, $PermissionID]);
-        if (!count($res)) {
-            $sql = [
+        $res = $mysqli->execute1("SELECT `RoleID`,`PermissionID` FROM `" . $this->db_prefix . "_rolepermissions` WHERE `RoleID`=? AND `PermissionID`=?", 'ii', [$RoleID, $PermissionID], true);
+        if ($res === null) {
+            $result = $mysqli->execute(
                 "INSERT INTO `" . $this->db_prefix . "_rolepermissions` (`RoleID`,`PermissionID`,`AssignmentDate`) VALUES (?,?,?)",
                 "iii",
                 [$RoleID, $PermissionID, time()]
-            ];
-            $result = $mysqli->prepared_insert($sql);
+            );
             if ($this->verbose_actions) {
                 echo 'RoleID (' . $RoleID . ') assigned to PermissionID (' . $PermissionID . ') successfully.<br>';
             }
@@ -299,7 +281,7 @@ class UARPC_PermissionManager
     {
         global $mysqli;
 
-        $affected_rows = $mysqli->prepared_query("DELETE FROM `" . $this->db_prefix . "_rolepermissions` WHERE `RoleID`=? AND `PermissionID`=?", 'ii', [$RoleID, $PermissionID]);
+        $affected_rows = $mysqli->execute("DELETE FROM `" . $this->db_prefix . "_rolepermissions` WHERE `RoleID`=? AND `PermissionID`=?", 'ii', [$RoleID, $PermissionID]);
         if (!$affected_rows) {
             if ($this->verbose_actions) {
                 echo 'Error: permissions/unassign(' . $RoleID . ', ' . $UserID . ') did not report any databasechange' . '<br>';
@@ -325,17 +307,17 @@ class UARPC_PermissionManager
     {
         global $mysqli;
 
-        $res = $mysqli->prepared_query("SELECT `PermissionID` FROM `" . $this->db_prefix . "_permissions` WHERE `title`=?", 's', [$title]);
-        if (!count($res)) {
+        $res = $mysqli->execute1("SELECT `PermissionID` FROM `" . $this->db_prefix . "_permissions` WHERE `title`=?", 's', [$title], true);
+        if ($res === null) {
             if ($this->verbose_actions) {
                 echo 'PermissionID for ' . $title . ' does not exist' . '<br>';
             }
             return false;
         } else {
             if ($this->verbose_actions) {
-                echo 'PermissionID returned is ' . $res[0]['PermissionID'] . '<br>';
+                echo 'PermissionID returned is ' . $res['PermissionID'] . '<br>';
             }
-            return $res[0]['PermissionID'];
+            return $res['PermissionID'];
         }
     }
 
@@ -410,7 +392,7 @@ class UARPC_PermissionManager
                         WHERE `ur`.`RoleID` = ?
                         ' . $__orderby;
             }
-            $res = $mysqli->prepared_query($sql, 'i', [$RoleID]);
+            $res = $mysqli->execute($sql, 'i', [$RoleID]);
 
             $items = [];
             if (count($res)) {
@@ -430,13 +412,13 @@ class UARPC_PermissionManager
             return $items;
         } else {
             if ($__listType == 'parent') {
-                $res = $mysqli->query("SELECT `up`.`PermissionID`, `up`.`parentId`, `up`.`enabled`, `up`.`description`, CONCAT( COALESCE(parent.title, ''), `up`.`title`) AS `title`, COALESCE(parent.title,'') AS paTitle, `up`.`title` AS elTitle FROM `" . $this->db_prefix . "_permissions` `up` LEFT JOIN `" . $this->db_prefix . "_permissions` AS `parent` ON `up`.`parentId` = `parent`.`PermissionID`" . $__orderby);
+                $res = $mysqli->execute("SELECT `up`.`PermissionID`, `up`.`parentId`, `up`.`enabled`, `up`.`description`, CONCAT( COALESCE(parent.title, ''), `up`.`title`) AS `title`, COALESCE(parent.title,'') AS paTitle, `up`.`title` AS elTitle FROM `" . $this->db_prefix . "_permissions` `up` LEFT JOIN `" . $this->db_prefix . "_permissions` AS `parent` ON `up`.`parentId` = `parent`.`PermissionID`" . $__orderby);
             } else {
-                $res = $mysqli->query("SELECT `up`.`PermissionID`, `up`.`parentId`, `up`.`enabled`, `up`.`title`, `up`.`description` FROM `" . $this->db_prefix . "_permissions` `up`" . $__orderby);
+                $res = $mysqli->execute("SELECT `up`.`PermissionID`, `up`.`parentId`, `up`.`enabled`, `up`.`title`, `up`.`description` FROM `" . $this->db_prefix . "_permissions` `up`" . $__orderby);
             }
-            if ($res->num_rows) {
+            if (count($res)) {
                 $items = [];
-                while ($row = $res->fetch_assoc()) {
+                foreach ($res as $row) {
                     if ($__conf['onlyEnabled'] and $row['enabled']) {
                         unset($row['enabled']);
                         $items[ $row['PermissionID'] ] = $row;
@@ -479,12 +461,12 @@ class UARPC_PermissionManager
         foreach ($permissions as $permission) {
             $PermissionID = $permission['PermissionID'];
             $permission['override'] = 'auto';
-            $res = $mysqli->prepared_query("SELECT * FROM `" . $this->db_prefix . "_userdenypermissions` WHERE `UserID`=? and `PermissionID`=?", 'ii', [$UserID, $PermissionID]);
-            if (count($res)) {
+            $res = $mysqli->execute1("SELECT * FROM `" . $this->db_prefix . "_userdenypermissions` WHERE `UserID`=? and `PermissionID`=?", 'ii', [$UserID, $PermissionID], true);
+            if ($res !== null) {
                 $permission['override'] = 'block';
             }
-            $res = $mysqli->prepared_query("SELECT * FROM `" . $this->db_prefix . "_userallowpermissions` WHERE `UserID`=? and `PermissionID`=?", 'ii', [$UserID, $PermissionID]);
-            if (count($res)) {
+            $res = $mysqli->execute1("SELECT * FROM `" . $this->db_prefix . "_userallowpermissions` WHERE `UserID`=? and `PermissionID`=?", 'ii', [$UserID, $PermissionID], true);
+            if ($res !== null) {
                 $permission['override'] = 'grant';
             }
             $_processedPermissions[$PermissionID] = $permission;
@@ -504,17 +486,17 @@ class UARPC_PermissionManager
     public function getTitle($PermissionID)
     {
         global $mysqli;
-        $res = $mysqli->prepared_query("SELECT `title` FROM `" . $this->db_prefix . "_permissions` WHERE `PermissionID`=?", 'i', [$PermissionID]);
-        if (!count($res)) {
+        $res = $mysqli->execute1("SELECT `title` FROM `" . $this->db_prefix . "_permissions` WHERE `PermissionID`=?", 'i', [$PermissionID], true);
+        if ($res === null) {
             if ($this->verbose_actions) {
                 echo 'Permission(' . $PermissionID . ') does not exist' . '<br>';
             }
             return false;
         } else {
             if ($this->verbose_actions) {
-                echo 'Permission title returned is ' . $res[0]['title'] . '<br>';
+                echo 'Permission title returned is ' . $res['title'] . '<br>';
             }
-            return $res[0]['title'];
+            return $res['title'];
         }
     }
 
@@ -528,17 +510,17 @@ class UARPC_PermissionManager
     public function getDescription($PermissionID)
     {
         global $mysqli;
-        $res = $mysqli->prepared_query("SELECT `description` FROM `" . $this->db_prefix . "_permissions` WHERE `PermissionID`=?", 'i', [$PermissionID]);
-        if (!count($res)) {
+        $res = $mysqli->execute1("SELECT `description` FROM `" . $this->db_prefix . "_permissions` WHERE `PermissionID`=?", 'i', [$PermissionID], true);
+        if ($res === null) {
             if ($this->verbose_actions) {
                 echo 'Permission(' . $PermissionID . ') does not exist' . '<br>';
             }
             return false;
         } else {
             if ($this->verbose_actions) {
-                echo 'Permission description returned is ' . $res[0]['description'] . '<br>';
+                echo 'Permission description returned is ' . $res['description'] . '<br>';
             }
-            return $res[0]['description'];
+            return $res['description'];
         }
     }
 }

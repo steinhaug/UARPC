@@ -28,13 +28,6 @@ class uarpc
         #    $this->db_prefix = $GLOBALS['steinhaugUarpcDbPrefix'];
         #}
 
-        $funcs_to_check = ['return_charset_and_collate','prepared_insert'];
-        foreach($funcs_to_check as $func){
-            if (!method_exists($mysqli, $func)) {
-                die('Fatal error, steinhaug/uarpc requires latest version of class.mysqli.php. Make sure $mysqli is setup and try again.');
-            }
-        }
-
         // this would be normal behaviour, and will set the table prefix
         if ($cmd !== 'setup' and $cmd !== null) {
             $this->db_prefix = $cmd;
@@ -49,7 +42,7 @@ class uarpc
 
         if (!$mysqli->table_exist($this->db_prefix . '_permissions')) {
             if ($cmd !== 'setup' and $cmd !== null) {
-                die('Fatal error, steinhaug/uarpc cannot locate the required database tables. Reload with added setup parameter, "new uarpc(\'' . $cmd . '\',\'setup\');" to automatically set up new tables with your custom prefix.');
+                die('Fatal error, steinhaug/uarpc cannot locate the required database tables. Reload with added setup parameter, "new uarpc(\'" . $cmd . "\',\'setup\');" to automatically set up new tables with your custom prefix.');
             } else {
                 die('Fatal error, steinhaug/uarpc cannot locate the required database tables. Reload with added setup parameter, "new uarpc(\'setup\');" to automatically set up new tables.');
             }
@@ -117,7 +110,7 @@ class uarpc
         $tables = [];
 
         if (!$mysqli->table_exist($this->db_prefix . '_permissions')) {
-            $mysqli->query("CREATE TABLE IF NOT EXISTS `" . $this->db_prefix . "_permissions` (
+            $mysqli->execute("CREATE TABLE IF NOT EXISTS `" . $this->db_prefix . "_permissions` (
             `PermissionID` int NOT NULL AUTO_INCREMENT,
             `parentId` int DEFAULT NULL,
             `enabled` tinyint unsigned NOT NULL DEFAULT '1',
@@ -129,7 +122,7 @@ class uarpc
             $tables[] = $this->db_prefix . '_permissions';
         }
         if (!$mysqli->table_exist($this->db_prefix . '_rolepermissions')) {
-            $mysqli->query("CREATE TABLE IF NOT EXISTS `" . $this->db_prefix . "_rolepermissions` (
+            $mysqli->execute("CREATE TABLE IF NOT EXISTS `" . $this->db_prefix . "_rolepermissions` (
             `RoleID` int NOT NULL,
             `PermissionID` int NOT NULL,
             `AssignmentDate` int NOT NULL,
@@ -138,7 +131,7 @@ class uarpc
             $tables[] = $this->db_prefix . '_rolepermissions';
         }
         if (!$mysqli->table_exist($this->db_prefix . '_roles')) {
-            $mysqli->query("CREATE TABLE IF NOT EXISTS `" . $this->db_prefix . "_roles` (
+            $mysqli->execute("CREATE TABLE IF NOT EXISTS `" . $this->db_prefix . "_roles` (
             `RoleID` int NOT NULL AUTO_INCREMENT,
             `title` varchar(128) COLLATE " . $collate['utf8'] . " NOT NULL,
             `description` text COLLATE " . $collate['utf8'] . " NOT NULL,
@@ -148,7 +141,7 @@ class uarpc
             $tables[] = $this->db_prefix . '_roles';
         }
         if (!$mysqli->table_exist($this->db_prefix . '_userallowpermissions')) {
-            $mysqli->query("CREATE TABLE IF NOT EXISTS `" . $this->db_prefix . "_userallowpermissions` (
+            $mysqli->execute("CREATE TABLE IF NOT EXISTS `" . $this->db_prefix . "_userallowpermissions` (
             `UserID` int NOT NULL,
             `PermissionID` int NOT NULL,
             `AssignmentDate` int NOT NULL,
@@ -157,7 +150,7 @@ class uarpc
             $tables[] = $this->db_prefix . '_userallowpermissions';
         }
         if (!$mysqli->table_exist($this->db_prefix . '_userdenypermissions')) {
-            $mysqli->query("CREATE TABLE IF NOT EXISTS `" . $this->db_prefix . "_userdenypermissions` (
+            $mysqli->execute("CREATE TABLE IF NOT EXISTS `" . $this->db_prefix . "_userdenypermissions` (
             `UserID` int NOT NULL,
             `PermissionID` int NOT NULL,
             `AssignmentDate` int NOT NULL,
@@ -166,7 +159,7 @@ class uarpc
             $tables[] = $this->db_prefix . '_userdenypermissions';
         }
         if (!$mysqli->table_exist($this->db_prefix . '_userroles')) {
-            $mysqli->query("CREATE TABLE IF NOT EXISTS `" . $this->db_prefix . "_userroles` (
+            $mysqli->execute("CREATE TABLE IF NOT EXISTS `" . $this->db_prefix . "_userroles` (
             `UserID` int NOT NULL,
             `RoleID` int NOT NULL,
             `AssignmentDate` int NOT NULL,
