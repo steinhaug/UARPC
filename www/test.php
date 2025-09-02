@@ -19,12 +19,12 @@ echo '<hr>';
 var_dump( $uarpc->havePermission('::moderator::') );
 var_dump( $uarpc->havePermission('::moderator::', 1) );
 
-exit;
+echo '<hr>'; //exit;
 
 
 var_dump($uarpc->roles->listUsers(1));
 var_dump($uarpc->roles->format('option', 999)->listUsers(1));
-exit;
+
 var_dump($uarpc->roles->list());
 var_dump($uarpc->roles->format('option', 2)->list());
 

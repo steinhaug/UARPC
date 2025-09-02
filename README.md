@@ -84,28 +84,29 @@ See the commit log for updates.
 
 ## UARPC v1.7.0
 
-Upgraded steinhaug/mysqli to v1.9
+- Upgraded steinhaug/mysqli to v1.9
+- Adding tests
 
 ## UARPC v1.6.5
 
-Updated readme.
+- Updated readme.
 
 ## UARPC v1.6.4
 
-Added \$GLOBALS['steinhaugUarpcDbPrefix'] for all classes.
+- Added \$GLOBALS['steinhaugUarpcDbPrefix'] for all classes.
 
 ## UARPC v1.6.3
 
-Fixed composer requirements.
+- Fixed composer requirements.
 
 ## UARPC v1.6.2
 
-Added UserID parameter so it's possible to check against any user.  
+- Added UserID parameter so it's possible to check against any user.  
 ->havePermission(PermTitle, UserID),
 
 ## UARPC v1.6.1
 
-Moved Mysqli2 into seperate project
+- Moved Mysqli2 into seperate project
 
 # 4. Information
 
