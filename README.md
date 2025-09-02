@@ -13,6 +13,7 @@ UARPC is a PHP library that provides a flexible and easy-to-use framework for ma
 - [2. DOCUMENTATION](#2-documentation)
   - [Basic Usage](#basic-usage)
 - [3. BRIEF HISTORY LOG](#3-brief-history-log)
+  - [UARPC v1.7.0](#uarpc-v170)
   - [UARPC v1.6.5](#uarpc-v165)
   - [UARPC v1.6.4](#uarpc-v164)
   - [UARPC v1.6.3](#uarpc-v163)
@@ -39,7 +40,7 @@ To start using UARPC, you need to initialize the `uarpc` and `UARPC_base` classe
 require 'vendor/autoload.php';
 
 // Initialize the uarpc class to ensure all required files are loaded
-new uarpc();
+new uarpc(); // DB_PREFIX
 
 // Create a new UARPC_base instance with a user ID
 $uarpc = new UARPC_base($userID);
@@ -80,6 +81,10 @@ if ($uarpc->havePermission('create-post', $userID)) {
 # 3. BRIEF HISTORY LOG
 
 See the commit log for updates.
+
+## UARPC v1.7.0
+
+Upgraded steinhaug/mysqli to v1.9
 
 ## UARPC v1.6.5
 
