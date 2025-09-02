@@ -30,7 +30,7 @@
         "ext-mbstring": "*"
     },
     "require-dev": {
-        "steinhaug/mysqli": "^1.6"
+        "steinhaug/mysqli": "v1.6.6"
     },
     "autoload": {
         "psr-0": {
@@ -41,5 +41,8 @@
         "psr-0": {
             "testuarpc": "test/"
         }
+    },
+    "scripts": {
+        "test": "php tests/simple_test.php"
     }
 }

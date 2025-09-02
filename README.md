@@ -1,60 +1,83 @@
-# UARPC
+# UARPC - User Access, Roles, Permissions and Configurations
 
-User Access, Roles, Permissions and Configurations framework
-Tools for administering user access. 
-
-https://gitlab.com/steinhaug/uarpc/-/wikis/home
-https://lucid.app/lucidspark/invitations/accept/19b35103-eaa4-4b0c-82c4-c124a1ac8880
+UARPC is a PHP library that provides a flexible and easy-to-use framework for managing user access control. It allows you to define roles and permissions, assign roles to users, and check if a user has a specific permission.
 
 <div class="show_none">
 
 # Table of Contents
 
-- [UARPC](#uarpc)
+- [UARPC - User Access, Roles, Permissions and Configurations](#uarpc---user-access-roles-permissions-and-configurations)
 - [Table of Contents](#table-of-contents)
 - [1. INSTALL](#1-install)
-  - [1.1 COMPOSER](#11-composer)
-  - [1.2 INIT LIBRARY](#12-init-library)
+  - [Getting Started](#getting-started)
 - [2. DOCUMENTATION](#2-documentation)
-- [3. REQUIREMENTS](#3-requirements)
-- [4. BRIEF HISTORY LOG](#4-brief-history-log)
+  - [Basic Usage](#basic-usage)
+- [3. BRIEF HISTORY LOG](#3-brief-history-log)
   - [UARPC v1.6.5](#uarpc-v165)
   - [UARPC v1.6.4](#uarpc-v164)
   - [UARPC v1.6.3](#uarpc-v163)
   - [UARPC v1.6.2](#uarpc-v162)
   - [UARPC v1.6.1](#uarpc-v161)
-- [5. Information](#5-information)
-  - [5.1 License](#51-license)
-  - [5.2 Author](#52-author)
+- [4. Information](#4-information)
+  - [4.1 License](#41-license)
+  - [4.2 Author](#42-author)
 </div>
 
 # 1. INSTALL
 
-## 1.1 COMPOSER
+To install the library, use Composer:
 
-To install the library use composer:
+```bash
+composer require steinhaug/uarpc
+```
 
-    composer require steinhaug/uarpc
+## Getting Started
 
-    or specify version
+To start using UARPC, you need to initialize the `uarpc` and `UARPC_base` classes:
 
-    composer require "steinhaug/uarpc:^1.*"
+```php
+require 'vendor/autoload.php';
 
-## 1.2 INIT LIBRARY
+// Initialize the uarpc class to ensure all required files are loaded
+new uarpc();
 
-    new uarpc(opt 'table_prefix'); // needed for loading uarpc classes
-    $uarpc = new UARPC_base($UserId);
-    ... see docs for rest
+// Create a new UARPC_base instance with a user ID
+$uarpc = new UARPC_base($userID);
+```
 
 # 2. DOCUMENTATION
 
-Use the [WIKI pages documentation](https://gitlab.com/steinhaug/uarpc/-/wikis/home) or the markdown files inside the /docs folder.
+*   [UARPC_base](documentation/UARPC_base.md)
+*   [UARPC_PermissionManager](documentation/UARPC_PermissionManager.md)
+*   [UARPC_RoleManager](documentation/UARPC_RoleManager.md)
+*   [UARPC_UserManager](documentation/UARPC_UserManager.md)
 
-# 3. REQUIREMENTS
+## Basic Usage
 
-Manually add /dist folder for local development.
+Here's a simple example of how to use UARPC to manage roles and permissions:
 
-# 4. BRIEF HISTORY LOG
+```php
+// Create a new role
+$roleID = $uarpc->roles->add('Administrator', 'This is the administrator role');
+
+// Create a new permission
+$permissionID = $uarpc->permissions->add('create-post', 'Allows a user to create a new post');
+
+// Assign the permission to the role
+$uarpc->permissions->assign($permissionID, $roleID);
+
+// Assign the role to a user
+$uarpc->roles->assign($roleID, $userID);
+
+// Check if the user has the permission
+if ($uarpc->havePermission('create-post', $userID)) {
+    echo 'The user has permission to create a post.';
+} else {
+    echo 'The user does not have permission to create a post.';
+}
+```
+
+# 3. BRIEF HISTORY LOG
 
 See the commit log for updates.
 
@@ -79,13 +102,13 @@ Added UserID parameter so it's possible to check against any user.
 
 Moved Mysqli2 into seperate project
 
-# 5. Information
+# 4. Information
 
-## 5.1 License
+## 4.1 License
 
 This project is licensed under the terms of the  [MIT](http://www.opensource.org/licenses/mit-license.php) License. Enjoy!
 
-## 5.2 Author
+## 4.2 Author
 
 Kim Steinhaug, steinhaug at gmail dot com.
 
