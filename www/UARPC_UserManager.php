@@ -1,7 +1,7 @@
 <?php
 
 /**
- * UARPC - User Manager v1.6.0
+ * UARPC - User Manager v1.7.1
  *
  * All role based functions and operations goes into this class
  */
@@ -228,10 +228,10 @@ class UARPC_UserManager
             throw new Exception('UserManager, cannot deny permission no UserID');
         }
 
-        $sql = "SELECT `up`.`PermissionID`  
-                FROM `" . $this->db_prefix . "_permissions` `up` 
-                JOIN `" . $this->db_prefix . "_userdenypermissions` `udp` ON ( `udp`.`PermissionID` = `up`.`PermissionID` ) 
-                WHERE `udp`.`UserID`=? 
+        $sql = "SELECT `up`.`PermissionID`
+                FROM `" . $this->db_prefix . "_permissions` `up`
+                JOIN `" . $this->db_prefix . "_userdenypermissions` `udp` ON ( `udp`.`PermissionID` = `up`.`PermissionID` )
+                WHERE `udp`.`UserID`=?
                 ";
 
         $res = $mysqli->execute($sql, 'i', [$UserID]);
@@ -242,17 +242,17 @@ class UARPC_UserManager
             }
         }
 
-        $sql = "SELECT `up`.`enabled`, `up`.`PermissionID`, `up`.`title` 
-                FROM `" . $this->db_prefix . "_permissions` `up` 
-                JOIN `" . $this->db_prefix . "_rolepermissions` `urp` ON ( `urp`.`PermissionID` = `up`.`PermissionID` ) 
-                JOIN `" . $this->db_prefix . "_userroles` `uur` ON ( `uur`.`RoleID` = `urp`.`RoleID` ) 
-                WHERE `uur`.`UserID`=? 
-                GROUP BY `up`.`PermissionID` 
+        $sql = "SELECT `up`.`enabled`, `up`.`PermissionID`, `up`.`title`
+                FROM `" . $this->db_prefix . "_permissions` `up`
+                JOIN `" . $this->db_prefix . "_rolepermissions` `urp` ON ( `urp`.`PermissionID` = `up`.`PermissionID` )
+                JOIN `" . $this->db_prefix . "_userroles` `uur` ON ( `uur`.`RoleID` = `urp`.`RoleID` )
+                WHERE `uur`.`UserID`=?
+                GROUP BY `up`.`PermissionID`
                 UNION
-                SELECT `up`.`enabled`, `up`.`PermissionID`, `up`.`title` 
-                FROM `" . $this->db_prefix . "_permissions` `up` 
-                JOIN `" . $this->db_prefix . "_userallowpermissions` `uap`  ON ( `uap`.`PermissionID` = `up`.`PermissionID` ) 
-                WHERE `uap`.`UserID`=? 
+                SELECT `up`.`enabled`, `up`.`PermissionID`, `up`.`title`
+                FROM `" . $this->db_prefix . "_permissions` `up`
+                JOIN `" . $this->db_prefix . "_userallowpermissions` `uap`  ON ( `uap`.`PermissionID` = `up`.`PermissionID` )
+                WHERE `uap`.`UserID`=?
                 ";
 
         $res = $mysqli->execute($sql, 'ii', [$UserID, $UserID]);
@@ -301,8 +301,8 @@ class UARPC_UserManager
             $UserID = $this->UserID;
         }
 
-        $sql = "SELECT * FROM `" . $this->db_prefix . "_userroles` `ur` 
-                JOIN `" . $this->db_prefix . "_roles` `r` ON `r`.`RoleID` = `ur`.`RoleID` 
+        $sql = "SELECT * FROM `" . $this->db_prefix . "_userroles` `ur`
+                JOIN `" . $this->db_prefix . "_roles` `r` ON `r`.`RoleID` = `ur`.`RoleID`
                 WHERE `ur`.`UserID` = ?";
         $res = $mysqli->execute($sql, 'i', [$UserID]);
 

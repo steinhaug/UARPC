@@ -1,7 +1,7 @@
 <?php
 
 /**
- * UARPC - Role Manager v1.6.0
+ * UARPC - Role Manager v1.7.1
  *
  * All role based functions and operations goes into this class
  */
@@ -238,8 +238,8 @@ class UARPC_RoleManager
             $UserID = $this->UserID;
         }
 
-        $sql = "SELECT `r`.`RoleID`, `r`.`title`, `r`.`description`, `ur`.`UserID` AS `thisUserAssigned` 
-                FROM `" . $this->db_prefix . "_roles` `r` 
+        $sql = "SELECT `r`.`RoleID`, `r`.`title`, `r`.`description`, `ur`.`UserID` AS `thisUserAssigned`
+                FROM `" . $this->db_prefix . "_roles` `r`
                 LEFT JOIN `" . $this->db_prefix . "_userroles` ur ON (`r`.`RoleID` = `ur`.`RoleID` AND `ur`.`UserID` = ?)";
         $res = $mysqli->execute($sql, 'i', [$UserID]);
 
@@ -278,8 +278,8 @@ class UARPC_RoleManager
     {
         global $mysqli;
 
-        $sql = "SELECT * FROM `" . $this->db_prefix . "_userroles` `ur` 
-                JOIN `" . $this->db_prefix . "_roles` `r` ON `r`.`RoleID` = `ur`.`RoleID` 
+        $sql = "SELECT * FROM `" . $this->db_prefix . "_userroles` `ur`
+                JOIN `" . $this->db_prefix . "_roles` `r` ON `r`.`RoleID` = `ur`.`RoleID`
                 WHERE `ur`.`RoleID` = ?";
         $res = $mysqli->execute($sql, 'i', [$RoleID]);
 

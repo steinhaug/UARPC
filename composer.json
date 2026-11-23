@@ -30,7 +30,7 @@
         "ext-mbstring": "*"
     },
     "require-dev": {
-        "steinhaug/mysqli": "^1.9"
+        "steinhaug/mysqli": "^2.2"
     },
     "autoload": {
         "psr-0": {

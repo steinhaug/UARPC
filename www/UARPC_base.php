@@ -1,7 +1,7 @@
 <?php
 
 /**
- * UARPC - User Access Roles Permissions Configuration v1.6.0
+ * UARPC - User Access Roles Permissions Configuration v1.7.1
  *
  * Framework for managing and checking all rights for a particular user.
  *
@@ -109,9 +109,9 @@ class UARPC_base
         }
 
         // 2. check if permission is denied on user
-        $sql = 'SELECT * 
-                FROM `' . $this->db_prefix . '_permissions` `up` 
-                JOIN `' . $this->db_prefix . '_userdenypermissions` `uudp` ON ( `uudp`.`PermissionID` = `up`.`PermissionID` ) 
+        $sql = 'SELECT *
+                FROM `' . $this->db_prefix . '_permissions` `up`
+                JOIN `' . $this->db_prefix . '_userdenypermissions` `uudp` ON ( `uudp`.`PermissionID` = `up`.`PermissionID` )
                 WHERE `up`.`title`=? AND `uudp`.`UserID` = ?
                 ';
         $res = $mysqli->execute1($sql, 'si', [$PermissionTitle, $UserID], true);
@@ -123,9 +123,9 @@ class UARPC_base
         }
 
         // 3. Check if permission is allowed for user
-        $sql = 'SELECT * 
-                FROM `' . $this->db_prefix . '_permissions` `up` 
-                JOIN `' . $this->db_prefix . '_userallowpermissions` `uudp` ON ( `uudp`.`PermissionID` = `up`.`PermissionID` ) 
+        $sql = 'SELECT *
+                FROM `' . $this->db_prefix . '_permissions` `up`
+                JOIN `' . $this->db_prefix . '_userallowpermissions` `uudp` ON ( `uudp`.`PermissionID` = `up`.`PermissionID` )
                 WHERE `up`.`title`=? AND `uudp`.`UserID` = ?
                 ';
         $res = $mysqli->execute1($sql, 'si', [$PermissionTitle, $UserID], true);
@@ -137,11 +137,11 @@ class UARPC_base
         }
 
         // 4. Check if permission is allowed for role belonging to user
-        $sql = 'SELECT * 
-                FROM `' . $this->db_prefix . '_permissions` `up` 
-                JOIN `' . $this->db_prefix . '_rolepermissions` `urp` ON ( `urp`.`PermissionID` = `up`.`PermissionID` ) 
-                JOIN `' . $this->db_prefix . '_userroles` `uur` ON ( `uur`.`RoleID` = `urp`.`RoleID` ) 
-                JOIN `' . $this->db_prefix . '_roles` `ur` ON ( `ur`.`RoleID` = `uur`.`RoleID` ) 
+        $sql = 'SELECT *
+                FROM `' . $this->db_prefix . '_permissions` `up`
+                JOIN `' . $this->db_prefix . '_rolepermissions` `urp` ON ( `urp`.`PermissionID` = `up`.`PermissionID` )
+                JOIN `' . $this->db_prefix . '_userroles` `uur` ON ( `uur`.`RoleID` = `urp`.`RoleID` )
+                JOIN `' . $this->db_prefix . '_roles` `ur` ON ( `ur`.`RoleID` = `uur`.`RoleID` )
                 WHERE `up`.`title`=? AND `uur`.`UserID` = ?
                 ';
 

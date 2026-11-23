@@ -1,7 +1,7 @@
 <?php
 
 /**
- * UARPC - Permission Manager v1.6.0
+ * UARPC - Permission Manager v1.7.1
  *
  * All permission based operations and functions goes into this class.
  */
@@ -376,19 +376,19 @@ class UARPC_PermissionManager
 
         if ($RoleID !== null) {
             if ($__listType == 'parent') {
-                $sql = 'SELECT `up`.`PermissionID`, `up`.`parentId`, `up`.`enabled`, `up`.`description`, 
+                $sql = 'SELECT `up`.`PermissionID`, `up`.`parentId`, `up`.`enabled`, `up`.`description`,
                         CONCAT( COALESCE(`parent`.`title`, \'\'), `up`.`title`) AS `title`, COALESCE(`parent`.`title`,\'\') AS paTitle, `up`.`title` AS elTitle
-                        FROM `' . $this->db_prefix . '_permissions` `up` 
-                        JOIN `' . $this->db_prefix . '_rolepermissions` `urp` ON ( `urp`.`PermissionID` = `up`.`PermissionID` ) 
-                        JOIN `' . $this->db_prefix . '_roles` `ur` ON ( `ur`.`RoleID` = `urp`.`RoleID` ) 
+                        FROM `' . $this->db_prefix . '_permissions` `up`
+                        JOIN `' . $this->db_prefix . '_rolepermissions` `urp` ON ( `urp`.`PermissionID` = `up`.`PermissionID` )
+                        JOIN `' . $this->db_prefix . '_roles` `ur` ON ( `ur`.`RoleID` = `urp`.`RoleID` )
                         LEFT JOIN `' . $this->db_prefix . '_permissions` AS `parent` ON `up`.`parentId` = `parent`.`PermissionID`
                         WHERE `ur`.`RoleID` = ?
                         ' . $__orderby;
             } else {
-                $sql = 'SELECT `up`.`PermissionID`, `up`.`parentId`, `up`.`enabled`, `up`.`title`, `up`.`description` 
-                        FROM `' . $this->db_prefix . '_permissions` `up` 
-                        JOIN `' . $this->db_prefix . '_rolepermissions` `urp` ON ( `urp`.`PermissionID` = `up`.`PermissionID` ) 
-                        JOIN `' . $this->db_prefix . '_roles` `ur` ON ( `ur`.`RoleID` = `urp`.`RoleID` ) 
+                $sql = 'SELECT `up`.`PermissionID`, `up`.`parentId`, `up`.`enabled`, `up`.`title`, `up`.`description`
+                        FROM `' . $this->db_prefix . '_permissions` `up`
+                        JOIN `' . $this->db_prefix . '_rolepermissions` `urp` ON ( `urp`.`PermissionID` = `up`.`PermissionID` )
+                        JOIN `' . $this->db_prefix . '_roles` `ur` ON ( `ur`.`RoleID` = `urp`.`RoleID` )
                         WHERE `ur`.`RoleID` = ?
                         ' . $__orderby;
             }

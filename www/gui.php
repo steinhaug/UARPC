@@ -301,7 +301,7 @@ function thats_it_for_now_incomming_payload($jsondata)
         }
 
         .input-group > .form-control.integer {
-            
+
         }
         .form-control.extraid {
             width: 90px;
@@ -403,7 +403,7 @@ function thats_it_for_now_incomming_payload($jsondata)
     <div class="container-fluid"><div id="contents-body">
 
 
-        <h5 class="mt-3">OARPC</h5>
+        <h5 class="mt-3">UARPC</h5>
 
         <div class="row">
             <div class="col-lg-4">
@@ -551,7 +551,7 @@ function thats_it_for_now_incomming_payload($jsondata)
 <script>
 
     /**
-    * Deliver unique numerical numbers needed for IDs 
+    * Deliver unique numerical numbers needed for IDs
     */
     function* infinite() {
         let index = 0;
@@ -573,7 +573,7 @@ function thats_it_for_now_incomming_payload($jsondata)
 
     /**
     * Get the existing CSS ID, if not create a new one and set it
-    * 
+    *
     * param node el The node/element to check for the ID
     * return string The CSS ID
     */
@@ -589,7 +589,7 @@ function thats_it_for_now_incomming_payload($jsondata)
         return CSSID;
     }
 
-    $.fn.hasAttr = function(name) {  
+    $.fn.hasAttr = function(name) {
         return this.attr(name) !== undefined;
     };
 
@@ -623,7 +623,7 @@ function thats_it_for_now_incomming_payload($jsondata)
             }
         });
 
-        // ADD 
+        // ADD
         $("#addperm").on('click', function() {
             var item = $(this).parent().parent();
             var dataTitle = $(item).find('input[type="text"]').val();
@@ -695,7 +695,7 @@ function thats_it_for_now_incomming_payload($jsondata)
                 var PermID = $(el).data('permid');
                 ajaxCall({PermID: PermID, CSSID: CSSID}, 'disablePerm');
             } else {
-                console.log( 'ERROR: command missing, ' + $(this).data('command') ); 
+                console.log( 'ERROR: command missing, ' + $(this).data('command') );
             }
         });
         $("#userList").on('click.action', 'a.action', function(event) {
@@ -847,7 +847,7 @@ function thats_it_for_now_incomming_payload($jsondata)
                     $("#roleid").html( response.id ).closest('.id-fetch').children().addClass('trans-25').first().removeClass('trans-25').addClass('add-focus');
                 }
             }
-        }).always(function (data) { 
+        }).always(function (data) {
             //$('#spinner').hide();
         });
 
